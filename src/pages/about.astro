@@ -1,0 +1,364 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+
+// Values & Qualities Data (Exact 6 cards from Figma)
+const qualitiesData = [
+  {
+    num: "01.",
+    title: "High Quality",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  },
+  {
+    num: "02.",
+    title: "Originality",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  },
+  {
+    num: "03.",
+    title: "Team Work",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  },
+  {
+    num: "04.",
+    title: "Creativity",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  },
+  {
+    num: "05.",
+    title: "Accessibility",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  },
+  {
+    num: "06.",
+    title: "Innovation",
+    desc: "One of the biggest reasons to choose handmade ceramic or stoneware mugs is because of their superior durability."
+  }
+];
+
+// Exclusive Qualities List (3 rows from Figma)
+const exclusiveList = [
+  {
+    title: "Premium Craftsmanship",
+    desc: "Our ceramic mugs are crafted with precision and care...",
+    icon: "craft"
+  },
+  {
+    title: "Eco-Friendly & Sustainable",
+    desc: "We believe in creating products that are not only...",
+    icon: "eco"
+  },
+  {
+    title: "Perfect for Every Occasion",
+    desc: "Whether you're sipping your morning coffee or...",
+    icon: "occasion"
+  }
+];
+---
+
+<Layout title="About Us — Earthware Ceramic Pot Website">
+  <Navbar />
+
+  <main class="bg-white">
+
+    <!-- ================= 1. ABOUT US HERO SECTION ================= -->
+    <section class="relative overflow-hidden py-20 sm:py-28 bg-[#F9ECE7] border-b border-neutral-200/50">
+      <!-- Subtle Paper Texture Overlay -->
+      <img 
+        src="/assets/images/Hero Section.svg" 
+        alt="" 
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40 mix-blend-multiply"
+      >
+
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center relative z-10 space-y-4">
+        <!-- Badge: Welcome to [earthware] -->
+        <div class="flex items-center justify-center gap-1.5 text-base sm:text-lg font-medium text-[#000104]">
+          <span>Welcome to</span>
+          <span class="bg-[#000104] text-white text-xs sm:text-sm font-bold px-2 py-0.5 rounded tracking-wide">
+            earthware
+          </span>
+        </div>
+
+        <!-- Huge Elegant Heading in Gallient -->
+        <h1 class="font-gallient text-6xl sm:text-8xl md:text-[96px] font-normal text-[#000104] tracking-tight leading-[1.05]">
+          About Us
+        </h1>
+      </div>
+    </section>
+
+    <!-- ================= 2. ABOUT EARTHWARE (STORY & STATS) ================= -->
+    <section class="py-16 sm:py-24 bg-white border-b border-neutral-200/60">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          
+          <!-- Left: Pale Sage Box with Ceramic Mugs Image -->
+          <div class="bg-[#EFF2E6] rounded-3xl p-6 sm:p-10 flex items-center justify-center min-h-[380px] sm:min-h-[440px] shadow-sm">
+            <img 
+              src="/assets/images/about-mugs.png" 
+              alt="Handmade Ceramic Mugs" 
+              class="max-h-[340px] w-auto object-contain drop-shadow-md hover:scale-105 transition-smooth"
+            >
+          </div>
+
+          <!-- Right: Story, Stats & Contact Button -->
+          <div class="space-y-6">
+            <!-- Eyebrow: About [earthware] -->
+            <div class="flex items-center gap-1.5 text-base font-medium text-[#5E666C]">
+              <span>About</span>
+              <span class="bg-[#000104] text-white text-xs font-bold px-2 py-0.5 rounded tracking-wide">
+                earthware
+              </span>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl lg:text-[34px] font-bold text-[#000104] leading-snug">
+              Renowned Beauty and Cosmetics Supplier
+            </h2>
+
+            <p class="text-sm sm:text-base text-[#5E666C] leading-relaxed">
+              Our wide selection of spa, haircare, and skincare important items is expertly made to guarantee you get the glowing
+            </p>
+
+            <!-- Stats List -->
+            <div class="space-y-4 pt-2">
+              <!-- Stat 1: 180+ -->
+              <div class="flex items-center justify-between pb-4 border-b border-[#E8E8E8]">
+                <div>
+                  <h4 class="text-2xl sm:text-3xl font-bold text-[#000104]">180+</h4>
+                  <p class="text-xs text-[#5E666C] mt-0.5">180+ ceramic mug & design Hare</p>
+                </div>
+                <div class="p-2 border border-neutral-300 rounded-lg">
+                  <svg class="w-6 h-6 text-[#5E666C]" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 1v3M10 1v3M14 1v3"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Stat 2: 12k+ -->
+              <div class="flex items-center justify-between pb-4 border-b border-[#E8E8E8]">
+                <div>
+                  <h4 class="text-2xl sm:text-3xl font-bold text-[#000104]">12k+</h4>
+                  <p class="text-xs text-[#5E666C] mt-0.5">Over 1,200 unique ceramic mugs</p>
+                </div>
+                <div class="p-2 border border-neutral-300 rounded-lg">
+                  <svg class="w-6 h-6 text-[#5E666C]" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 1v3M10 1v3M14 1v3"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Button: Contact Us -->
+            <div class="pt-2">
+              <a href="#contact" class="inline-block bg-[#000104] text-white text-sm font-semibold px-9 py-3.5 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+                Contact Us
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. OUR CERAMIC MUG'S QUALITIES & VALUES ================= -->
+    <section class="py-16 sm:py-24 bg-white border-b border-neutral-200/60">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12 space-y-12">
+        
+        <!-- Section Header -->
+        <div class="text-center space-y-2">
+          <div class="flex items-center justify-center gap-1.5 text-base font-medium text-[#5E666C]">
+            <span>Our Ceramic</span>
+            <span class="bg-[#000104] text-white text-xs font-bold px-2 py-0.5 rounded tracking-wide">
+              mug's
+            </span>
+          </div>
+          <h2 class="font-gallient text-4xl sm:text-6xl lg:text-[64px] font-normal text-[#000104] leading-tight">
+            Qualities & values
+          </h2>
+        </div>
+
+        <!-- 6 Cards Grid (3 Columns, 2 Rows) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {qualitiesData.map((item) => (
+            <div class="bg-white rounded-2xl p-7 border border-[#E8E8E8] shadow-sm hover:shadow-md transition-smooth space-y-3 group hover:border-neutral-400">
+              <span class="font-serif italic text-2xl text-[#8E959B] block">
+                {item.num}
+              </span>
+              <h4 class="text-lg font-bold text-[#000104] group-hover:text-neutral-700 transition-colors">
+                {item.title}
+              </h4>
+              <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+                {item.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 4. PROMOTIONAL OFFERS (2 CARDS) ================= -->
+    <section class="py-14 sm:py-20 bg-white border-b border-neutral-200/60">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          
+          <!-- Banner 1: Combo Offers (BUY 1 GET 1) -->
+          <div class="relative overflow-hidden rounded-2xl bg-[#EFF2E6] p-7 sm:p-9 flex flex-col justify-between min-h-[260px] sm:min-h-[290px] border border-neutral-200/50 shadow-sm group">
+            <!-- Diagonal pink background slice matching Figma -->
+            <div class="absolute right-0 top-0 bottom-0 w-[55%] bg-[#FFF0EB] [clip-path:polygon(32%_0,100%_0,100%_100%,0%_100%)] pointer-events-none"></div>
+
+            <div class="space-y-3 z-10 max-w-[55%]">
+              <div class="flex items-center gap-1.5 text-sm font-medium text-[#000104]">
+                <span>Combo</span>
+                <span class="bg-[#000104] text-white text-[11px] font-bold px-2 py-0.5 rounded">Offers</span>
+              </div>
+              <h3 class="font-gallient text-2xl sm:text-3xl lg:text-[34px] text-[#000104] font-normal leading-tight">
+                BUY 1 GET 1 on Skin Products
+              </h3>
+            </div>
+
+            <div class="pt-4 z-10">
+              <a href="/#products" class="inline-block bg-white text-[#000104] text-xs font-semibold px-6 py-2.5 rounded shadow-sm hover:bg-neutral-100 transition-smooth btn-press">
+                Buy Now
+              </a>
+            </div>
+
+            <!-- Image on the right -->
+            <img 
+              src="/assets/images/jar-with-fresh-honey 1.svg" 
+              alt="Combo Offers Fresh Honey" 
+              class="absolute right-2 sm:right-6 bottom-0 h-[86%] sm:h-[94%] w-auto max-w-[48%] object-contain object-bottom pointer-events-none group-hover:scale-105 transition-smooth duration-500 z-10"
+            >
+          </div>
+
+          <!-- Banner 2: 20% Off For All Products! -->
+          <div class="relative overflow-hidden rounded-2xl bg-[#FFF0EB] p-7 sm:p-9 flex flex-col justify-between min-h-[260px] sm:min-h-[290px] border border-neutral-200/50 shadow-sm group">
+            <div class="space-y-3 z-10 max-w-[55%]">
+              <div class="flex items-center gap-1.5 text-sm font-medium text-[#000104]">
+                <span>ceramic</span>
+                <span class="bg-[#000104] text-white text-[11px] font-bold px-2 py-0.5 rounded">mug's</span>
+              </div>
+              <h3 class="font-gallient text-2xl sm:text-3xl lg:text-[34px] text-[#000104] font-normal leading-tight">
+                20% Off For All Products!
+              </h3>
+            </div>
+
+            <div class="pt-4 z-10">
+              <a href="/#products" class="inline-block bg-white text-[#000104] text-xs font-semibold px-6 py-2.5 rounded shadow-sm hover:bg-neutral-100 transition-smooth btn-press">
+                Buy Now
+              </a>
+            </div>
+
+            <!-- Image on the right -->
+            <img 
+              src="/assets/images/jar-with-fresh-honey (1) 1.svg" 
+              alt="Fresh Honey & Comb" 
+              class="absolute right-2 sm:right-6 bottom-0 h-[86%] sm:h-[94%] w-auto max-w-[48%] object-contain object-bottom pointer-events-none group-hover:scale-105 transition-smooth duration-500 z-10"
+            >
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. TOP CERAMIC MUG'S EXCLUSIVE QUALITIES ================= -->
+    <section class="py-16 sm:py-24 bg-white border-b border-neutral-200/60">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          
+          <!-- Left: Exclusive Qualities List -->
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <div class="flex items-center gap-1.5 text-sm font-medium text-[#5E666C]">
+                <span>Top ceramic</span>
+                <span class="bg-[#000104] text-white text-[11px] font-bold px-2 py-0.5 rounded">mug's</span>
+              </div>
+              <h2 class="font-gallient text-4xl sm:text-5xl lg:text-[54px] font-normal text-[#000104] leading-tight">
+                Exclusive Qualities
+              </h2>
+              <p class="text-sm text-[#5E666C]">
+                Exquisite quality, crafted for indulgence and rejuvenation.
+              </p>
+            </div>
+
+            <!-- 3 Feature Rows with Dotted Circle Icons -->
+            <div class="space-y-4 pt-2">
+              {exclusiveList.map((item) => (
+                <div class="border border-[#E8E8E8] rounded-xl p-4 sm:p-5 flex items-center gap-5 hover:border-neutral-400 hover:shadow-sm transition-smooth bg-white">
+                  <!-- Custom CSS Dotted Circle -->
+                  <div class="w-12 h-12 rounded-full border-2 border-dashed border-[#000104]/50 flex items-center justify-center p-2.5 flex-shrink-0">
+                    <svg class="w-6 h-6 text-[#000104]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2h-4a2 2 0 01-2-2zm0 0H8a2 2 0 00-2 2v4a2 2 0 002 2h4"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-gallient text-lg sm:text-xl font-normal text-[#000104]">
+                      {item.title}
+                    </h4>
+                    <p class="text-xs text-[#5E666C] mt-0.5">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <!-- Contact Us Button -->
+            <div class="pt-2">
+              <a href="#contact" class="inline-block bg-[#000104] text-white text-sm font-semibold px-9 py-3.5 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+                Contact Us
+              </a>
+            </div>
+          </div>
+
+          <!-- Right: Soft Peach Square Container with Ceramic Jugs -->
+          <div class="bg-[#FDF2EE] rounded-3xl p-8 sm:p-12 flex items-center justify-center min-h-[420px] sm:min-h-[480px] shadow-sm">
+            <img 
+              src="/assets/images/image-removebg-preview 1.png" 
+              alt="Handmade Ceramic Mugs Exclusive Qualities" 
+              class="max-h-[380px] w-auto object-contain drop-shadow-xl hover:scale-105 transition-smooth duration-500"
+            >
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. NEWSLETTER ================= -->
+    <section class="bg-earth-olive py-16 sm:py-20 relative overflow-hidden border-b border-neutral-200/60">
+      <img 
+        src="/assets/icons/newsletter-tag.svg" 
+        alt="" 
+        class="absolute left-[-60px] top-1/2 -translate-y-1/2 h-[350px] w-auto opacity-80 pointer-events-none hidden sm:block"
+      >
+
+      <div class="max-w-[736px] mx-auto px-6 text-center space-y-5 relative z-10">
+        <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">
+          Join Our Newsletter
+        </h2>
+        <p class="text-base text-[#5E666C] leading-relaxed">
+          Join our email subscription now to get updates on promotions and coupons. $15 discount get your first order
+        </p>
+
+        <form id="newsletter-form-about" class="max-w-[588px] mx-auto h-[64px] bg-white rounded-full p-2 flex items-center justify-between shadow-sm border border-neutral-200">
+          <input 
+            type="email" 
+            required 
+            placeholder="Your Email" 
+            class="flex-1 px-6 bg-transparent text-[#000104] focus:outline-none text-base"
+          >
+          <button type="submit" class="bg-[#000104] text-white font-semibold text-base px-8 h-full rounded-full hover:bg-neutral-800 transition-smooth btn-press">
+            Subscribe
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+  <CartDrawer />
+</Layout>
