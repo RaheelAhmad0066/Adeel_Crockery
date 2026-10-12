@@ -43,17 +43,17 @@ const exclusiveList = [
   {
     title: "Premium Craftsmanship",
     desc: "Our ceramic mugs are crafted with precision and care...",
-    icon: "craft"
+    icon: "/assets/images/premium.svg"
   },
   {
     title: "Eco-Friendly & Sustainable",
     desc: "We believe in creating products that are not only...",
-    icon: "eco"
+    icon: "/assets/images/eco.svg"
   },
   {
     title: "Perfect for Every Occasion",
     desc: "Whether you're sipping your morning coffee or...",
-    icon: "occasion"
+    icon: "/assets/images/prefect.svg"
   }
 ];
 ---
@@ -96,7 +96,7 @@ const exclusiveList = [
           <!-- Left: Pale Sage Box with Ceramic Mugs Image -->
           <div class="bg-[#EFF2E6] rounded-3xl p-6 sm:p-10 flex items-center justify-center min-h-[380px] sm:min-h-[440px] shadow-sm">
             <img 
-              src="/assets/images/about-mugs.png" 
+              src="/assets/images/about-mugs.svg" 
               alt="Handmade Ceramic Mugs" 
               class="max-h-[340px] w-auto object-contain drop-shadow-md hover:scale-105 transition-smooth"
             >
@@ -288,11 +288,9 @@ const exclusiveList = [
             <div class="space-y-4 pt-2">
               {exclusiveList.map((item) => (
                 <div class="border border-[#E8E8E8] rounded-xl p-4 sm:p-5 flex items-center gap-5 hover:border-neutral-400 hover:shadow-sm transition-smooth bg-white">
-                  <!-- Custom CSS Dotted Circle -->
-                  <div class="w-12 h-12 rounded-full border-2 border-dashed border-[#000104]/50 flex items-center justify-center p-2.5 flex-shrink-0">
-                    <svg class="w-6 h-6 text-[#000104]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v13m0-13V4a2 2 0 012-2h4a2 2 0 012 2v4a2 2 0 01-2 2h-4a2 2 0 01-2-2zm0 0H8a2 2 0 00-2 2v4a2 2 0 002 2h4"/>
-                    </svg>
+                  <!-- Custom CSS Dotted Circle with Icon -->
+                  <div class="w-14 h-14 rounded-full border-2 border-dashed border-[#8E959B] flex items-center justify-center p-1.5 flex-shrink-0 bg-transparent">
+                    <img src={item.icon} alt={item.title} class="w-full h-full object-contain" />
                   </div>
                   <div>
                     <h4 class="font-gallient text-lg sm:text-xl font-normal text-[#000104]">
@@ -330,7 +328,7 @@ const exclusiveList = [
     <!-- ================= 6. NEWSLETTER ================= -->
     <section class="bg-earth-olive py-16 sm:py-20 relative overflow-hidden border-b border-neutral-200/60">
       <img 
-        src="/assets/icons/newsletter-tag.svg" 
+        src="/assets/icons/tag icon.svg" 
         alt="" 
         class="absolute left-[-60px] top-1/2 -translate-y-1/2 h-[350px] w-auto opacity-80 pointer-events-none hidden sm:block"
       >
