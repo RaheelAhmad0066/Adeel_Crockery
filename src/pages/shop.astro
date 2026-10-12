@@ -1,0 +1,222 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Newsletter from '../components/Newsletter.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+
+// Exact 8 Products from Figma Shop screen
+const shopProducts = [
+  { id: 'sp-1', name: 'Ceramic Plant Pot', price: 100, image: '/assets/images/shop-1.svg', rating: 5 },
+  { id: 'sp-2', name: 'Terracotta Mug', price: 100, image: '/assets/images/shop-2.svg', rating: 5 },
+  { id: 'sp-3', name: 'Earthenware Tea Pot', price: 100, image: '/assets/images/shop-3.svg', rating: 5 },
+  { id: 'sp-4', name: 'Ceramic Glass', price: 100, image: '/assets/images/shop-4.svg', rating: 5 },
+  { id: 'sp-5', name: 'Stoneware Bowl', price: 100, image: '/assets/images/shop-5.svg', rating: 5 },
+  { id: 'sp-6', name: 'Ceramic Glass', price: 100, image: '/assets/images/shop-4.svg', rating: 5 },
+  { id: 'sp-7', name: 'Ceramic Plant Pot', price: 100, image: '/assets/images/shop-1.svg', rating: 5 },
+  { id: 'sp-8', name: 'Terracotta Mug', price: 100, image: '/assets/images/shop-2.svg', rating: 5 },
+];
+
+const filterOptions = [
+  'Product Type',
+  'Material',
+  'Finishing',
+  'Color',
+  'Size',
+  'Quantity'
+];
+---
+
+<Layout title="Shop — Earthware Ceramic Pot Website">
+  <Navbar active="shop" />
+
+  <main class="bg-white">
+
+    <!-- ================= 1. SHOP HERO BANNER ================= -->
+    <section class="relative overflow-hidden py-16 sm:py-24 bg-[#F9ECE7] border-b border-neutral-200/50">
+      <!-- Subtle Paper Texture Overlay -->
+      <img 
+        src="/assets/images/Hero Section.svg" 
+        alt="" 
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-40 mix-blend-multiply"
+      >
+
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center relative z-10 space-y-4">
+        <!-- Eyebrow Badge -->
+        <div class="flex items-center justify-center gap-1.5 text-base sm:text-lg font-medium text-[#000104]">
+          <span>Unique handmade</span>
+          <span class="bg-[#000104] text-white text-xs sm:text-sm font-bold px-2 py-0.5 rounded tracking-wide">
+            pottery
+          </span>
+        </div>
+
+        <!-- Huge Elegant Heading in Gallient -->
+        <h1 class="font-gallient text-5xl sm:text-7xl md:text-[84px] font-normal text-[#000104] tracking-tight leading-[1.05]">
+          Discover Our Products
+        </h1>
+      </div>
+    </section>
+
+    <!-- ================= 2. PRODUCTS & FILTERS SECTION ================= -->
+    <section class="py-12 sm:py-20 bg-white">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12 space-y-10">
+
+        <!-- Filter & Sorting Bar -->
+        <div class="bg-white border border-[#E8E8E8] rounded-xl p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <!-- Sort By Dropdown -->
+          <div class="flex items-center gap-2">
+            <button class="bg-[#000104] text-white text-xs sm:text-sm font-semibold px-4 py-2.5 rounded-md flex items-center gap-2 hover:bg-neutral-800 transition-smooth btn-press">
+              <span>Sort By</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Secondary Filter Buttons -->
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+            {filterOptions.map((filter) => (
+              <button class="bg-[#F0F2E5]/50 hover:bg-[#F0F2E5] text-[#5E666C] hover:text-[#000104] border border-[#E8E8E8] text-xs sm:text-sm font-medium px-3.5 py-2 rounded-md flex items-center gap-1.5 transition-smooth">
+                <span>{filter}</span>
+                <svg class="w-3 h-3 text-[#8E959B]" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- 8 Products Grid (4 Columns, 2 Rows) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {shopProducts.map((prod) => (
+            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#E8E8E8] hover:border-neutral-400 hover:shadow-md transition-smooth flex flex-col group relative overflow-hidden">
+              
+              <!-- Product Image Area with Hover Add To Cart -->
+              <div class="relative w-full h-[220px] sm:h-[240px] flex items-center justify-center p-3 rounded-xl bg-neutral-50/50 group-hover:bg-neutral-50 transition-colors">
+                <img 
+                  src={prod.image} 
+                  alt={prod.name} 
+                  class="max-h-full max-w-full object-contain group-hover:scale-105 transition-smooth duration-500 drop-shadow-sm"
+                />
+
+                <!-- Add to Cart Hover Button Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth bg-black/10 rounded-xl">
+                  <button 
+                    class="add-to-cart-btn bg-[#000104] text-white text-xs font-semibold px-6 py-2.5 rounded shadow-lg hover:bg-neutral-800 transition-smooth btn-press"
+                    data-id={prod.id}
+                    data-name={prod.name}
+                    data-price={prod.price}
+                    data-image={prod.image}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+
+              <!-- Product Details -->
+              <div class="pt-4 space-y-1">
+                <!-- 5 Stars Rating -->
+                <div class="flex items-center text-amber-400 text-sm gap-0.5">
+                  <span>★</span>
+                  <span>★</span>
+                  <span>★</span>
+                  <span>★</span>
+                  <span>★</span>
+                </div>
+
+                <!-- Product Title -->
+                <h4 class="font-bold text-base text-[#000104] group-hover:text-neutral-700 transition-colors">
+                  {prod.name}
+                </h4>
+
+                <!-- Price -->
+                <p class="text-sm font-semibold text-[#5E666C]">
+                  ${prod.price}
+                </p>
+              </div>
+
+            </div>
+          ))}
+        </div>
+
+        <!-- Pagination Controls matching Figma -->
+        <div class="pt-6 flex items-center justify-between">
+          <!-- Page Numbers -->
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <span class="w-9 h-9 rounded bg-[#000104] text-white font-bold text-sm flex items-center justify-center shadow-sm">
+              1
+            </span>
+            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
+              2
+            </button>
+            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
+              3
+            </button>
+            <span class="w-9 h-9 text-[#8E959B] text-sm flex items-center justify-center">
+              ...
+            </span>
+            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
+              8
+            </button>
+            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
+              9
+            </button>
+          </div>
+
+          <!-- Next Button -->
+          <button class="bg-[#000104] text-white text-xs sm:text-sm font-semibold px-6 sm:px-8 py-2.5 rounded shadow-sm hover:bg-neutral-800 transition-smooth btn-press">
+            Next
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. FLASH SALE SECTION ================= -->
+    <section class="py-16 sm:py-24 bg-[#262E35]">
+      <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
+        <div class="relative rounded-2xl overflow-hidden min-h-[380px] sm:min-h-[460px] flex items-center justify-center shadow-2xl border border-neutral-700/50">
+          
+          <!-- Background Ceramic Pots Graphic from Figma -->
+          <img 
+            src="/assets/images/flash-sale-banner.svg" 
+            alt="Artisan Crafted Ceramic Pots" 
+            class="absolute inset-0 w-full h-full object-cover"
+          />
+
+          <!-- Dark Overlay Tint -->
+          <div class="absolute inset-0 bg-black/25"></div>
+
+          <!-- Centered White Card (Exact Figma Layout & Typography) -->
+          <div class="relative z-10 bg-white p-8 sm:p-12 md:p-14 max-w-[620px] mx-4 text-center space-y-4 shadow-2xl rounded-sm">
+            <h3 class="text-base sm:text-lg font-bold tracking-[0.25em] text-[#000104] uppercase">
+              FLASH SALE
+            </h3>
+            
+            <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+              For a limited time, discover artisan-crafted ceramic pots at unbeatable prices. These unique, handcrafted pieces add warmth and elegance to any space, but they won't last long—grab yours before they're gone!
+            </p>
+
+            <div class="pt-2">
+              <a 
+                href="#products" 
+                class="inline-block bg-[#000104] text-white text-xs font-semibold px-8 py-3.5 rounded hover:bg-neutral-800 transition-smooth btn-press shadow-sm"
+              >
+                Shop Now
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 4. NEWSLETTER ================= -->
+    <Newsletter />
+
+  </main>
+
+  <Footer />
+  <CartDrawer />
+</Layout>
+
