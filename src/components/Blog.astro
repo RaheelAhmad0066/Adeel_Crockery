@@ -1,0 +1,63 @@
+---
+// Blog.astro
+import { blogData } from '../data/mockData.js';
+---
+
+<section id="blog" class="py-16 lg:py-24 bg-white border-b border-neutral-200/60">
+  <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
+    <div class="text-center">
+      <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">See Our Latest Blog & News</h2>
+    </div>
+
+    <!-- Featured Articles (2 Columns) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {blogData.featured.map((post) => (
+        <article class="space-y-3 group cursor-pointer">
+          <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
+            <img 
+              src={post.image.startsWith('/') ? post.image : `/${post.image}`} 
+              alt={post.title} 
+              class="w-full h-full object-cover group-hover:scale-105 transition-smooth duration-500"
+            />
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-[#5E666C] font-medium">
+              <span>{post.author}</span>
+              <span>{post.date}</span>
+            </div>
+            <h3 class="font-gallient text-2xl sm:text-3xl font-normal text-[#000104] group-hover:text-neutral-600 transition-colors">
+              {post.title}
+            </h3>
+            <p class="text-sm text-[#5E666C] leading-relaxed line-clamp-2">
+              {post.excerpt}
+            </p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Compact Cards (4 Columns) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+      {blogData.compact.map((item) => (
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+          <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img 
+              src={item.image.startsWith('/') ? item.image : `/${item.image}`} 
+              alt={item.title} 
+              class="h-24 object-contain"
+            />
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-neutral-400">
+              <span>{item.author}</span>
+              <span>{item.date}</span>
+            </div>
+            <h5 class="font-bold text-xs text-[#000104] truncate">{item.title}</h5>
+            <p class="text-[11px] text-[#5E666C] line-clamp-2">{item.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+

@@ -51,7 +51,7 @@
         <a href="#blog" class="hover:text-[#000104] transition-colors">News</a>
       </nav>
 
-      <!-- Right Action Items (Figma cart.svg icon) -->
+      <!-- Right Action Items (Figma cart.svg) -->
       <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
         <button id="cart-btn" class="flex items-center gap-2 text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press">
           <img src="assets/icons/cart.svg" alt="Cart" class="w-5 h-5 object-contain">
@@ -83,10 +83,10 @@
     </div>
   </header>
 
-  <!-- ================= 2. HERO SECTION (Using Hero Section.svg background) ================= -->
-  <section class="bg-earth-peach relative overflow-hidden py-16 sm:py-24 border-b border-neutral-200/50">
-    <!-- Exact Hero Section background vector image from Figma -->
-    <img src="assets/images/hero-section.svg" alt="" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-25 pointer-events-none">
+  <!-- ================= 2. HERO SECTION (Using assets/images/Hero Section.svg) ================= -->
+  <section class="relative overflow-hidden py-16 sm:py-24 border-b border-neutral-200/50 bg-[#FBF6F3]">
+    <!-- Exact Background Image requested: assets/images/Hero Section.svg -->
+    <img src="assets/images/Hero Section.svg" alt="" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
     
     <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center relative z-10 space-y-7">
       <h1 class="font-gallient text-4xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[1.08] font-normal text-[#000104] tracking-tight max-w-4xl mx-auto">
@@ -157,46 +157,60 @@
     </div>
   </section>
 
-  <!-- ================= 5. ABOUT US ================= -->
+  <!-- ================= 5. ABOUT US (Centered Text & Custom CSS Dotted Circle Icons) ================= -->
   <section id="about" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60">
     <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
-      <div class="space-y-2">
+      <!-- Centered Header -->
+      <div class="text-center max-w-xl mx-auto space-y-2">
         <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">About Us</h2>
         <p class="text-base text-[#5E666C]">3DO Filament (Made in EU) is prop</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14">
-        <div class="space-y-3">
-          <div class="w-20 h-20 flex items-center justify-center">
-            <img src="assets/icons/about-shipping.svg" alt="EU Shipping" class="w-full h-full object-contain">
+      <!-- 3 Columns with Centered Dotted Circle & Small Icon -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14 text-center">
+        <!-- 1. EU Shipping -->
+        <div class="flex flex-col items-center space-y-3">
+          <!-- Custom CSS Dotted Circle with Centered Compact Icon -->
+          <div class="w-16 h-16 rounded-full border-2 border-dashed border-[#3C4245] flex items-center justify-center p-3 mb-1">
+            <svg class="w-7 h-7 text-[#3C4245]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8h4l3 3v5h-2m-6 0h2"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 10l2 2 4-4"/>
+            </svg>
           </div>
           <h3 class="text-lg font-bold text-[#000104]">EU Shipping</h3>
-          <p class="text-[#5E666C] leading-relaxed text-sm">We ship from Denmark to all across Europe.</p>
+          <p class="text-[#5E666C] leading-relaxed text-sm max-w-xs">We ship from Denmark to all across Europe.</p>
         </div>
 
-        <div class="space-y-3">
-          <div class="w-20 h-20 flex items-center justify-center">
-            <img src="assets/icons/about-quality.svg" alt="High Quality" class="w-full h-full object-contain">
+        <!-- 2. High Quality -->
+        <div class="flex flex-col items-center space-y-3">
+          <div class="w-16 h-16 rounded-full border-2 border-dashed border-[#3C4245] flex items-center justify-center p-3 mb-1">
+            <svg class="w-7 h-7 text-[#3C4245]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
           </div>
           <h3 class="text-lg font-bold text-[#000104]">High Quality</h3>
-          <p class="text-[#5E666C] leading-relaxed text-sm">At 3DO we focus on quality, and do not sell any products we would not use ourself.</p>
+          <p class="text-[#5E666C] leading-relaxed text-sm max-w-xs">At 3DO we focus on quality, and do not sell any products we would not use ourself.</p>
         </div>
 
-        <div class="space-y-3">
-          <div class="w-20 h-20 flex items-center justify-center">
-            <img src="assets/icons/about-payment.svg" alt="Safe Payment" class="w-full h-full object-contain">
+        <!-- 3. Safe Payment -->
+        <div class="flex flex-col items-center space-y-3">
+          <div class="w-16 h-16 rounded-full border-2 border-dashed border-[#3C4245] flex items-center justify-center p-3 mb-1">
+            <svg class="w-7 h-7 text-[#3C4245]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 14l1.5 1.5L21 13"/>
+            </svg>
           </div>
           <h3 class="text-lg font-bold text-[#000104]">Safe Payment</h3>
-          <p class="text-[#5E666C] leading-relaxed text-sm">3-D Secure v2Verified by Visa And MasterCardSecured by Nets</p>
+          <p class="text-[#5E666C] leading-relaxed text-sm max-w-xs">3-D Secure v2Verified by Visa And MasterCardSecured by Nets</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ================= 6. ALL PRODUCTS (Gallient Font & Compact Cards) ================= -->
+  <!-- ================= 6. ALL PRODUCTS ================= -->
   <section id="products" class="bg-earth-peach py-16 lg:py-24 overflow-hidden border-b border-neutral-200/60">
     <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-10">
-      <!-- Centered Gallient Title & CTA Button -->
       <div class="text-center max-w-4xl mx-auto space-y-6">
         <h2 class="font-gallient text-3xl sm:text-5xl lg:text-[54px] text-[#000104] font-normal leading-[1.12]">
           We personalize the most beautiful and sustainable products for your brand to shine in real life.
@@ -208,7 +222,6 @@
         </div>
       </div>
 
-      <!-- Compact & Attractive Products Horizontal Grid -->
       <div id="products-grid-container" class="flex gap-5 overflow-x-auto pb-4 hide-scrollbar">
       </div>
     </div>
@@ -233,7 +246,6 @@
         <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">See Our Latest Blog & News</h2>
       </div>
 
-      <!-- 2 Main Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <article class="space-y-3 group cursor-pointer">
           <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
@@ -272,7 +284,6 @@
         </article>
       </div>
 
-      <!-- 4 Compact Cards Row -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
         <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
           <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">

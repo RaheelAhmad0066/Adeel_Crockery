@@ -1,7 +1,10 @@
 /**
  * Testimonials View Component
- * Exact Figma Node 1754:3171 Implementation
- * Tilted cards with dotted divider and quote text
+ * Exact Figma Layout matching User Screenshots:
+ * - Left card: Warm pink, tilted -12deg, quote icon top-left, profile left, dashed line, text right
+ * - Center card: Olive (#F0F2E5), horizontal card with big top-left quote icon overhanging, profile left, dashed line, text right
+ * - Right card: Soft blue (#B8DBE5), tilted +12deg, quote icon top-left, profile left, dashed line, text right
+ * - Clean circular arrow buttons (← and →) between cards
  */
 
 export function renderTestimonialCarousel(testimonials, activeIndex) {
@@ -13,67 +16,68 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
   const next = testimonials[(activeIndex + 1) % testimonials.length];
 
   container.innerHTML = `
-    <!-- Left Card (-15 deg tilted) -->
-    <div class="hidden md:block w-[420px] lg:w-[480px] bg-[#FFF0EB] rounded-lg p-7 shadow-sm transform -rotate-12 opacity-75 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer" id="test-prev-card">
-      <div class="text-6xl font-quote text-[#000104] select-none leading-none mb-2">“</div>
-      <div class="flex gap-5 items-start">
+    <!-- Left Tilted Card (-12 deg) -->
+    <div class="hidden md:block w-[400px] lg:w-[440px] bg-[#FFF0EB] rounded-2xl p-6 sm:p-7 shadow-sm transform -rotate-12 opacity-80 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer" id="test-prev-card">
+      <img src="assets/icons/quote-icon.svg" alt="" class="w-8 h-8 absolute -top-3.5 left-5">
+      <div class="flex gap-5 items-center mt-2">
         <div class="flex flex-col items-center gap-2 pr-5 border-r border-dashed border-[#000104]/30 flex-shrink-0 w-28 text-center">
-          <img src="${prev.avatar}" alt="${prev.name}" class="w-14 h-14 rounded-full object-cover">
+          <img src="${prev.avatar}" alt="${prev.name}" class="w-14 h-14 rounded-full object-cover shadow-sm">
           <div>
             <h5 class="font-bold text-sm text-[#000104] leading-tight">${prev.name}</h5>
             <span class="text-xs text-[#5E666C]">${prev.location}</span>
           </div>
         </div>
-        <p class="text-xs lg:text-sm text-[#5E666C] leading-relaxed line-clamp-4 flex-1">
+        <p class="text-xs lg:text-[13px] text-[#5E666C] leading-relaxed line-clamp-4 flex-1">
           ${prev.quote}
         </p>
       </div>
     </div>
 
-    <!-- Left Arrow Navigation -->
-    <button id="test-prev-btn" class="w-10 h-10 rounded-full border border-neutral-400 flex items-center justify-center hover:bg-neutral-100 transition-colors flex-shrink-0 z-20 btn-press">
-      <svg class="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <!-- Left Nav Arrow -->
+    <button id="test-prev-btn" class="w-10 h-10 rounded-full border border-neutral-400 bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors flex-shrink-0 z-20 btn-press shadow-sm" aria-label="Previous">
+      <svg class="w-4 h-4 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
     </button>
 
     <!-- Center Card (Jenny Wilson Highlight in #F0F2E5) -->
-    <div class="w-full max-w-[650px] bg-[#F0F2E5] rounded-lg p-8 sm:p-9 shadow-md relative z-10 card-hover">
-      <div class="text-7xl font-quote text-[#000104] select-none leading-none -mt-4 mb-1">“</div>
-      <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+    <div class="w-full max-w-[580px] lg:max-w-[620px] bg-[#F0F2E5] rounded-2xl p-7 sm:p-8 shadow-md relative z-10 card-hover flex-shrink-0">
+      <!-- Quote icon overlapping top-left corner -->
+      <img src="assets/icons/quote-icon.svg" alt="" class="w-10 h-10 absolute -top-4 left-6">
+      <div class="flex flex-col sm:flex-row gap-6 items-center mt-1">
         <!-- Author Profile Column -->
-        <div class="flex sm:flex-col items-center gap-3 sm:pr-8 sm:border-r border-dashed border-[#000104]/30 flex-shrink-0 text-center w-full sm:w-36">
-          <img src="${current.avatar}" alt="${current.name}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-white shadow-sm">
+        <div class="flex flex-col items-center gap-2 sm:pr-7 sm:border-r border-dashed border-[#000104]/30 flex-shrink-0 text-center w-full sm:w-36">
+          <img src="${current.avatar}" alt="${current.name}" class="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-white shadow-sm">
           <div>
-            <h4 class="font-bold text-[#000104] text-base sm:text-lg leading-snug">${current.name}</h4>
-            <p class="text-xs sm:text-sm text-[#5E666C]">${current.location}</p>
+            <h4 class="font-bold text-[#000104] text-base leading-tight">${current.name}</h4>
+            <p class="text-xs text-[#5E666C] mt-0.5">${current.location}</p>
           </div>
         </div>
 
         <!-- Quote Column -->
         <div class="flex-1">
-          <p class="text-sm sm:text-[18px] text-[#5E666C] leading-relaxed font-normal">
+          <p class="text-sm sm:text-[15px] text-[#5E666C] leading-relaxed font-normal">
             ${current.quote}
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Right Arrow Navigation -->
-    <button id="test-next-btn" class="w-10 h-10 rounded-full border border-neutral-400 flex items-center justify-center hover:bg-neutral-100 transition-colors flex-shrink-0 z-20 btn-press">
-      <svg class="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    <!-- Right Nav Arrow -->
+    <button id="test-next-btn" class="w-10 h-10 rounded-full border border-neutral-400 bg-white flex items-center justify-center hover:bg-neutral-100 transition-colors flex-shrink-0 z-20 btn-press shadow-sm" aria-label="Next">
+      <svg class="w-4 h-4 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     </button>
 
-    <!-- Right Card (+15 deg tilted in #B8DBE5) -->
-    <div class="hidden md:block w-[420px] lg:w-[480px] bg-[#B8DBE5] rounded-lg p-7 shadow-sm transform rotate-12 opacity-85 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer" id="test-next-card">
-      <div class="text-6xl font-quote text-[#000104] select-none leading-none mb-2">“</div>
-      <div class="flex gap-5 items-start">
+    <!-- Right Tilted Card (+12 deg in #B8DBE5) -->
+    <div class="hidden md:block w-[400px] lg:w-[440px] bg-[#B8DBE5] rounded-2xl p-6 sm:p-7 shadow-sm transform rotate-12 opacity-85 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer" id="test-next-card">
+      <img src="assets/icons/quote-icon.svg" alt="" class="w-8 h-8 absolute -top-3.5 left-5">
+      <div class="flex gap-5 items-center mt-2">
         <div class="flex flex-col items-center gap-2 pr-5 border-r border-dashed border-[#000104]/30 flex-shrink-0 w-28 text-center">
-          <img src="${next.avatar}" alt="${next.name}" class="w-14 h-14 rounded-full object-cover">
+          <img src="${next.avatar}" alt="${next.name}" class="w-14 h-14 rounded-full object-cover shadow-sm">
           <div>
             <h5 class="font-bold text-sm text-[#000104] leading-tight">${next.name}</h5>
             <span class="text-xs text-[#5E666C]">${next.location}</span>
           </div>
         </div>
-        <p class="text-xs lg:text-sm text-[#5E666C] leading-relaxed line-clamp-4 flex-1">
+        <p class="text-xs lg:text-[13px] text-[#5E666C] leading-relaxed line-clamp-4 flex-1">
           ${next.quote}
         </p>
       </div>

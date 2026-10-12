@@ -1,0 +1,76 @@
+---
+// Categories.astro
+import { categoriesData } from '../data/mockData.js';
+---
+
+<section id="categories" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60 overflow-hidden">
+  <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-10">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div>
+        <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">Categories</h2>
+      </div>
+      <p class="text-base sm:text-lg text-[#5E666C] max-w-xl">
+        3DO Filament (Made in EU) is properly one of the best filaments you will find out there, we are using the best raw materials and have a very strict quality control.
+      </p>
+    </div>
+
+    <!-- Categories Container with Right Arrow -->
+    <div class="relative">
+      <div id="categories-grid-container" class="flex gap-6 overflow-x-auto pb-6 hide-scrollbar scroll-smooth">
+        {categoriesData.map((cat, index) => {
+          const isSelected = index === 0;
+          return (
+            <div 
+              class={`flex-shrink-0 w-[220px] sm:w-[240px] rounded-2xl p-5 border transition-all duration-300 cursor-pointer group flex flex-col justify-between relative ${
+                isSelected 
+                  ? 'bg-[#EDEDED] border-[#D1D5DB] shadow-md ring-2 ring-neutral-400/20' 
+                  : 'bg-white border-[#E8E8E8] hover:border-neutral-400 hover:shadow-lg'
+              }`}
+            >
+              {isSelected && (
+                <div class="absolute -top-3 right-4 bg-[#000104] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">
+                  Selected
+                </div>
+              )}
+
+              <div class="h-44 w-full flex items-center justify-center p-2 mb-4 overflow-hidden">
+                <img 
+                  src={cat.image.startsWith('/') ? cat.image : `/${cat.image}`} 
+                  alt={cat.name} 
+                  class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+
+              <div class="pt-2 border-t border-black/5 flex items-end justify-between">
+                <div>
+                  <h4 class="font-gallient text-xl text-[#000104] font-medium">{cat.name}</h4>
+                  <p class="text-sm font-semibold text-[#5E666C] mt-0.5">${cat.price} USD</p>
+                </div>
+                <button 
+                  data-add-cat={cat.id} 
+                  class="w-8 h-8 rounded-full bg-[#000104] text-white flex items-center justify-center hover:bg-neutral-700 transition-colors btn-press shadow-sm"
+                  aria-label={`Add ${cat.name} to cart`}
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <button 
+        id="cat-scroll-right-btn" 
+        class="absolute right-0 top-1/2 -translate-y-8 w-12 h-12 rounded-full bg-white shadow-xl border border-neutral-200 flex items-center justify-center text-neutral-800 z-30 hover:scale-110 transition-smooth btn-press" 
+        aria-label="Next Category"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+

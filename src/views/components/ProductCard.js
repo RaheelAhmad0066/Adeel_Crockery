@@ -5,10 +5,9 @@
 
 export function renderProductCard(product, onAddToCart) {
   const card = document.createElement('div');
-  // Reduced compact width & padding for elegant, attractive design
   card.className = 'w-[230px] sm:w-[240px] flex-shrink-0 flex flex-col justify-between';
   card.innerHTML = `
-    <div class="w-full aspect-square bg-white rounded-lg p-5 flex items-center justify-center shadow-sm card-hover">
+    <div class="w-full aspect-square bg-white rounded-lg p-5 flex items-center justify-center shadow-sm card-hover border border-neutral-100">
       <img src="${product.image}" alt="${product.name}" class="max-h-36 max-w-full object-contain">
     </div>
     <div class="pt-4 space-y-1.5">
@@ -32,13 +31,13 @@ export function renderCategoryCard(cat, onAddToCart) {
   const card = document.createElement('div');
   card.className = 'w-[230px] flex-shrink-0 flex flex-col group cursor-pointer relative';
   
+  // Selected card gets gray background + white circle
+  // All other cards are pure white (#FFFFFF)
   const isSelected = cat.id === 1;
-  const bgBoxClass = isSelected
-    ? 'bg-[#EFEFEF] border border-neutral-300'
-    : 'bg-[#FAF8F5] border border-neutral-200/70';
+  const cardBgClass = isSelected ? 'bg-[#EDEDED]' : 'bg-[#FAFAFA] border border-neutral-200/80';
 
   card.innerHTML = `
-    <div class="h-[290px] w-full rounded-2xl ${bgBoxClass} flex items-center justify-center overflow-hidden relative card-hover">
+    <div class="h-[290px] w-full rounded-2xl ${cardBgClass} flex items-center justify-center overflow-hidden relative card-hover">
       ${isSelected ? '<div class="w-40 h-40 rounded-full bg-white absolute pointer-events-none shadow-sm"></div>' : ''}
       <img src="${cat.image}" alt="${cat.name}" class="h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth">
     </div>

@@ -28,9 +28,11 @@ class App {
     // 4. Render Testimonials
     this.setupTestimonials();
 
-    // 5. Setup Navigation & Forms
+    // 5. Setup Navigation, Newsletter, and Checkout
     this.setupNavigation();
     this.setupNewsletter();
+    this.setupCheckout();
+    this.bindStaticActions();
   }
 
   renderProducts() {
@@ -105,17 +107,66 @@ class App {
         e.preventDefault();
         const input = document.getElementById('newsletter-email');
         if (input && input.value) {
-          msg.classList.remove('hidden');
+          if (msg) msg.classList.remove('hidden');
           input.value = '';
           NotificationService.showToast('🎉 Subscribed successfully!');
-          setTimeout(() => msg.classList.add('hidden'), 5000);
+          if (msg) setTimeout(() => msg.classList.add('hidden'), 5000);
         }
       });
     }
   }
+
+  setupCheckout() {
+    const checkoutBtn = document.getElementById('checkout-order-btn');
+    if (checkoutBtn) {
+      checkoutBtn.onclick = () => {
+        if (this.cartVM.items.length === 0) {
+          NotificationService.showToast('Your cart is empty!');
+          return;
+        }
+        alert('Order placed successfully! Thank you for choosing Earthware.');
+        this.cartVM.clearCart();
+        this.cartView.close();
+      };
+    }
+  }
+
+  bindStaticActions() {
+    document.querySelectorAll('[data-add-cat]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = Number(btn.dataset.addCat);
+        const cat = this.homeVM.categories.find(c => c.id === id);
+        if (cat) {
+          this.cartVM.addItem(cat.name, cat.price, cat.image);
+          this.cartView.open();
+          NotificationService.showToast(`Added "${cat.name}" to cart!`);
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-add-prod]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = Number(btn.dataset.addProd);
+        const prod = this.homeVM.products.find(p => p.id === id);
+        if (prod) {
+          this.cartVM.addItem(prod.name, prod.price, prod.image);
+          this.cartView.open();
+          NotificationService.showToast(`Added "${prod.name}" to cart!`);
+        }
+      });
+    });
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function boot() {
   const app = new App();
   app.init();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
