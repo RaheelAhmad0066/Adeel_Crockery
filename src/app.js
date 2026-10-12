@@ -77,11 +77,15 @@ class App {
       
       const prevBtn = document.getElementById('test-prev-btn');
       const nextBtn = document.getElementById('test-next-btn');
+      const prevBtnMob = document.getElementById('test-prev-btn-mob');
+      const nextBtnMob = document.getElementById('test-next-btn-mob');
       const prevCard = document.getElementById('test-prev-card');
       const nextCard = document.getElementById('test-next-card');
 
       if (prevBtn) prevBtn.onclick = () => { this.homeVM.prevTestimonial(); render(); };
       if (nextBtn) nextBtn.onclick = () => { this.homeVM.nextTestimonial(); render(); };
+      if (prevBtnMob) prevBtnMob.onclick = () => { this.homeVM.prevTestimonial(); render(); };
+      if (nextBtnMob) nextBtnMob.onclick = () => { this.homeVM.nextTestimonial(); render(); };
       if (prevCard) prevCard.onclick = () => { this.homeVM.prevTestimonial(); render(); };
       if (nextCard) nextCard.onclick = () => { this.homeVM.nextTestimonial(); render(); };
     };

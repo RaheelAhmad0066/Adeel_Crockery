@@ -1,11 +1,8 @@
 /**
  * Testimonials View Component (MVVM)
  * Figma Node 1754:3171 layout:
- * - 3 Horizontal landscape cards
- * - Left card: Warm peach (#FFF0EB), tilted -10deg
- * - Center card: Olive (#F0F2E5), straight 0deg, slightly taller height with comfortable padding
- * - Right card: Soft blue (#C3E4EE), tilted +10deg
- * - Clean circular arrows (← and →) between cards
+ * - 3 Horizontal landscape cards on Desktop
+ * - On Mobile: Card gets maximum width with generous padding, and navigation arrows are centered cleanly below the card!
  */
 
 export function renderTestimonialCarousel(testimonials, activeIndex) {
@@ -21,7 +18,7 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
   const nextAvatar = next.avatar.startsWith('/') ? next.avatar : `/${next.avatar}`;
 
   container.innerHTML = `
-    <!-- 1. Left Tilted Card (-10 deg, Peach #FFF0EB) -->
+    <!-- 1. Left Tilted Card (Desktop, -10 deg, Peach #FFF0EB) -->
     <div 
       id="test-prev-card"
       class="hidden md:flex w-[420px] lg:w-[480px] min-h-[210px] sm:min-h-[230px] bg-[#FFF0EB] rounded-[24px] p-6 sm:p-7 shadow-sm transform -rotate-[8deg] lg:-rotate-[10deg] opacity-85 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer items-center"
@@ -41,10 +38,10 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
       </div>
     </div>
 
-    <!-- Left Navigation Arrow (←) -->
+    <!-- Desktop Left Navigation Arrow (←) -->
     <button 
       id="test-prev-btn" 
-      class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-neutral-300 bg-white flex items-center justify-center hover:bg-neutral-50 transition-all flex-shrink-0 z-20 btn-press shadow-sm hover:scale-105" 
+      class="hidden md:flex w-11 h-11 rounded-full border border-neutral-300 bg-white items-center justify-center hover:bg-neutral-50 transition-all flex-shrink-0 z-20 btn-press shadow-sm hover:scale-105" 
       aria-label="Previous Testimonial"
     >
       <svg class="w-4 h-4 text-neutral-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -52,9 +49,9 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
       </svg>
     </button>
 
-    <!-- 2. Center Card (Straight, Olive #F0F2E5, slightly taller height with comfortable padding) -->
+    <!-- 2. Center Card (Spacious full width on mobile, Olive #F0F2E5) -->
     <div 
-      class="w-full max-w-[460px] sm:max-w-[500px] lg:max-w-[540px] min-h-[220px] sm:min-h-[240px] bg-[#F0F2E5] rounded-[24px] p-6 sm:p-7 shadow-md relative z-10 card-hover flex-shrink-0 flex items-center"
+      class="w-full max-w-[480px] lg:max-w-[540px] min-h-[220px] sm:min-h-[240px] bg-[#F0F2E5] rounded-[24px] p-6 sm:p-7 shadow-md relative z-10 card-hover flex-shrink-0 flex items-center"
     >
       <img src="/assets/icons/quote-icon.svg" alt="" class="w-5 h-5 sm:w-6 sm:h-6 absolute top-4 sm:top-5 left-5 sm:left-6 opacity-90">
       <div class="flex gap-5 sm:gap-6 items-center w-full">
@@ -76,10 +73,10 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
       </div>
     </div>
 
-    <!-- Right Navigation Arrow (→) -->
+    <!-- Desktop Right Navigation Arrow (→) -->
     <button 
       id="test-next-btn" 
-      class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-neutral-300 bg-white flex items-center justify-center hover:bg-neutral-50 transition-all flex-shrink-0 z-20 btn-press shadow-sm hover:scale-105" 
+      class="hidden md:flex w-11 h-11 rounded-full border border-neutral-300 bg-white items-center justify-center hover:bg-neutral-50 transition-all flex-shrink-0 z-20 btn-press shadow-sm hover:scale-105" 
       aria-label="Next Testimonial"
     >
       <svg class="w-4 h-4 text-neutral-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -87,7 +84,7 @@ export function renderTestimonialCarousel(testimonials, activeIndex) {
       </svg>
     </button>
 
-    <!-- 3. Right Tilted Card (+10 deg, Soft Blue #C3E4EE) -->
+    <!-- 3. Right Tilted Card (Desktop, +10 deg, Soft Blue #C3E4EE) -->
     <div 
       id="test-next-card"
       class="hidden md:flex w-[420px] lg:w-[480px] min-h-[210px] sm:min-h-[230px] bg-[#C3E4EE] rounded-[24px] p-6 sm:p-7 shadow-sm transform rotate-[8deg] lg:rotate-[10deg] opacity-85 hover:opacity-100 hover:rotate-0 transition-all duration-300 relative flex-shrink-0 cursor-pointer items-center"
