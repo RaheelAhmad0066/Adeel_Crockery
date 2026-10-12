@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Earthware — Ceramic Pot Website</title>
+  <meta name="description" content="Feel it, Feel the Uniqueness. Is filament of the highest quality that we are proud to offer our customers.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'earth-peach': '#FFF0EB',
+            'earth-olive': '#F0F2E5',
+            'earth-dark': '#000104',
+            'earth-gray': '#5E666C',
+            'earth-border': '#E8E8E8',
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            gallient: ['"Gallient"', '"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
+            quote: ['"Just Me Again Down Here"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-white text-[#000104] antialiased min-h-screen">
+
+  <!-- ================= 1. TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8E8E8]">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 h-20 sm:h-[92px] flex items-center justify-between">
+      
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-2 group flex-shrink-0">
+        <img src="assets/icons/logo.svg" alt="Earthware" class="h-8 w-auto object-contain">
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden lg:flex items-center gap-9 text-[18px] font-medium text-[#5E666C]">
+        <a href="index.html" class="text-[#000104] font-semibold">Home</a>
+        <a href="#about" class="hover:text-[#000104] transition-colors">About</a>
+        <a href="#products" class="hover:text-[#000104] transition-colors">Shop</a>
+        <a href="#categories" class="hover:text-[#000104] transition-colors">Service</a>
+        <a href="#blog" class="hover:text-[#000104] transition-colors">News</a>
+      </nav>
+
+      <!-- Right Action Items (Figma cart.svg icon) -->
+      <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
+        <button id="cart-btn" class="flex items-center gap-2 text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press">
+          <img src="assets/icons/cart.svg" alt="Cart" class="w-5 h-5 object-contain">
+          <span class="hidden sm:inline">Cart</span>
+          <span class="cart-count-badge bg-[#000104] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+        </button>
+
+        <span class="hidden sm:inline-block h-5 w-[1px] bg-neutral-300"></span>
+
+        <a href="#login" class="hidden sm:inline-block text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
+
+        <a href="#signup" class="bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+          Sign Up
+        </a>
+
+        <button id="mobile-menu-btn" class="lg:hidden text-[#000104] p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-3">
+      <a href="index.html" class="block font-semibold text-[#000104]">Home</a>
+      <a href="#about" class="block text-[#5E666C]">About</a>
+      <a href="#products" class="block text-[#5E666C]">Shop</a>
+      <a href="#categories" class="block text-[#5E666C]">Service</a>
+      <a href="#blog" class="block text-[#5E666C]">News</a>
+    </div>
+  </header>
+
+  <!-- ================= 2. HERO SECTION (Using Hero Section.svg background) ================= -->
+  <section class="bg-earth-peach relative overflow-hidden py-16 sm:py-24 border-b border-neutral-200/50">
+    <!-- Exact Hero Section background vector image from Figma -->
+    <img src="assets/images/hero-section.svg" alt="" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-25 pointer-events-none">
+    
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center relative z-10 space-y-7">
+      <h1 class="font-gallient text-4xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[1.08] font-normal text-[#000104] tracking-tight max-w-4xl mx-auto">
+        Feel it, Feel the Uniqueness.
+      </h1>
+
+      <p class="text-lg sm:text-2xl text-[#5E666C] font-normal max-w-2xl mx-auto leading-relaxed">
+        Is filament of the highest quality that we are proud to offer our customers.
+      </p>
+
+      <div class="pt-2">
+        <a href="#products" class="inline-block bg-[#000104] text-white text-[18px] font-semibold px-11 py-4 rounded-md hover:bg-neutral-800 transition-smooth shadow-md btn-press">
+          Buy Now
+        </a>
+      </div>
+
+      <div class="pt-6 max-w-xl mx-auto flex justify-center animate-float">
+        <img src="assets/images/hero-pot.png" alt="Ceramic Jugs" class="max-h-[340px] w-auto drop-shadow-xl object-contain">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 3. OUR BRAND PARTNERS ================= -->
+  <section class="bg-earth-olive py-14 sm:py-18 border-b border-neutral-200/60">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center space-y-8">
+      <h3 class="font-gallient text-3xl sm:text-4xl text-[#000104] font-normal">
+        They trusted us
+      </h3>
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-14 items-center justify-items-center max-w-4xl mx-auto">
+        <div class="p-2 hover:scale-105 transition-smooth cursor-pointer">
+          <img src="assets/icons/brand-cerim.svg" alt="CERIM" class="h-8 sm:h-9 w-auto object-contain">
+        </div>
+        <div class="p-2 hover:scale-105 transition-smooth cursor-pointer">
+          <img src="assets/icons/brand-azteca.svg" alt="AZTECA Ceramica" class="h-8 sm:h-9 w-auto object-contain">
+        </div>
+        <div class="p-2 hover:scale-105 transition-smooth cursor-pointer">
+          <img src="assets/icons/brand-ragno.svg" alt="CERAMICHE RAGNO" class="h-8 sm:h-9 w-auto object-contain">
+        </div>
+        <div class="p-2 hover:scale-105 transition-smooth cursor-pointer">
+          <img src="assets/icons/brand-venus.svg" alt="VENUS CERAMICA" class="h-8 sm:h-9 w-auto object-contain">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4. CATEGORIES ================= -->
+  <section id="categories" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60 overflow-hidden">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-10">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div>
+          <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">Categories</h2>
+        </div>
+        <p class="text-base sm:text-lg text-[#5E666C] max-w-xl">
+          3DO Filament (Made in EU) is properly one of the best filaments you will find out there, we are using the best raw materials and have a very strict quality control.
+        </p>
+      </div>
+
+      <!-- Categories Container with Right Arrow -->
+      <div class="relative">
+        <div id="categories-grid-container" class="flex gap-6 overflow-x-auto pb-6 hide-scrollbar scroll-smooth">
+        </div>
+
+        <button id="cat-scroll-right-btn" class="absolute right-0 top-1/2 -translate-y-8 w-12 h-12 rounded-full bg-white shadow-xl border border-neutral-200 flex items-center justify-center text-neutral-800 z-30 hover:scale-110 transition-smooth btn-press" aria-label="Next Category">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 5. ABOUT US ================= -->
+  <section id="about" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
+      <div class="space-y-2">
+        <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">About Us</h2>
+        <p class="text-base text-[#5E666C]">3DO Filament (Made in EU) is prop</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14">
+        <div class="space-y-3">
+          <div class="w-20 h-20 flex items-center justify-center">
+            <img src="assets/icons/about-shipping.svg" alt="EU Shipping" class="w-full h-full object-contain">
+          </div>
+          <h3 class="text-lg font-bold text-[#000104]">EU Shipping</h3>
+          <p class="text-[#5E666C] leading-relaxed text-sm">We ship from Denmark to all across Europe.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div class="w-20 h-20 flex items-center justify-center">
+            <img src="assets/icons/about-quality.svg" alt="High Quality" class="w-full h-full object-contain">
+          </div>
+          <h3 class="text-lg font-bold text-[#000104]">High Quality</h3>
+          <p class="text-[#5E666C] leading-relaxed text-sm">At 3DO we focus on quality, and do not sell any products we would not use ourself.</p>
+        </div>
+
+        <div class="space-y-3">
+          <div class="w-20 h-20 flex items-center justify-center">
+            <img src="assets/icons/about-payment.svg" alt="Safe Payment" class="w-full h-full object-contain">
+          </div>
+          <h3 class="text-lg font-bold text-[#000104]">Safe Payment</h3>
+          <p class="text-[#5E666C] leading-relaxed text-sm">3-D Secure v2Verified by Visa And MasterCardSecured by Nets</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6. ALL PRODUCTS (Gallient Font & Compact Cards) ================= -->
+  <section id="products" class="bg-earth-peach py-16 lg:py-24 overflow-hidden border-b border-neutral-200/60">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-10">
+      <!-- Centered Gallient Title & CTA Button -->
+      <div class="text-center max-w-4xl mx-auto space-y-6">
+        <h2 class="font-gallient text-3xl sm:text-5xl lg:text-[54px] text-[#000104] font-normal leading-[1.12]">
+          We personalize the most beautiful and sustainable products for your brand to shine in real life.
+        </h2>
+        <div class="pt-2">
+          <a href="#products" class="inline-block bg-[#000104] text-white text-sm font-semibold px-8 py-3.5 rounded-md hover:bg-neutral-800 transition-smooth shadow-md btn-press">
+            View all products
+          </a>
+        </div>
+      </div>
+
+      <!-- Compact & Attractive Products Horizontal Grid -->
+      <div id="products-grid-container" class="flex gap-5 overflow-x-auto pb-4 hide-scrollbar">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7. TESTIMONIALS ================= -->
+  <section class="py-16 lg:py-24 bg-white overflow-hidden border-b border-neutral-200/60">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
+      <div class="text-center">
+        <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">What our client say</h2>
+      </div>
+
+      <div id="testimonials-container" class="relative flex items-center justify-center gap-4 lg:gap-8 max-w-6xl mx-auto py-6">
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 8. BLOG & NEWS ================= -->
+  <section id="blog" class="py-16 lg:py-24 bg-white border-b border-neutral-200/60">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
+      <div class="text-center">
+        <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">See Our Latest Blog & News</h2>
+      </div>
+
+      <!-- 2 Main Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <article class="space-y-3 group cursor-pointer">
+          <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
+            <img src="assets/images/blog-main-1.png" alt="Stoneware mugs" class="w-full h-full object-cover group-hover:scale-105 transition-smooth duration-500">
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-[#5E666C] font-medium">
+              <span>By American Spa Staff</span>
+              <span>Apr 16, 2004</span>
+            </div>
+            <h3 class="font-gallient text-2xl sm:text-3xl font-normal text-[#000104] group-hover:text-neutral-600 transition-colors">
+              Stoneware hand thrown pottery mugs
+            </h3>
+            <p class="text-sm text-[#5E666C] leading-relaxed line-clamp-2">
+              Beth French Pottery - unique hand thrown stoneware mugs - in two sizes - with hand painted design on the exterior and the option...
+            </p>
+          </div>
+        </article>
+
+        <article class="space-y-3 group cursor-pointer">
+          <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
+            <img src="assets/images/blog-main-2.png" alt="Handcrafted Stoneware Mugs" class="w-full h-full object-cover group-hover:scale-105 transition-smooth duration-500">
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs text-[#5E666C] font-medium">
+              <span>By Kathryn Murphy</span>
+              <span>Apr 16, 2004</span>
+            </div>
+            <h3 class="font-gallient text-2xl sm:text-3xl font-normal text-[#000104] group-hover:text-neutral-600 transition-colors">
+              Handcrafted Stoneware Mugs
+            </h3>
+            <p class="text-sm text-[#5E666C] leading-relaxed line-clamp-2">
+              Beth French Pottery presents unique, hand-thrown stoneware mugs available in two sizes. Featuring hand-painted designs on the...
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <!-- 4 Compact Cards Row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+          <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img src="assets/images/blog-side-1.png" alt="Mug" class="h-24 object-contain">
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-neutral-400">
+              <span>By American Spa Staff</span>
+              <span>Feb 14, 2024</span>
+            </div>
+            <h5 class="font-bold text-xs text-[#000104] truncate">Limited-Edition Handmade Mug</h5>
+            <p class="text-[11px] text-[#5E666C] line-clamp-2">Is it just us, or does this mug look like a sandy beach?</p>
+          </div>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+          <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img src="assets/images/blog-side-2.png" alt="Mug" class="h-24 object-contain">
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-neutral-400">
+              <span>By Cameron Williamson</span>
+              <span>Oct 24, 2024</span>
+            </div>
+            <h5 class="font-bold text-xs text-[#000104] truncate">160Z Stoneware Mug SEA Glass</h5>
+            <p class="text-[11px] text-[#5E666C] line-clamp-2">Handle with care. Microwave safe and dish washer friendly.</p>
+          </div>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+          <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img src="assets/images/blog-side-3.png" alt="Mug" class="h-24 object-contain">
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-neutral-400">
+              <span>By Kathryn Murphy</span>
+              <span>Sep 22, 2024</span>
+            </div>
+            <h5 class="font-bold text-xs text-[#000104] truncate">Round Enamel Cup Mockup,</h5>
+            <p class="text-[11px] text-[#5E666C] line-clamp-2">Handle with care. May chip or break on high impact impact.</p>
+          </div>
+        </div>
+
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+          <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img src="assets/images/blog-side-4.png" alt="Mug" class="h-24 object-contain">
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-neutral-400">
+              <span>By Brooklyn Simmons</span>
+              <span>Apr 14, 2024</span>
+            </div>
+            <h5 class="font-bold text-xs text-[#000104] truncate">Pink - Landscape collection</h5>
+            <p class="text-[11px] text-[#5E666C] line-clamp-2">Care Instructions : Handle with care. Microwave safe & food safe.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 9. NEWSLETTER ================= -->
+  <section class="bg-earth-olive py-16 relative overflow-hidden">
+    <img src="assets/icons/newsletter-tag.svg" alt="" class="absolute left-[-60px] top-1/2 -translate-y-1/2 h-[350px] w-auto opacity-80 pointer-events-none hidden sm:block">
+
+    <div class="max-w-[736px] mx-auto px-6 text-center space-y-5 relative z-10">
+      <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">Join Our Newsletter</h2>
+      <p class="text-base text-[#5E666C] leading-relaxed">
+        Join our email subscription now to get updates on promotions and coupons. $15 discount get your first order
+      </p>
+
+      <form id="newsletter-form" class="max-w-[588px] mx-auto h-[64px] bg-white rounded-full p-2 flex items-center justify-between shadow-sm border border-neutral-200">
+        <input 
+          id="newsletter-email" 
+          type="email" 
+          required 
+          placeholder="Your Email" 
+          class="flex-1 px-6 bg-transparent text-[#000104] focus:outline-none text-base"
+        >
+        <button type="submit" class="bg-[#000104] text-white font-semibold text-base px-8 h-full rounded-full hover:bg-neutral-800 transition-smooth btn-press">
+          Subscribe
+        </button>
+      </form>
+      <div id="newsletter-msg" class="hidden text-sm font-medium text-green-700">
+        Thank you for subscribing! Your $15 discount code has been sent.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 10. FOOTER ================= -->
+  <footer class="bg-[#000104] text-neutral-300 py-16">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div class="space-y-4">
+        <img src="assets/images/logo-white.png" alt="Earthware" class="h-8 w-auto object-contain">
+        <p class="text-sm text-[#888888] leading-relaxed max-w-[209px]">
+          The fastest, most precise No-Code AI tool in the world.
+        </p>
+        <p class="text-xs text-[#888888]">©2024 eathware, Inc.</p>
+        <div class="pt-2">
+          <span class="block text-sm font-semibold text-white mb-2">Follow Us</span>
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-full bg-[#F0F2E5] flex items-center justify-center text-[#000104] text-xs font-bold cursor-pointer hover:opacity-80">f</span>
+            <span class="w-7 h-7 rounded-full bg-[#F0F2E5] flex items-center justify-center text-[#000104] text-xs font-bold cursor-pointer hover:opacity-80">in</span>
+            <span class="w-7 h-7 rounded-full bg-[#F0F2E5] flex items-center justify-center text-[#000104] text-xs font-bold cursor-pointer hover:opacity-80">wa</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-base font-semibold text-white">Product</h4>
+        <ul class="space-y-2 text-sm text-[#888888]">
+          <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Personal Data Policy</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Terms Of Service</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Cookie and Privacy Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-base font-semibold text-white">Resources</h4>
+        <ul class="space-y-2 text-sm text-[#888888]">
+          <li class="text-white font-medium">3DO</li>
+          <li>Platanvej 10, 7400 Herning</li>
+          <li>(+45) 93 40 44 31</li>
+          <li><a href="mailto:info@3do.dk" class="hover:text-white transition-colors">info@3do.dk</a></li>
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <h4 class="text-base font-semibold text-white">Company</h4>
+        <ul class="space-y-2 text-sm text-[#888888]">
+          <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= CART DRAWER ================= -->
+  <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between">
+    <div class="p-6 border-b border-[#E8E8E8] flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h3 class="text-2xl font-gallient text-[#000104]">Your Cart</h3>
+        <span class="cart-count-badge bg-[#000104] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+      </div>
+      <button id="close-cart-btn" class="p-2 text-[#5E666C] hover:text-[#000104]">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div id="cart-items-container" class="p-6 overflow-y-auto space-y-4 flex-1">
+    </div>
+
+    <div class="p-6 bg-[#FAF8F5] border-t border-[#E8E8E8] space-y-2.5">
+      <div class="flex justify-between text-sm text-[#5E666C]">
+        <span>Subtotal</span>
+        <span id="cart-subtotal" class="font-semibold text-[#000104]">$0 USD</span>
+      </div>
+      <div class="flex justify-between text-sm text-green-700">
+        <span>Discount</span>
+        <span id="cart-discount">$0 USD</span>
+      </div>
+      <div class="flex justify-between text-sm text-[#5E666C]">
+        <span>VAT (16%)</span>
+        <span id="cart-vat" class="font-semibold text-[#000104]">$0 USD</span>
+      </div>
+      <div class="flex justify-between text-lg font-bold text-[#000104] pt-2 border-t border-neutral-200">
+        <span>Total</span>
+        <span id="cart-total">$0 USD</span>
+      </div>
+      <button onclick="alert('Order placed successfully! Thank you for choosing Earthware.'); document.getElementById('close-cart-btn').click();" class="w-full bg-[#000104] text-white font-semibold py-3.5 rounded-md mt-3 hover:bg-neutral-800 transition-smooth shadow-md btn-press">
+        Place Order
+      </button>
+    </div>
+  </aside>
+
+  <!-- Modular MVVM Application Script -->
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
