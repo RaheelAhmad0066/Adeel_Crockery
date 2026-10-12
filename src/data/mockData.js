@@ -333,6 +333,141 @@ export const shopProductsData = [
       drainage: 'N/A',
       care: 'Dishwasher & Microwave safe.'
     }
+  },
+  { 
+    id: 'bp-1', 
+    name: 'Brass serving platter', 
+    heroSubtitle: 'Brass serving platter',
+    categoryBadge: 'Brass Ware',
+    badgePill: 'Sold Out',
+    sku: 'BRS-101',
+    category: 'Brass Serving / Thaal',
+    price: 23500, 
+    originalPrice: 23500,
+    currency: 'Rs.',
+    image: '/assets/images/about-promo-1.png', 
+    rating: 5,
+    description: 'Exquisite handcrafted brass platter with delicate ornamental rim and brass tripod legs. Ideal for grand banquets and decor.',
+    overview: [
+      'Authentic pure brass craftsmanship with hand-carved floral border rim.',
+      'Elevated on solid brass tripod legs for stunning buffet presentation.',
+      'Food-safe tinned interior finish suitable for warm dishes and fruit platters.'
+    ],
+    info: {
+      dimensions: '36cm Diameter x 12cm Height',
+      weight: '1.8 kg',
+      material: '100% Solid Brass with Silver Finish',
+      drainage: 'N/A',
+      care: 'Wipe with soft cloth. Avoid harsh chemicals.'
+    }
+  },
+  { 
+    id: 'bp-2', 
+    name: 'Royal Gold Hammered Brass Platter', 
+    heroSubtitle: 'Royal Gold Hammered Brass Platter',
+    categoryBadge: 'Brass Ware',
+    badgePill: 'Authentic',
+    sku: 'BRS-102',
+    category: 'Brass Serving / Thaal',
+    price: 17500, 
+    originalPrice: 19500,
+    currency: 'Rs.',
+    image: '/assets/images/about-promo-2.png', 
+    rating: 5,
+    description: 'Deep hammered gold finish traditional royal thaal with carved imperial pedestal feet.',
+    overview: [
+      'Hammered by skilled artisans with heavy gauge brass plate.',
+      'Lustrous warm golden patina that reflects festive candlelight beautifully.',
+      'Ergonomic twin cast-brass handles for effortless serving.'
+    ],
+    info: {
+      dimensions: '40cm Diameter x 10cm Height',
+      weight: '2.1 kg',
+      material: 'Hand-hammered Gold Brass',
+      drainage: 'N/A',
+      care: 'Hand wash with mild detergent and dry immediately.'
+    }
+  },
+  { 
+    id: 'bp-3', 
+    name: 'Royal Brass Handi Dish', 
+    heroSubtitle: 'Royal Brass Handi Dish',
+    categoryBadge: 'Brass Ware',
+    badgePill: 'Premium',
+    sku: 'BRS-103',
+    category: 'Brass Serving / Thaal',
+    price: 18500, 
+    originalPrice: 20000,
+    currency: 'Rs.',
+    image: '/assets/images/image-removebg-preview 1.png', 
+    rating: 5,
+    description: 'Set of authentic brass serving handi dishes with domed lids and side handles for luxury dining.',
+    overview: [
+      'Double handi serving set made with heavy brass core and tight-fitting lids.',
+      'Retains food warmth for extended dining experiences.',
+      'Traditional tin-lined interior for acidic or curried delicacies.'
+    ],
+    info: {
+      dimensions: '22cm Diameter x 16cm Height',
+      weight: '1.4 kg',
+      material: 'Heavy-gauge Brass with Kalai (Tin) lining',
+      drainage: 'N/A',
+      care: 'Hand wash only.'
+    }
+  },
+  { 
+    id: 'bp-4', 
+    name: 'Brass Serving Platter', 
+    heroSubtitle: 'Brass Serving Platter',
+    categoryBadge: 'Brass Ware',
+    badgePill: 'Artisan',
+    sku: 'BRS-104',
+    category: 'Brass Serving / Thaal',
+    price: 22000, 
+    originalPrice: 24000,
+    currency: 'Rs.',
+    image: '/assets/images/shop-3.svg', 
+    rating: 5,
+    description: 'Rectangular chased silver-plated brass platter with ornate sculpted foliage border.',
+    overview: [
+      'Regal rectangular banquet platter with engraved scrollwork surface.',
+      'Heavy cast brass construction with four decorative cabriole feet.',
+      'Tarnish-resistant clear protective coating.'
+    ],
+    info: {
+      dimensions: '45cm Length x 30cm Width x 8cm Height',
+      weight: '2.4 kg',
+      material: 'Silver-plated Brass',
+      drainage: 'N/A',
+      care: 'Wipe dry with microfiber cloth.'
+    }
+  },
+  { 
+    id: 'bp-5', 
+    name: 'Handcrafted Brass Thaal', 
+    heroSubtitle: 'Handcrafted Brass Thaal',
+    categoryBadge: 'Brass Ware',
+    badgePill: 'Vintage',
+    sku: 'BRS-105',
+    category: 'Brass Serving / Thaal',
+    price: 19500, 
+    originalPrice: 21000,
+    currency: 'Rs.',
+    image: '/assets/images/shop-5.svg', 
+    rating: 5,
+    description: 'Large circular engraved brass thaal with mandala center motif and filigree rim.',
+    overview: [
+      'Centuries-old artisan engraving technique depicting radiant sunburst petals.',
+      'Perfect as an imposing dining centerpiece or ritual ceremony thaal.',
+      'Solid heavy brass with satin golden antique polish.'
+    ],
+    info: {
+      dimensions: '42cm Diameter x 4cm Depth',
+      weight: '1.9 kg',
+      material: 'Solid Engraved Brass',
+      drainage: 'N/A',
+      care: 'Polish periodically with brass cleaner for radiant shine.'
+    }
   }
 ];
 
