@@ -7,6 +7,7 @@ const { active = 'home' } = Astro.props;
 ---
 
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8E8E8]">
+  <!-- Top Primary Bar -->
   <div class="max-w-[1440px] mx-auto px-6 lg:px-28 h-20 sm:h-[92px] flex items-center justify-between">
     
     <!-- Logo -->
@@ -45,13 +46,189 @@ const { active = 'home' } = Astro.props;
     </div>
   </div>
 
+  <!-- Secondary Category Bar (Exact Figma/User screenshots) -->
+  <div class="hidden lg:block bg-[#FAF8F5] border-t border-b border-[#EAE6DF] relative">
+    <div class="max-w-[1440px] mx-auto px-6 lg:px-28 h-12 flex items-center justify-between text-[15px] text-[#4A4F54]">
+      
+      <!-- 1. Crockery Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1.5 py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent group-hover:border-black group-hover:text-black">
+          <span>Crockery</span>
+          <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <!-- Dropdown Menu -->
+        <div class="absolute left-0 top-full pt-1 hidden group-hover:block z-50 min-w-[260px]">
+          <div class="bg-[#FAF8F5] border border-[#EAE6DF] rounded-b-md shadow-xl py-3 px-5 space-y-2">
+            <a href="/shop?cat=plate-sets" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Plate sets</a>
+            <a href="/shop?cat=tea-cups-and-saucers" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Tea cups and Saucers</a>
+            <a href="/shop?cat=2-tier-3-tier" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">2-Tier & 3-Tier</a>
+            <a href="/shop?cat=dessert-set" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Dessert Set</a>
+            <a href="/shop?cat=cutlery" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Cutlery</a>
+            <a href="/shop?cat=cake-stand" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Cake Stand</a>
+            <a href="/shop?cat=cake-lifter" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Cake Lifter</a>
+            <a href="/shop?cat=mugs" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Mugs</a>
+            <a href="/shop?cat=trays" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Trays</a>
+            <a href="/shop?cat=glass-and-water-set" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Glass and water set</a>
+            <a href="/shop?cat=jars" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Jars</a>
+            <a href="/shop?cat=glasslock-containers" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">GlassLock Storage Containers</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. New Arrivals -->
+      <a href="/shop?tag=new-arrivals" class="py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent hover:border-black">
+        New Arrivals
+      </a>
+
+      <!-- 3. Silverware Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1.5 py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent group-hover:border-black group-hover:text-black">
+          <span>Silverware</span>
+          <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <!-- Dropdown Menu -->
+        <div class="absolute left-0 top-full pt-1 hidden group-hover:block z-50 min-w-[200px]">
+          <div class="bg-[#FAF8F5] border border-[#EAE6DF] rounded-b-md shadow-xl py-3 px-5 space-y-2">
+            <a href="/shop?cat=silver-bowl" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Silver Bowl</a>
+            <a href="/shop?cat=silver-platters" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Silver Platters</a>
+            <a href="/shop?cat=chafing-dish" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Chafing Dish</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Copperware -->
+      <a href="/shop?cat=copperware" class="py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent hover:border-black">
+        Copperware
+      </a>
+
+      <!-- 5. Brass Ware Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1.5 py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent group-hover:border-black group-hover:text-black">
+          <span>Brass Ware</span>
+          <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <!-- Dropdown Menu -->
+        <div class="absolute left-0 top-full pt-1 hidden group-hover:block z-50 min-w-[220px]">
+          <div class="bg-[#FAF8F5] border border-[#EAE6DF] rounded-b-md shadow-xl py-3 px-5 space-y-2">
+            <a href="/shop?cat=brass-ware" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Brass Ware</a>
+            <a href="/shop?cat=brass-serving-thaal" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Brass Serving / Thaal</a>
+            <a href="/shop?cat=brass-chafing-dish" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Brass Chafing Dish</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Serveware -->
+      <a href="/shop?cat=serveware" class="py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent hover:border-black">
+        Serveware
+      </a>
+
+      <!-- 7. Casserole Dish -->
+      <a href="/shop?cat=casserole-dish" class="py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent hover:border-black">
+        Casserole Dish
+      </a>
+
+      <!-- 8. Home Decor Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1.5 py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent group-hover:border-black group-hover:text-black">
+          <span>Home Decor</span>
+          <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 top-full pt-1 hidden group-hover:block z-50 min-w-[220px]">
+          <div class="bg-[#FAF8F5] border border-[#EAE6DF] rounded-b-md shadow-xl py-3 px-5 space-y-2">
+            <a href="/shop?cat=candle-stands" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Candle stands</a>
+            <a href="/shop?cat=accessories" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Accessories</a>
+            <a href="/shop?cat=planters" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Planters</a>
+            <a href="/shop?cat=table-mats-placemats" class="block text-[14px] text-[#4A4F54] hover:text-black hover:font-medium transition-colors">Table mats/ placemats</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Bathroom Set -->
+      <a href="/shop?cat=bathroom-set" class="py-3 hover:text-black transition-colors font-medium border-b-2 border-transparent hover:border-black">
+        Bathroom Set
+      </a>
+
+    </div>
+  </div>
+
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-3">
+  <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
     <a href="/" class={active === 'home' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Home</a>
     <a href="/about" class={active === 'about' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>About</a>
     <a href="/shop" class={active === 'shop' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Shop</a>
     <a href="/#categories" class="block text-[#5E666C] hover:text-[#000104]">Service</a>
     <a href="/#blog" class="block text-[#5E666C] hover:text-[#000104]">News</a>
+
+    <!-- Mobile Categories Accordion -->
+    <div class="pt-3 border-t border-neutral-200">
+      <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">Categories</p>
+      <div class="space-y-1 text-sm font-medium text-neutral-700">
+        <details class="group py-1">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
+            Crockery <span class="text-xs">▾</span>
+          </summary>
+          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
+            <a href="/shop?cat=plate-sets" class="block py-0.5">Plate sets</a>
+            <a href="/shop?cat=tea-cups-and-saucers" class="block py-0.5">Tea cups and Saucers</a>
+            <a href="/shop?cat=2-tier-3-tier" class="block py-0.5">2-Tier & 3-Tier</a>
+            <a href="/shop?cat=dessert-set" class="block py-0.5">Dessert Set</a>
+            <a href="/shop?cat=cutlery" class="block py-0.5">Cutlery</a>
+            <a href="/shop?cat=cake-stand" class="block py-0.5">Cake Stand</a>
+            <a href="/shop?cat=cake-lifter" class="block py-0.5">Cake Lifter</a>
+            <a href="/shop?cat=mugs" class="block py-0.5">Mugs</a>
+            <a href="/shop?cat=trays" class="block py-0.5">Trays</a>
+            <a href="/shop?cat=glass-and-water-set" class="block py-0.5">Glass and water set</a>
+            <a href="/shop?cat=jars" class="block py-0.5">Jars</a>
+            <a href="/shop?cat=glasslock-containers" class="block py-0.5">GlassLock Storage Containers</a>
+          </div>
+        </details>
+        <a href="/shop?tag=new-arrivals" class="block py-1">New Arrivals</a>
+        <details class="group py-1">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
+            Silverware <span class="text-xs">▾</span>
+          </summary>
+          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
+            <a href="/shop?cat=silver-bowl" class="block py-0.5">Silver Bowl</a>
+            <a href="/shop?cat=silver-platters" class="block py-0.5">Silver Platters</a>
+            <a href="/shop?cat=chafing-dish" class="block py-0.5">Chafing Dish</a>
+          </div>
+        </details>
+        <a href="/shop?cat=copperware" class="block py-1">Copperware</a>
+        <details class="group py-1">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
+            Brass Ware <span class="text-xs">▾</span>
+          </summary>
+          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
+            <a href="/shop?cat=brass-ware" class="block py-0.5">Brass Ware</a>
+            <a href="/shop?cat=brass-serving-thaal" class="block py-0.5">Brass Serving / Thaal</a>
+            <a href="/shop?cat=brass-chafing-dish" class="block py-0.5">Brass Chafing Dish</a>
+          </div>
+        </details>
+        <a href="/shop?cat=serveware" class="block py-1">Serveware</a>
+        <a href="/shop?cat=casserole-dish" class="block py-1">Casserole Dish</a>
+        <details class="group py-1">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
+            Home Decor <span class="text-xs">▾</span>
+          </summary>
+          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
+            <a href="/shop?cat=candle-stands" class="block py-0.5">Candle stands</a>
+            <a href="/shop?cat=accessories" class="block py-0.5">Accessories</a>
+            <a href="/shop?cat=planters" class="block py-0.5">Planters</a>
+            <a href="/shop?cat=table-mats-placemats" class="block py-0.5">Table mats/ placemats</a>
+          </div>
+        </details>
+        <a href="/shop?cat=bathroom-set" class="block py-1">Bathroom Set</a>
+      </div>
+    </div>
   </div>
 </header>
 

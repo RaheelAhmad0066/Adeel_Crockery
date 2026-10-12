@@ -90,7 +90,7 @@ export class CartDrawerView {
 
     this.container.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
-        const id = Number(btn.dataset.id);
+        const id = btn.dataset.id;
         const action = btn.dataset.action;
         if (action === 'inc') this.vm.updateQty(id, 1);
         if (action === 'dec') this.vm.updateQty(id, -1);

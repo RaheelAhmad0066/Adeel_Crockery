@@ -4,7 +4,6 @@
 import { CartViewModel } from './viewmodels/CartViewModel.js';
 import { HomeViewModel } from './viewmodels/HomeViewModel.js';
 import { CartDrawerView } from './views/components/CartDrawer.js';
-import { renderProductCard, renderCategoryCard } from './views/components/ProductCard.js';
 import { renderTestimonialCarousel } from './views/components/Testimonials.js';
 import { NotificationService } from './services/NotificationService.js';
 
@@ -16,62 +15,42 @@ class App {
   }
 
   init() {
-    // 1. Initialize Views
+    // 1. Initialize Cart Drawer View & View-Model
     this.cartView = new CartDrawerView(this.cartVM);
 
-    // 2. Render Products
-    this.renderProducts();
+    // 2. Setup Category scroll triggers
+    this.setupCategoriesScroll();
 
-    // 3. Render Categories with horizontal scroll trigger
-    this.renderCategories();
-
-    // 4. Render Testimonials
+    // 3. Render Testimonials Carousel if container exists
     this.setupTestimonials();
 
-    // 5. Setup Navigation, Newsletter, and Checkout
+    // 4. Setup Navigation & Mobile menu
     this.setupNavigation();
+
+    // 5. Setup Newsletter
     this.setupNewsletter();
+
+    // 6. Setup Checkout button
     this.setupCheckout();
-    this.bindStaticActions();
+
+    // 7. Bind Global Add-To-Cart actions & Custom Events
+    this.bindCartActions();
   }
 
-  renderProducts() {
-    const container = document.getElementById('products-grid-container');
-    if (!container) return;
-    container.innerHTML = '';
-    this.homeVM.products.forEach(product => {
-      const card = renderProductCard(product, (p) => {
-        this.cartVM.addItem(p.name, p.price, p.image);
-        this.cartView.open();
-        NotificationService.showToast(`Added "${p.name}" to cart!`);
-      });
-      container.appendChild(card);
-    });
-  }
-
-  renderCategories() {
+  setupCategoriesScroll() {
     const container = document.getElementById('categories-grid-container');
-    if (!container) return;
-    container.innerHTML = '';
-    this.homeVM.categories.forEach(cat => {
-      const card = renderCategoryCard(cat, (item) => {
-        this.cartVM.addItem(item.name, item.price, item.image);
-        this.cartView.open();
-        NotificationService.showToast(`Added "${item.name}" to cart!`);
-      });
-      container.appendChild(card);
-    });
-
-    // Arrow click to scroll categories to the right
     const scrollBtn = document.getElementById('cat-scroll-right-btn');
-    if (scrollBtn) {
+    if (container && scrollBtn) {
       scrollBtn.onclick = () => {
-        container.scrollBy({ left: 300, behavior: 'smooth' });
+        container.scrollBy({ left: 320, behavior: 'smooth' });
       };
     }
   }
 
   setupTestimonials() {
+    const container = document.getElementById('testimonials-grid-container');
+    if (!container) return;
+
     const render = () => {
       renderTestimonialCarousel(this.homeVM.testimonials, this.homeVM.activeTestimonialIndex);
       
@@ -125,41 +104,59 @@ class App {
     if (checkoutBtn) {
       checkoutBtn.onclick = () => {
         if (this.cartVM.items.length === 0) {
-          NotificationService.showToast('Your cart is empty!');
+          NotificationService.showToast('Your cart is empty! Add products to proceed.');
           return;
         }
-        alert('Order placed successfully! Thank you for choosing Earthware.');
-        this.cartVM.clearCart();
+        alert(`Order placed successfully!\nTotal: $${this.cartVM.grandTotal} USD\nThank you for choosing Earthware Pottery.`);
+        this.cartVM.clear();
         this.cartView.close();
       };
     }
   }
 
-  bindStaticActions() {
-    document.querySelectorAll('[data-add-cat]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = Number(btn.dataset.addCat);
-        const cat = this.homeVM.categories.find(c => c.id === id);
+  bindCartActions() {
+    // A. Listen for programmatic cart:add custom events from any page
+    window.addEventListener('cart:add', (e) => {
+      if (e.detail) {
+        const { name, price, image, quantity = 1, id } = e.detail;
+        this.cartVM.addItem(name, price, image, quantity, id);
+        this.cartView.open();
+        NotificationService.showToast(`Added "${name}" to cart!`);
+      }
+    });
+
+    // B. Delegate clicks on any button with data-add-to-cart or class .add-to-cart-btn
+    document.addEventListener('click', (e) => {
+      const target = e.target.closest('.add-to-cart-btn, .similar-add-to-cart-btn, [data-add-cat], [data-add-prod]');
+      if (!target) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const id = target.dataset.id || target.dataset.addCat || target.dataset.addProd;
+      const name = target.dataset.name;
+      const price = target.dataset.price;
+      const image = target.dataset.image;
+
+      if (name && price) {
+        this.cartVM.addItem(name, price, image, 1, id);
+        this.cartView.open();
+        NotificationService.showToast(`Added "${name}" to cart!`);
+      } else if (id && target.hasAttribute('data-add-cat')) {
+        const cat = this.homeVM.categories.find(c => c.id === Number(id));
         if (cat) {
-          this.cartVM.addItem(cat.name, cat.price, cat.image);
+          this.cartVM.addItem(cat.name, cat.price, cat.image, 1, `cat-${cat.id}`);
           this.cartView.open();
           NotificationService.showToast(`Added "${cat.name}" to cart!`);
         }
-      });
-    });
-
-    document.querySelectorAll('[data-add-prod]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = Number(btn.dataset.addProd);
-        const prod = this.homeVM.products.find(p => p.id === id);
+      } else if (id && target.hasAttribute('data-add-prod')) {
+        const prod = this.homeVM.products.find(p => p.id === Number(id));
         if (prod) {
-          this.cartVM.addItem(prod.name, prod.price, prod.image);
+          this.cartVM.addItem(prod.name, prod.price, prod.image, 1, `prod-${prod.id}`);
           this.cartView.open();
           NotificationService.showToast(`Added "${prod.name}" to cart!`);
         }
-      });
+      }
     });
   }
 }
