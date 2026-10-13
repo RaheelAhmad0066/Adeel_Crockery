@@ -1,0 +1,616 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { initialProducts, initialNavbarCategories } from '../data/storeDataModel.js';
+---
+
+<AdminLayout title="Products Inventory & CRUD" activeNav="products">
+  <div class="space-y-6">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#000104] tracking-tight">Products & Inventory Control</h1>
+        <p class="text-xs text-[#5E666C] mt-1">
+          Add, edit, delete and categorize pottery products shown across Homepage (Categories & 4-Grid deals) and /shop.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button 
+          id="btn-open-add-product"
+          type="button" 
+          class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Add New Product
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div class="bg-white p-3 rounded-xl border border-neutral-200/80 flex items-center gap-2 overflow-x-auto text-xs">
+      <span class="font-bold text-neutral-400 px-2 uppercase text-[10px] tracking-wider">Filter:</span>
+      <button class="filter-btn active-filter px-3 py-1.5 rounded-lg font-bold bg-[#000104] text-white" data-cat="all">All Products (<span id="total-count">{initialProducts.length}</span>)</button>
+      {initialNavbarCategories.map(cat => (
+        <button class="filter-btn px-3 py-1.5 rounded-lg font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 whitespace-nowrap" data-cat={cat.name}>
+          {cat.name}
+        </button>
+      ))}
+      <button class="filter-btn px-3 py-1.5 rounded-lg font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 whitespace-nowrap" data-cat="Home Categories">Home Carousel</button>
+      <button class="filter-btn px-3 py-1.5 rounded-lg font-semibold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 whitespace-nowrap" data-cat="Home Featured">Home 4-Grid Deals</button>
+    </div>
+
+    <!-- Products Table -->
+    <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-[#FAF8F5] text-neutral-500 uppercase tracking-wider font-bold text-[10px] border-b border-neutral-100">
+              <th class="py-3.5 px-5">Item Preview</th>
+              <th class="py-3.5 px-5">Category & Subcategory</th>
+              <th class="py-3.5 px-5">Retail Price (PKR)</th>
+              <th class="py-3.5 px-5">Cost (PKR)</th>
+              <th class="py-3.5 px-5">Stock</th>
+              <th class="py-3.5 px-5">Placement</th>
+              <th class="py-3.5 px-5">Status</th>
+              <th class="py-3.5 px-5 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-table-body" class="divide-y divide-neutral-100 text-neutral-700">
+            {initialProducts.map((prod) => (
+              <tr 
+                id={`row-${prod.id}`}
+                class="product-row hover:bg-neutral-50/70 transition-colors" 
+                data-id={prod.id}
+                data-name={prod.name}
+                data-category={prod.category} 
+                data-subcategory={prod.subcategory}
+                data-price={prod.price}
+                data-cost={prod.costPrice}
+                data-stock={prod.stock}
+                data-image={prod.image}
+                data-home-cat={prod.showOnHomeCategories ? "true" : "false"} 
+                data-home-feat={prod.showOnHomeFeatured ? "true" : "false"}
+              >
+                
+                <!-- Preview & Name -->
+                <td class="py-3.5 px-5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-[#FAF8F5] border border-neutral-200/70 p-1 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      <img src={prod.image} alt={prod.name} class="max-h-full max-w-full object-contain row-img" />
+                    </div>
+                    <div>
+                      <span class="font-bold text-[#000104] block text-xs row-name">{prod.name}</span>
+                      <span class="text-[10px] text-neutral-400 font-mono">{prod.sku}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Category & Subcategory -->
+                <td class="py-3.5 px-5">
+                  <div class="space-y-0.5">
+                    <span class="font-semibold text-neutral-900 block row-cat">{prod.category}</span>
+                    <span class="text-[11px] text-neutral-400 row-subcat">{prod.subcategory}</span>
+                  </div>
+                </td>
+
+                <!-- Price -->
+                <td class="py-3.5 px-5 font-bold text-[#000104] row-price">
+                  PKR {prod.price.toLocaleString()}
+                </td>
+
+                <!-- Cost Price -->
+                <td class="py-3.5 px-5 text-neutral-500 row-cost">
+                  PKR {prod.costPrice.toLocaleString()}
+                </td>
+
+                <!-- Stock -->
+                <td class="py-3.5 px-5">
+                  <span class="font-bold text-neutral-900 row-stock">{prod.stock}</span>
+                  <span class="text-[10px] text-neutral-400"> pcs</span>
+                </td>
+
+                <!-- Home Placement Badges -->
+                <td class="py-3.5 px-5">
+                  {prod.showOnHomeCategories && (
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mr-1">
+                      Home Carousel
+                    </span>
+                  )}
+                  {prod.showOnHomeFeatured && (
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 mr-1">
+                      Home 4-Grid
+                    </span>
+                  )}
+                  {!prod.showOnHomeCategories && !prod.showOnHomeFeatured && (
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-100 text-neutral-600">
+                      Shop Only
+                    </span>
+                  )}
+                </td>
+
+                <!-- Status -->
+                <td class="py-3.5 px-5">
+                  <span class={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    prod.status === 'In Stock' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {prod.status}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td class="py-3.5 px-5 text-right whitespace-nowrap space-x-2">
+                  <button 
+                    class="btn-edit-prod text-xs font-semibold text-neutral-700 hover:text-black underline"
+                    data-id={prod.id}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    class="btn-delete-prod text-xs font-semibold text-red-500 hover:text-red-700 underline"
+                    data-id={prod.id}
+                  >
+                    Delete
+                  </button>
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
+  <div id="product-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl transform scale-95 transition-transform duration-200 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="modal-title" class="font-bold text-base text-[#000104]">Add New Crockery Product</h3>
+        <button id="close-modal-btn" class="text-neutral-400 hover:text-black text-lg font-bold">✕</button>
+      </div>
+
+      <form id="product-form" class="space-y-4 text-xs">
+        <input type="hidden" id="form-product-id" value="" />
+
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Product Name</label>
+          <input 
+            type="text" 
+            id="form-name" 
+            required 
+            placeholder="e.g. Royal Tea Cup Set, River Vase" 
+            class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black" 
+          />
+        </div>
+
+        <!-- Dynamic Category & Linked Subcategory Dropdown -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Main Category</label>
+            <select id="form-category" class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-medium">
+              {initialNavbarCategories.map(cat => (
+                <option value={cat.name}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Subcategory (Dropdown)</label>
+            <select id="form-subcategory" class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-medium">
+              <!-- Dynamically populated based on selected category -->
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Retail Price (PKR)</label>
+            <input 
+              type="number" 
+              id="form-price" 
+              required 
+              placeholder="100" 
+              class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-bold" 
+            />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Cost Price (PKR)</label>
+            <input 
+              type="number" 
+              id="form-cost" 
+              placeholder="60" 
+              class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black" 
+            />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Stock Count</label>
+            <input 
+              type="number" 
+              id="form-stock" 
+              required 
+              placeholder="20" 
+              class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-bold" 
+            />
+          </div>
+        </div>
+
+        <!-- Image Upload & File Picker UI -->
+        <div class="space-y-2">
+          <label class="block font-semibold text-neutral-800">Product Image (Upload or Pick Asset)</label>
+          
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-16 rounded-xl bg-neutral-100 border border-dashed border-neutral-300 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <img id="form-img-preview" src="/assets/images/cat-river-vase.png" alt="Preview" class="max-h-full max-w-full object-contain" />
+            </div>
+
+            <div class="flex-1 space-y-1.5">
+              <!-- File Upload Input -->
+              <input 
+                type="file" 
+                id="form-file-input" 
+                accept="image/*"
+                class="block w-full text-xs text-neutral-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-neutral-100 file:text-neutral-700 hover:file:bg-neutral-200 cursor-pointer"
+              />
+              <div class="flex items-center gap-1.5 text-[11px] text-neutral-400">
+                <span>Or select from library:</span>
+                <select id="form-asset-picker" class="border rounded px-2 py-0.5 text-[11px] bg-white">
+                  <option value="/assets/images/cat-river-vase.png">cat-river-vase.png</option>
+                  <option value="/assets/images/cat-ripple-vase.png">cat-ripple-vase.png</option>
+                  <option value="/assets/images/cat-bulb-vase.png">cat-bulb-vase.png</option>
+                  <option value="/assets/images/cat-glass-bowl-1.png">cat-glass-bowl-1.png</option>
+                  <option value="/assets/images/cat-glass-bowl-2.png">cat-glass-bowl-2.png</option>
+                  <option value="/assets/images/prod-1.png">prod-1.png</option>
+                  <option value="/assets/images/prod-2.png">prod-2.png</option>
+                  <option value="/assets/images/prod-3.png">prod-3.png</option>
+                  <option value="/assets/images/prod-4.png">prod-4.png</option>
+                  <option value="/assets/images/shop-1.svg">shop-1.svg</option>
+                  <option value="/assets/images/shop-2.svg">shop-2.svg</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="form-image-path" value="/assets/images/cat-river-vase.png" />
+        </div>
+
+        <!-- Storefront Placement Checkboxes -->
+        <div class="p-3 bg-neutral-50 rounded-xl border border-neutral-200 space-y-2">
+          <label class="block font-bold text-neutral-700">Display Placement on Storefront:</label>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="form-home-cat" class="rounded text-black" />
+              <span>Show in Home Categories Carousel</span>
+            </label>
+          </div>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="form-home-feat" class="rounded text-black" />
+              <span>Show in Home Featured Deals (4-Grid)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t">
+          <button type="button" id="cancel-modal-btn" class="px-4 py-2 border rounded-lg text-neutral-600 hover:bg-neutral-100 font-semibold">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 bg-[#000104] text-white rounded-lg font-bold hover:bg-neutral-800">
+            Save Product
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= DELETE CONFIRMATION MODAL ================= -->
+  <div id="delete-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+      </div>
+      <div>
+        <h4 class="font-bold text-base text-[#000104]">Delete Product?</h4>
+        <p class="text-xs text-neutral-500 mt-1">This item will be permanently removed from store inventory and live views.</p>
+      </div>
+      <div class="flex items-center justify-center gap-2 pt-2">
+        <button id="cancel-del-btn" class="px-4 py-2 border rounded-lg text-xs font-semibold text-neutral-600 hover:bg-neutral-50">Cancel</button>
+        <button id="confirm-del-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700">Yes, Delete Item</button>
+      </div>
+    </div>
+  </div>
+
+</AdminLayout>
+
+<script define:vars={{ initialNavbarCategories }}>
+  // Subcategories mapping dictionary
+  const subcategoryMap = {};
+  initialNavbarCategories.forEach(cat => {
+    subcategoryMap[cat.name] = cat.subcategories.map(s => s.name);
+  });
+
+  const modal = document.getElementById('product-modal');
+  const deleteModal = document.getElementById('delete-modal');
+  const openBtn = document.getElementById('btn-open-add-product');
+  const closeBtn = document.getElementById('close-modal-btn');
+  const cancelBtn = document.getElementById('cancel-modal-btn');
+  const modalTitle = document.getElementById('modal-title');
+  const productForm = document.getElementById('product-form');
+
+  const inputId = document.getElementById('form-product-id');
+  const inputName = document.getElementById('form-name');
+  const selectCat = document.getElementById('form-category');
+  const selectSubCat = document.getElementById('form-subcategory');
+  const inputPrice = document.getElementById('form-price');
+  const inputCost = document.getElementById('form-cost');
+  const inputStock = document.getElementById('form-stock');
+  const checkHomeCat = document.getElementById('form-home-cat');
+  const checkHomeFeat = document.getElementById('form-home-feat');
+
+  const fileInput = document.getElementById('form-file-input');
+  const assetPicker = document.getElementById('form-asset-picker');
+  const imgPathHidden = document.getElementById('form-image-path');
+  const imgPreview = document.getElementById('form-img-preview');
+
+  let pendingDeleteRow = null;
+
+  // Function to populate subcategories dropdown based on main category
+  function updateSubcategoryOptions(categoryName, selectedSub = '') {
+    if (!selectSubCat) return;
+    selectSubCat.innerHTML = '';
+    const list = subcategoryMap[categoryName] || ['General'];
+    list.forEach(sub => {
+      const opt = document.createElement('option');
+      opt.value = sub;
+      opt.textContent = sub;
+      if (sub === selectedSub) opt.selected = true;
+      selectSubCat.appendChild(opt);
+    });
+  }
+
+  // Handle Category Change
+  selectCat?.addEventListener('change', () => {
+    updateSubcategoryOptions(selectCat.value);
+  });
+
+  // Handle Image Asset Picker
+  assetPicker?.addEventListener('change', () => {
+    if (imgPathHidden && imgPreview) {
+      imgPathHidden.value = assetPicker.value;
+      imgPreview.src = assetPicker.value;
+    }
+  });
+
+  // Handle Real Image File Upload
+  fileInput?.addEventListener('change', (e) => {
+    const target = e.target;
+    if (target.files && target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        if (imgPreview && imgPathHidden && evt.target?.result) {
+          imgPreview.src = evt.target.result;
+          imgPathHidden.value = evt.target.result;
+        }
+      };
+      reader.readAsDataURL(target.files[0]);
+    }
+  });
+
+  function openModal(isEdit = false) {
+    if (modalTitle) modalTitle.textContent = isEdit ? 'Edit Pottery Product' : 'Add New Crockery Product';
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+  }
+
+  function closeModal() {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+    productForm?.reset();
+    if (inputId) inputId.value = '';
+  }
+
+  openBtn?.addEventListener('click', () => {
+    updateSubcategoryOptions(selectCat.value);
+    openModal(false);
+  });
+  closeBtn?.addEventListener('click', closeModal);
+  cancelBtn?.addEventListener('click', closeModal);
+
+  // Edit Product Handler
+  function attachEditListeners() {
+    document.querySelectorAll('.btn-edit-prod').forEach((btn) => {
+      btn.onclick = (e) => {
+        const id = btn.getAttribute('data-id');
+        const row = document.getElementById(`row-${id}`);
+        if (!row) return;
+
+        if (inputId) inputId.value = id;
+        if (inputName) inputName.value = row.getAttribute('data-name') || '';
+        
+        const cat = row.getAttribute('data-category') || 'Crockery';
+        if (selectCat) selectCat.value = cat;
+        updateSubcategoryOptions(cat, row.getAttribute('data-subcategory') || '');
+
+        if (inputPrice) inputPrice.value = row.getAttribute('data-price') || '';
+        if (inputCost) inputCost.value = row.getAttribute('data-cost') || '';
+        if (inputStock) inputStock.value = row.getAttribute('data-stock') || '';
+
+        const img = row.getAttribute('data-image') || '/assets/images/cat-river-vase.png';
+        if (imgPathHidden) imgPathHidden.value = img;
+        if (imgPreview) imgPreview.src = img;
+
+        if (checkHomeCat) checkHomeCat.checked = row.getAttribute('data-home-cat') === 'true';
+        if (checkHomeFeat) checkHomeFeat.checked = row.getAttribute('data-home-feat') === 'true';
+
+        openModal(true);
+      };
+    });
+  }
+
+  // Delete Product Handler
+  function attachDeleteListeners() {
+    document.querySelectorAll('.btn-delete-prod').forEach((btn) => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-id');
+        pendingDeleteRow = document.getElementById(`row-${id}`);
+        deleteModal?.classList.remove('opacity-0', 'pointer-events-none');
+      };
+    });
+  }
+
+  document.getElementById('cancel-del-btn')?.addEventListener('click', () => {
+    deleteModal?.classList.add('opacity-0', 'pointer-events-none');
+    pendingDeleteRow = null;
+  });
+
+  document.getElementById('confirm-del-btn')?.addEventListener('click', () => {
+    if (pendingDeleteRow) {
+      pendingDeleteRow.remove();
+      pendingDeleteRow = null;
+      deleteModal?.classList.add('opacity-0', 'pointer-events-none');
+    }
+  });
+
+  // Save Form (Add or Edit)
+  productForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const id = inputId?.value || 'PROD-' + Math.floor(100 + Math.random() * 900);
+    const name = inputName?.value || 'New Product';
+    const cat = selectCat?.value || 'Crockery';
+    const subcat = selectSubCat?.value || 'Plate sets';
+    const price = parseInt(inputPrice?.value || '100');
+    const cost = parseInt(inputCost?.value || '60');
+    const stock = parseInt(inputStock?.value || '10');
+    const image = imgPathHidden?.value || '/assets/images/cat-river-vase.png';
+    const isHomeCat = checkHomeCat?.checked || false;
+    const isHomeFeat = checkHomeFeat?.checked || false;
+
+    const existingRow = document.getElementById(`row-${id}`);
+    if (existingRow) {
+      // Update existing row
+      existingRow.setAttribute('data-name', name);
+      existingRow.setAttribute('data-category', cat);
+      existingRow.setAttribute('data-subcategory', subcat);
+      existingRow.setAttribute('data-price', price.toString());
+      existingRow.setAttribute('data-cost', cost.toString());
+      existingRow.setAttribute('data-stock', stock.toString());
+      existingRow.setAttribute('data-image', image);
+      existingRow.setAttribute('data-home-cat', isHomeCat ? 'true' : 'false');
+      existingRow.setAttribute('data-home-feat', isHomeFeat ? 'true' : 'false');
+
+      const nameEl = existingRow.querySelector('.row-name');
+      if (nameEl) nameEl.textContent = name;
+      const catEl = existingRow.querySelector('.row-cat');
+      if (catEl) catEl.textContent = cat;
+      const subcatEl = existingRow.querySelector('.row-subcat');
+      if (subcatEl) subcatEl.textContent = subcat;
+      const priceEl = existingRow.querySelector('.row-price');
+      if (priceEl) priceEl.textContent = `PKR ${price.toLocaleString()}`;
+      const costEl = existingRow.querySelector('.row-cost');
+      if (costEl) costEl.textContent = `PKR ${cost.toLocaleString()}`;
+      const stockEl = existingRow.querySelector('.row-stock');
+      if (stockEl) stockEl.textContent = stock.toString();
+      const imgEl = existingRow.querySelector('.row-img');
+      if (imgEl) imgEl.src = image;
+
+    } else {
+      // Add new row to table
+      const tbody = document.getElementById('products-table-body');
+      const tr = document.createElement('tr');
+      tr.id = `row-${id}`;
+      tr.className = 'product-row hover:bg-neutral-50/70 transition-colors';
+      tr.setAttribute('data-id', id);
+      tr.setAttribute('data-name', name);
+      tr.setAttribute('data-category', cat);
+      tr.setAttribute('data-subcategory', subcat);
+      tr.setAttribute('data-price', price.toString());
+      tr.setAttribute('data-cost', cost.toString());
+      tr.setAttribute('data-stock', stock.toString());
+      tr.setAttribute('data-image', image);
+      tr.setAttribute('data-home-cat', isHomeCat ? 'true' : 'false');
+      tr.setAttribute('data-home-feat', isHomeFeat ? 'true' : 'false');
+
+      tr.innerHTML = `
+        <td class="py-3.5 px-5">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-[#FAF8F5] border border-neutral-200/70 p-1 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <img src="${image}" alt="${name}" class="max-h-full max-w-full object-contain row-img" />
+            </div>
+            <div>
+              <span class="font-bold text-[#000104] block text-xs row-name">${name}</span>
+              <span class="text-[10px] text-neutral-400 font-mono">EW-NEW</span>
+            </div>
+          </div>
+        </td>
+        <td class="py-3.5 px-5">
+          <div class="space-y-0.5">
+            <span class="font-semibold text-neutral-900 block row-cat">${cat}</span>
+            <span class="text-[11px] text-neutral-400 row-subcat">${subcat}</span>
+          </div>
+        </td>
+        <td class="py-3.5 px-5 font-bold text-[#000104] row-price">
+          PKR ${price.toLocaleString()}
+        </td>
+        <td class="py-3.5 px-5 text-neutral-500 row-cost">
+          PKR ${cost.toLocaleString()}
+        </td>
+        <td class="py-3.5 px-5">
+          <span class="font-bold text-neutral-900 row-stock">${stock}</span>
+          <span class="text-[10px] text-neutral-400"> pcs</span>
+        </td>
+        <td class="py-3.5 px-5">
+          ${isHomeCat ? '<span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mr-1">Home Carousel</span>' : ''}
+          ${isHomeFeat ? '<span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 mr-1">Home 4-Grid</span>' : ''}
+        </td>
+        <td class="py-3.5 px-5">
+          <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">In Stock</span>
+        </td>
+        <td class="py-3.5 px-5 text-right whitespace-nowrap space-x-2">
+          <button class="btn-edit-prod text-xs font-semibold text-neutral-700 hover:text-black underline" data-id="${id}">Edit</button>
+          <button class="btn-delete-prod text-xs font-semibold text-red-500 hover:text-red-700 underline" data-id="${id}">Delete</button>
+        </td>
+      `;
+
+      tbody?.prepend(tr);
+    }
+
+    attachEditListeners();
+    attachDeleteListeners();
+    closeModal();
+  });
+
+  // Filter Buttons
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => {
+        b.classList.remove('bg-[#000104]', 'text-white', 'active-filter');
+        b.classList.add('bg-neutral-100', 'text-neutral-700');
+      });
+      btn.classList.add('bg-[#000104]', 'text-white', 'active-filter');
+      btn.classList.remove('bg-neutral-100', 'text-neutral-700');
+
+      const cat = btn.getAttribute('data-cat');
+      const allRows = document.querySelectorAll('.product-row');
+
+      allRows.forEach((row) => {
+        const rowEl = row;
+        if (cat === 'all') {
+          rowEl.style.display = '';
+        } else if (cat === 'Home Categories') {
+          rowEl.style.display = rowEl.getAttribute('data-home-cat') === 'true' ? '' : 'none';
+        } else if (cat === 'Home Featured') {
+          rowEl.style.display = rowEl.getAttribute('data-home-feat') === 'true' ? '' : 'none';
+        } else {
+          rowEl.style.display = rowEl.getAttribute('data-category') === cat ? '' : 'none';
+        }
+      });
+    });
+  });
+
+  // Initial Attach
+  attachEditListeners();
+  attachDeleteListeners();
+</script>

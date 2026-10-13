@@ -1,0 +1,79 @@
+---
+// AdminDispatchRadar.astro - Live Foodpanda-style delivery tracking radar
+---
+
+<div class="bg-white rounded-2xl border border-neutral-200/80 shadow-sm p-5 sm:p-6 space-y-4">
+  
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold">
+        📍
+      </div>
+      <div>
+        <h4 class="font-bold text-sm text-[#000104]">Live Dispatch Radar</h4>
+        <p class="text-[11px] text-[#5E666C]">Google Maps Fleet Status</p>
+      </div>
+    </div>
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+      GPS Active
+    </span>
+  </div>
+
+  <!-- Simulated Mini Radar Map View -->
+  <div class="relative w-full h-44 rounded-xl bg-[#E8ECEF] overflow-hidden border border-neutral-200/80 flex items-center justify-center">
+    <!-- Map grid pattern -->
+    <div class="absolute inset-0 opacity-40 bg-[radial-gradient(#94a3b8_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+    <!-- Central Kitchen Store Pin -->
+    <div class="relative z-10 flex flex-col items-center">
+      <div class="w-7 h-7 rounded-full bg-[#000104] text-white flex items-center justify-center shadow-lg text-xs font-bold border-2 border-white">
+        🏬
+      </div>
+      <span class="text-[10px] font-bold bg-white/95 px-1.5 py-0.5 rounded shadow mt-1 text-neutral-800">
+        Earthware Hub
+      </span>
+    </div>
+
+    <!-- Active Rider 1 (Ali Hassan) -->
+    <div class="absolute top-6 right-12 z-10 flex flex-col items-center animate-bounce">
+      <div class="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center shadow text-[10px] border-2 border-white">
+        🛵
+      </div>
+      <span class="text-[9px] font-bold bg-purple-100 text-purple-900 px-1 rounded shadow mt-0.5 whitespace-nowrap">
+        Ali (ORD-8921)
+      </span>
+    </div>
+
+    <!-- Active Rider 2 (Zubair) -->
+    <div class="absolute bottom-6 left-12 z-10 flex flex-col items-center">
+      <div class="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow text-[10px] border-2 border-white">
+        🛵
+      </div>
+      <span class="text-[9px] font-bold bg-emerald-100 text-emerald-900 px-1 rounded shadow mt-0.5 whitespace-nowrap">
+        Zubair (Completed)
+      </span>
+    </div>
+  </div>
+
+  <!-- Active Fleet List -->
+  <div class="space-y-2 pt-1 divide-y divide-neutral-100 text-xs">
+    <div class="flex items-center justify-between pt-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+        <span class="font-bold text-neutral-800">Ali Hassan (Bike-78)</span>
+      </div>
+      <span class="text-[11px] font-semibold text-purple-600">7 mins to DHA P5</span>
+    </div>
+
+    <div class="flex items-center justify-between pt-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+        <span class="font-bold text-neutral-800">Hamza R. (Bike-12)</span>
+      </div>
+      <span class="text-[11px] font-semibold text-blue-600">Waiting for Kitchen</span>
+    </div>
+  </div>
+
+</div>
+

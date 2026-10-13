@@ -1,0 +1,54 @@
+---
+interface Props {
+  title?: string;
+  activeNav?: string;
+}
+
+const { 
+  title = "Earthware Admin Portal", 
+  activeNav = "dashboard" 
+} = Astro.props;
+
+import AdminSidebar from '../components/AdminSidebar.astro';
+import AdminHeader from '../components/AdminHeader.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} — Earthware Admin</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body class="bg-[#F8F9FA] text-[#000104] antialiased min-h-screen flex flex-col font-sans overflow-x-hidden">
+
+  <div class="flex h-screen overflow-hidden">
+    
+    <!-- Admin Sidebar -->
+    <AdminSidebar activeNav={activeNav} />
+
+    <!-- Main Content Shell -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+      
+      <!-- Top Admin Header -->
+      <AdminHeader activeNav={activeNav} />
+
+      <!-- Scrollable Main View -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <slot />
+      </main>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
+

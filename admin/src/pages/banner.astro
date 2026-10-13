@@ -1,0 +1,351 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+---
+
+<AdminLayout title="Hero Banners CMS" activeNav="banner">
+  <div class="space-y-6">
+    
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#000104] tracking-tight">Homepage Hero Banners (Multi-Slide CMS)</h1>
+        <p class="text-xs text-[#5E666C] mt-1">
+          Add and manage multiple promotional hero slides. The textured craft background remains permanent, while foreground pots, titles, and CTA change.
+        </p>
+      </div>
+
+      <button 
+        id="btn-add-slide"
+        type="button" 
+        class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
+      >
+        <span>+ Add New Banner Slide</span>
+      </button>
+    </div>
+
+    <!-- Live Preview Box with Textured Background -->
+    <div class="space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-neutral-500 uppercase tracking-wider">Live Homepage Preview</span>
+        <div id="slide-indicators" class="flex items-center gap-1.5">
+          <!-- Slide dots -->
+        </div>
+      </div>
+
+      <div class="relative overflow-hidden py-12 px-6 sm:px-12 rounded-2xl border border-neutral-200/80 bg-[#FBF6F3] text-center shadow-xs">
+        <!-- Exact Texture Background (Fixed) -->
+        <img 
+          src="/assets/images/Hero Section.svg" 
+          alt="" 
+          class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-90"
+        />
+
+        <div class="relative z-10 space-y-4 max-w-3xl mx-auto">
+          <span id="preview-badge" class="inline-block text-[11px] font-semibold text-neutral-500 tracking-wider uppercase bg-white/70 px-3 py-0.5 rounded-full border border-neutral-200">
+            Slide 1 of 2 (Active)
+          </span>
+
+          <h2 id="preview-headline" class="font-serif text-3xl sm:text-5xl md:text-6xl text-[#000104] leading-tight font-normal">
+            Feel it, Feel the Uniqueness.
+          </h2>
+
+          <p id="preview-subtitle" class="text-xs sm:text-sm md:text-base text-[#5E666C] max-w-xl mx-auto leading-relaxed">
+            Is filament of the highest quality that we are proud to offer our customers.
+          </p>
+
+          <div class="pt-1">
+            <span id="preview-cta" class="inline-block bg-[#000104] text-white text-xs sm:text-sm font-semibold px-8 py-3 rounded-md shadow-md">
+              Buy Now
+            </span>
+          </div>
+
+          <div class="pt-4 flex justify-center">
+            <img 
+              id="preview-img" 
+              src="/assets/images/hero-pot.png" 
+              alt="Pot Graphic" 
+              class="max-h-44 sm:max-h-52 w-auto object-contain drop-shadow-xl"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slides Management Grid / List -->
+    <div class="space-y-3">
+      <h3 class="text-sm font-bold text-[#000104]">Configured Banner Slides</h3>
+      <div id="slides-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Slide Cards rendered via JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= ADD / EDIT SLIDE MODAL ================= -->
+  <div id="slide-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="slide-modal-title" class="font-bold text-base text-[#000104]">Edit Banner Slide</h3>
+        <button id="close-slide-modal" class="text-neutral-400 hover:text-black font-bold text-lg">✕</button>
+      </div>
+
+      <form id="slide-form" class="space-y-4 text-xs">
+        <input type="hidden" id="slide-id" />
+
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Headline Title</label>
+          <input 
+            type="text" 
+            id="slide-headline" 
+            required 
+            class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-medium" 
+          />
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Subtitle Description</label>
+          <textarea 
+            id="slide-subtitle" 
+            rows="2" 
+            required 
+            class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black"
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Button Label</label>
+            <input type="text" id="slide-cta" required class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Button Target URL</label>
+            <input type="text" id="slide-link" required class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+          </div>
+        </div>
+
+        <!-- Foreground Image Upload / Pick -->
+        <div class="space-y-2">
+          <label class="block font-semibold text-neutral-800">Foreground Ceramic Image (Upload / Pick)</label>
+          <div class="flex items-center gap-3">
+            <div class="w-16 h-16 rounded-xl bg-neutral-100 border p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+              <img id="modal-img-preview" src="/assets/images/hero-pot.png" alt="Preview" class="max-h-full max-w-full object-contain" />
+            </div>
+            <div class="flex-1 space-y-1.5">
+              <input type="file" id="slide-file-input" accept="image/*" class="block w-full text-xs text-neutral-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-neutral-100 cursor-pointer" />
+              <input type="hidden" id="slide-img-path" value="/assets/images/hero-pot.png" />
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t">
+          <button type="button" id="cancel-slide-btn" class="px-4 py-2 border rounded-lg font-semibold text-neutral-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-[#000104] text-white rounded-lg font-bold">Save Banner</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</AdminLayout>
+
+<script>
+  let slides = [
+    {
+      id: 'slide-1',
+      headline: 'Feel it, Feel the Uniqueness.',
+      subtitle: 'Is filament of the highest quality that we are proud to offer our customers.',
+      cta: 'Buy Now',
+      link: '#products',
+      img: '/assets/images/hero-pot.png',
+      active: true
+    },
+    {
+      id: 'slide-2',
+      headline: 'Artisan Terracotta Craftsmanship',
+      subtitle: 'Hand-thrown earthen clay dining sets crafted by master pottery artisans.',
+      cta: 'Explore Shop',
+      link: '/shop',
+      img: '/assets/images/prod-1.png',
+      active: false
+    }
+  ];
+
+  let activeIndex = 0;
+
+  const previewHeadline = document.getElementById('preview-headline');
+  const previewSubtitle = document.getElementById('preview-subtitle');
+  const previewCta = document.getElementById('preview-cta');
+  const previewImg = document.getElementById('preview-img') as HTMLImageElement;
+  const previewBadge = document.getElementById('preview-badge');
+  const slidesContainer = document.getElementById('slides-container');
+  const slideIndicators = document.getElementById('slide-indicators');
+
+  const modal = document.getElementById('slide-modal');
+  const modalTitle = document.getElementById('slide-modal-title');
+  const slideForm = document.getElementById('slide-form');
+  const slideId = document.getElementById('slide-id') as HTMLInputElement;
+  const slideHeadline = document.getElementById('slide-headline') as HTMLInputElement;
+  const slideSubtitle = document.getElementById('slide-subtitle') as HTMLTextAreaElement;
+  const slideCta = document.getElementById('slide-cta') as HTMLInputElement;
+  const slideLink = document.getElementById('slide-link') as HTMLInputElement;
+  const slideImgPath = document.getElementById('slide-img-path') as HTMLInputElement;
+  const modalImgPreview = document.getElementById('modal-img-preview') as HTMLImageElement;
+  const fileInput = document.getElementById('slide-file-input') as HTMLInputElement;
+
+  function renderSlides() {
+    // Update live banner
+    const current = slides[activeIndex];
+    if (previewHeadline) previewHeadline.textContent = current.headline;
+    if (previewSubtitle) previewSubtitle.textContent = current.subtitle;
+    if (previewCta) previewCta.textContent = current.cta;
+    if (previewImg) previewImg.src = current.img;
+    if (previewBadge) previewBadge.textContent = `Slide ${activeIndex + 1} of ${slides.length} (Active)`;
+
+    // Indicators
+    if (slideIndicators) {
+      slideIndicators.innerHTML = '';
+      slides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all ${i === activeIndex ? 'bg-black w-5' : 'bg-neutral-300'}`;
+        dot.onclick = () => {
+          activeIndex = i;
+          renderSlides();
+        };
+        slideIndicators.appendChild(dot);
+      });
+    }
+
+    // List Cards
+    if (slidesContainer) {
+      slidesContainer.innerHTML = '';
+      slides.forEach((slide, index) => {
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border transition-all ${index === activeIndex ? 'bg-white border-black shadow-sm' : 'bg-white/80 border-neutral-200'}`;
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-lg bg-[#FAF8F5] border p-1 flex items-center justify-center">
+                <img src="${slide.img}" class="max-h-full max-w-full object-contain" />
+              </div>
+              <div>
+                <span class="font-bold text-xs text-[#000104] block">${slide.headline}</span>
+                <span class="text-[11px] text-neutral-400 line-clamp-1">${slide.subtitle}</span>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${index === activeIndex ? 'bg-emerald-100 text-emerald-800' : 'bg-neutral-100 text-neutral-600'}">
+              ${index === activeIndex ? 'Active' : 'Slide ' + (index + 1)}
+            </span>
+          </div>
+
+          <div class="pt-3 mt-3 border-t flex items-center justify-between text-xs">
+            <button class="btn-make-active font-semibold ${index === activeIndex ? 'text-emerald-700' : 'text-neutral-500 hover:text-black'}" data-index="${index}">
+              ${index === activeIndex ? '✓ Showing on Top' : 'Set as Active'}
+            </button>
+            <div class="space-x-2">
+              <button class="btn-edit-slide font-semibold text-neutral-800 underline" data-index="${index}">Edit</button>
+              ${slides.length > 1 ? `<button class="btn-del-slide font-semibold text-red-500 underline" data-index="${index}">Delete</button>` : ''}
+            </div>
+          </div>
+        `;
+        slidesContainer.appendChild(card);
+      });
+
+      // Events
+      document.querySelectorAll('.btn-make-active').forEach(b => {
+        b.addEventListener('click', (e) => {
+          activeIndex = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+          renderSlides();
+        });
+      });
+
+      document.querySelectorAll('.btn-edit-slide').forEach(b => {
+        b.addEventListener('click', (e) => {
+          const idx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+          openEditModal(idx);
+        });
+      });
+
+      document.querySelectorAll('.btn-del-slide').forEach(b => {
+        b.addEventListener('click', (e) => {
+          const idx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+          if (confirm('Delete this banner slide?')) {
+            slides.splice(idx, 1);
+            if (activeIndex >= slides.length) activeIndex = 0;
+            renderSlides();
+          }
+        });
+      });
+    }
+  }
+
+  function openEditModal(idx: number) {
+    const s = slides[idx];
+    slideId.value = idx.toString();
+    slideHeadline.value = s.headline;
+    slideSubtitle.value = s.subtitle;
+    slideCta.value = s.cta;
+    slideLink.value = s.link;
+    slideImgPath.value = s.img;
+    modalImgPreview.src = s.img;
+    if (modalTitle) modalTitle.textContent = `Edit Slide #${idx + 1}`;
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+  }
+
+  document.getElementById('btn-add-slide')?.addEventListener('click', () => {
+    slideId.value = '-1';
+    slideHeadline.value = '';
+    slideSubtitle.value = '';
+    slideCta.value = 'Shop Now';
+    slideLink.value = '/shop';
+    slideImgPath.value = '/assets/images/hero-pot.png';
+    modalImgPreview.src = '/assets/images/hero-pot.png';
+    if (modalTitle) modalTitle.textContent = 'Add New Hero Banner Slide';
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+  });
+
+  document.getElementById('close-slide-modal')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+  document.getElementById('cancel-slide-btn')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  fileInput?.addEventListener('change', (e) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        if (evt.target?.result) {
+          modalImgPreview.src = evt.target.result as string;
+          slideImgPath.value = evt.target.result as string;
+        }
+      };
+      reader.readAsDataURL(target.files[0]);
+    }
+  });
+
+  slideForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const idx = parseInt(slideId.value);
+    const newSlide = {
+      id: 'slide-' + Date.now(),
+      headline: slideHeadline.value,
+      subtitle: slideSubtitle.value,
+      cta: slideCta.value,
+      link: slideLink.value,
+      img: slideImgPath.value,
+      active: true
+    };
+
+    if (idx === -1) {
+      slides.push(newSlide);
+      activeIndex = slides.length - 1;
+    } else {
+      slides[idx] = newSlide;
+    }
+
+    renderSlides();
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  renderSlides();
+</script>

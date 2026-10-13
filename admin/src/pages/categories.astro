@@ -1,0 +1,108 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { initialNavbarCategories, initialProducts } from '../data/storeDataModel.js';
+---
+
+<AdminLayout title="Navbar Categories & Subcategories" activeNav="categories">
+  <div class="space-y-6">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#000104] tracking-tight">Navbar Categories & Dropdowns</h1>
+        <p class="text-xs text-[#5E666C] mt-1">
+          Manage header navigation menu, subcategory dropdowns (Silverware, Crockery, Brass Ware, Home Decor) and mapped products.
+        </p>
+      </div>
+
+      <button 
+        id="btn-open-add-cat"
+        type="button" 
+        class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Navbar Category
+      </button>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {initialNavbarCategories.map((cat) => {
+        const mappedProductsCount = initialProducts.filter(p => p.category === cat.name).length;
+
+        return (
+          <div class="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors">
+            
+            <div class="flex items-start justify-between border-b pb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-bold text-[#000104]">{cat.name}</h3>
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
+                    /{cat.slug}
+                  </span>
+                </div>
+                <p class="text-xs text-[#5E666C] mt-0.5">
+                  {mappedProductsCount} active items mapped in inventory
+                </p>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  {cat.status}
+                </span>
+                <button class="text-xs font-semibold text-neutral-500 hover:text-black underline">
+                  Edit
+                </button>
+              </div>
+            </div>
+
+            <!-- Subcategories Tag Cloud -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                  Dropdown Subcategories ({cat.subcategories.length})
+                </span>
+                <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-cat={cat.name}>
+                  + Add Subcategory
+                </button>
+              </div>
+
+              <div class="flex flex-wrap gap-1.5">
+                {cat.subcategories.map((sub) => (
+                  <span class="inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors">
+                    <span>{sub.name}</span>
+                    <button class="text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        );
+      })}
+    </div>
+
+  </div>
+</AdminLayout>
+
+<script>
+  const addCatBtn = document.getElementById('btn-open-add-cat');
+  addCatBtn?.addEventListener('click', () => {
+    const name = prompt('Enter new category name:');
+    if (name) {
+      alert(`Category "${name}" created successfully!`);
+    }
+  });
+
+  document.querySelectorAll('.btn-add-subcat').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLElement;
+      const sub = prompt(`Add new subcategory under ${target.dataset.cat}:`);
+      if (sub) {
+        alert(`Subcategory "${sub}" added to ${target.dataset.cat}!`);
+      }
+    });
+  });
+</script>
