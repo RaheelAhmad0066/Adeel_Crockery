@@ -3,7 +3,7 @@ import AdminLayout from '../layouts/AdminLayout.astro';
 import { initialNavbarCategories, initialProducts } from '../data/storeDataModel.js';
 ---
 
-<AdminLayout title="Navbar Categories & Subcategories" activeNav="categories">
+<AdminLayout title="Navbar Categories & Dropdowns" activeNav="categories">
   <div class="space-y-6">
     
     <!-- Top Action Bar -->
@@ -16,34 +16,34 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       </div>
 
       <button 
-        id="btn-open-add-cat"
+        id="btn-add-main-cat"
         type="button" 
         class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
       >
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
-        Add Navbar Category
+        <span>+ Add Navbar Category</span>
       </button>
     </div>
 
-    <!-- Categories Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      {initialNavbarCategories.map((cat) => {
+    <!-- Categories Grid Container -->
+    <div id="cat-cards-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {initialNavbarCategories.map((cat, catIdx) => {
         const mappedProductsCount = initialProducts.filter(p => p.category === cat.name).length;
 
         return (
-          <div class="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors">
+          <div id={`cat-card-${catIdx}`} class="cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors" data-cat-name={cat.name} data-cat-idx={catIdx}>
             
             <div class="flex items-start justify-between border-b pb-3">
               <div>
                 <div class="flex items-center gap-2">
-                  <h3 class="text-base font-bold text-[#000104]">{cat.name}</h3>
-                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
+                  <h3 class="cat-title text-base font-bold text-[#000104]">{cat.name}</h3>
+                  <span class="cat-slug text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
                     /{cat.slug}
                   </span>
                 </div>
-                <p class="text-xs text-[#5E666C] mt-0.5">
+                <p class="cat-count text-xs text-[#5E666C] mt-0.5">
                   {mappedProductsCount} active items mapped in inventory
                 </p>
               </div>
@@ -52,8 +52,11 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   {cat.status}
                 </span>
-                <button class="text-xs font-semibold text-neutral-500 hover:text-black underline">
+                <button class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx={catIdx}>
                   Edit
+                </button>
+                <button class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx={catIdx}>
+                  Delete
                 </button>
               </div>
             </div>
@@ -61,19 +64,19 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
             <!-- Subcategories Tag Cloud -->
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                <span class="subcat-header text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
                   Dropdown Subcategories ({cat.subcategories.length})
                 </span>
-                <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-cat={cat.name}>
+                <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx={catIdx} data-cat={cat.name}>
                   + Add Subcategory
                 </button>
               </div>
 
-              <div class="flex flex-wrap gap-1.5">
-                {cat.subcategories.map((sub) => (
-                  <span class="inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors">
-                    <span>{sub.name}</span>
-                    <button class="text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
+              <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx={catIdx}>
+                {cat.subcategories.map((sub, subIdx) => (
+                  <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors" data-sub-idx={subIdx}>
+                    <span class="sub-name">{sub.name}</span>
+                    <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
                   </span>
                 ))}
               </div>
@@ -85,24 +88,237 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     </div>
 
   </div>
+
+  <!-- ================= ADD / EDIT MAIN CATEGORY MODAL ================= -->
+  <div id="category-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="cat-modal-title" class="font-bold text-base text-[#000104]">Add Navbar Category</h3>
+        <button id="close-cat-modal" class="text-neutral-400 hover:text-black font-bold text-lg">✕</button>
+      </div>
+
+      <form id="cat-form" class="space-y-4 text-xs">
+        <input type="hidden" id="edit-cat-index" value="-1" />
+
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Category Display Name</label>
+          <input type="text" id="cat-name-input" required placeholder="e.g. Copperware, Dinnerware" class="w-full border rounded-lg p-2.5 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black font-medium" />
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">URL Slug</label>
+          <input type="text" id="cat-slug-input" required placeholder="e.g. copperware" class="w-full border rounded-lg p-2.5 bg-neutral-50 font-mono" />
+        </div>
+
+        <div class="pt-3 flex items-center justify-end gap-2 border-t">
+          <button type="button" id="cancel-cat-btn" class="px-4 py-2 border rounded-lg font-semibold text-neutral-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-[#000104] text-white rounded-lg font-bold">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= ADD SUBCATEGORY MODAL ================= -->
+  <div id="subcat-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-2">
+        <h4 id="subcat-modal-title" class="font-bold text-sm text-[#000104]">Add Subcategory</h4>
+        <button id="close-subcat-modal" class="text-neutral-400 hover:text-black font-bold">✕</button>
+      </div>
+
+      <form id="subcat-form" class="space-y-3 text-xs">
+        <input type="hidden" id="target-cat-idx" value="0" />
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-700">Subcategory Name</label>
+          <input type="text" id="subcat-name-input" required placeholder="e.g. Candle stands, Dessert Set" class="w-full border rounded-lg p-2 bg-neutral-50 focus:bg-white focus:outline-none focus:border-black" />
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="cancel-subcat-btn" class="px-3 py-1.5 border rounded-lg font-semibold text-neutral-600">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-[#000104] text-white rounded-lg font-bold">Add to Dropdown</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </AdminLayout>
 
 <script>
-  const addCatBtn = document.getElementById('btn-open-add-cat');
-  addCatBtn?.addEventListener('click', () => {
-    const name = prompt('Enter new category name:');
-    if (name) {
-      alert(`Category "${name}" created successfully!`);
+  const catModal = document.getElementById('category-modal');
+  const catModalTitle = document.getElementById('cat-modal-title');
+  const catForm = document.getElementById('cat-form');
+  const catIndexInput = document.getElementById('edit-cat-index') as HTMLInputElement;
+  const catNameInput = document.getElementById('cat-name-input') as HTMLInputElement;
+  const catSlugInput = document.getElementById('cat-slug-input') as HTMLInputElement;
+
+  const subModal = document.getElementById('subcat-modal');
+  const subModalTitle = document.getElementById('subcat-modal-title');
+  const subForm = document.getElementById('subcat-form');
+  const subNameInput = document.getElementById('subcat-name-input') as HTMLInputElement;
+  const targetCatIdx = document.getElementById('target-cat-idx') as HTMLInputElement;
+
+  // Open Add Category Modal
+  document.getElementById('btn-add-main-cat')?.addEventListener('click', () => {
+    catIndexInput.value = '-1';
+    catNameInput.value = '';
+    catSlugInput.value = '';
+    if (catModalTitle) catModalTitle.textContent = 'Add Navbar Category';
+    catModal?.classList.remove('opacity-0', 'pointer-events-none');
+  });
+
+  document.getElementById('close-cat-modal')?.addEventListener('click', () => {
+    catModal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+  document.getElementById('cancel-cat-btn')?.addEventListener('click', () => {
+    catModal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  // Auto slug generator
+  catNameInput?.addEventListener('input', () => {
+    if (catIndexInput.value === '-1') {
+      catSlugInput.value = catNameInput.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
   });
 
-  document.querySelectorAll('.btn-add-subcat').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLElement;
-      const sub = prompt(`Add new subcategory under ${target.dataset.cat}:`);
-      if (sub) {
-        alert(`Subcategory "${sub}" added to ${target.dataset.cat}!`);
-      }
+  // Attach Edit and Delete Listeners for Category Cards
+  function attachCategoryListeners() {
+    // Edit Main Category
+    document.querySelectorAll('.btn-edit-main-cat').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        const card = document.getElementById(`cat-card-${idx}`);
+        if (!card) return;
+
+        catIndexInput.value = idx;
+        const title = card.querySelector('.cat-title')?.textContent || '';
+        const slug = card.querySelector('.cat-slug')?.textContent?.replace('/', '') || '';
+
+        catNameInput.value = title;
+        catSlugInput.value = slug;
+        if (catModalTitle) catModalTitle.textContent = `Edit Category: ${title}`;
+        catModal?.classList.remove('opacity-0', 'pointer-events-none');
+      };
     });
+
+    // Delete Main Category
+    document.querySelectorAll('.btn-delete-main-cat').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        const card = document.getElementById(`cat-card-${idx}`);
+        if (confirm(`Delete this category and all its subcategories?`)) {
+          card?.remove();
+        }
+      };
+    });
+
+    // Add Subcategory Button
+    document.querySelectorAll('.btn-add-subcat').forEach(b => {
+      b.onclick = (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const idx = target.dataset.idx || '0';
+        const catName = target.dataset.cat || '';
+        targetCatIdx.value = idx;
+        subNameInput.value = '';
+        if (subModalTitle) subModalTitle.textContent = `Add Subcategory under ${catName}`;
+        subModal?.classList.remove('opacity-0', 'pointer-events-none');
+      };
+    });
+
+    // Remove Subcategory
+    document.querySelectorAll('.btn-del-sub').forEach(b => {
+      b.onclick = (e) => {
+        const pill = (e.currentTarget as HTMLElement).closest('.subcat-pill');
+        pill?.remove();
+      };
+    });
+  }
+
+  // Handle Category Form Submit
+  catForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const idx = parseInt(catIndexInput.value);
+    const name = catNameInput.value;
+    const slug = catSlugInput.value;
+
+    if (idx === -1) {
+      // Add new Category Card
+      const grid = document.getElementById('cat-cards-grid');
+      const newIdx = document.querySelectorAll('.cat-card').length;
+      const newCard = document.createElement('div');
+      newCard.id = `cat-card-${newIdx}`;
+      newCard.className = 'cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors';
+      newCard.setAttribute('data-cat-name', name);
+      newCard.setAttribute('data-cat-idx', newIdx.toString());
+
+      newCard.innerHTML = `
+        <div class="flex items-start justify-between border-b pb-3">
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="cat-title text-base font-bold text-[#000104]">${name}</h3>
+              <span class="cat-slug text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
+                /${slug}
+              </span>
+            </div>
+            <p class="cat-count text-xs text-[#5E666C] mt-0.5">0 active items mapped in inventory</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
+            <button class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx="${newIdx}">Edit</button>
+            <button class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx="${newIdx}">Delete</button>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="subcat-header text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Dropdown Subcategories (0)</span>
+            <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx="${newIdx}" data-cat="${name}">+ Add Subcategory</button>
+          </div>
+          <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx="${newIdx}"></div>
+        </div>
+      `;
+      grid?.prepend(newCard);
+    } else {
+      // Update existing
+      const card = document.getElementById(`cat-card-${idx}`);
+      if (card) {
+        const titleEl = card.querySelector('.cat-title');
+        const slugEl = card.querySelector('.cat-slug');
+        if (titleEl) titleEl.textContent = name;
+        if (slugEl) slugEl.textContent = `/${slug}`;
+      }
+    }
+
+    catModal?.classList.add('opacity-0', 'pointer-events-none');
+    attachCategoryListeners();
   });
+
+  // Handle Subcategory Form Submit
+  subForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const idx = targetCatIdx.value;
+    const subName = subNameInput.value;
+    const card = document.getElementById(`cat-card-${idx}`);
+    const list = card?.querySelector('.subcat-list');
+
+    if (list) {
+      const pill = document.createElement('span');
+      pill.className = 'subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors';
+      pill.innerHTML = `
+        <span class="sub-name">${subName}</span>
+        <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
+      `;
+      list.appendChild(pill);
+    }
+
+    subModal?.classList.add('opacity-0', 'pointer-events-none');
+    attachCategoryListeners();
+  });
+
+  document.getElementById('close-subcat-modal')?.addEventListener('click', () => {
+    subModal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+  document.getElementById('cancel-subcat-btn')?.addEventListener('click', () => {
+    subModal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  // Initial Attach
+  attachCategoryListeners();
 </script>

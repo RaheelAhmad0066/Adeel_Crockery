@@ -10,17 +10,17 @@ const { limit = 10, showFilters = true } = Astro.props;
 const displayOrders = adminOrdersList.slice(0, limit);
 ---
 
-<div class="bg-white rounded-2xl border border-neutral-200/80 shadow-sm overflow-hidden">
+<div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
   
   <!-- Header & Status Tabs -->
-  <div class="p-5 sm:p-6 border-b border-neutral-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+  <div class="p-5 border-b border-neutral-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
-      <h3 class="text-base sm:text-lg font-bold text-[#000104]">Recent Customer Orders</h3>
-      <p class="text-xs text-[#5E666C]">Real-time live kitchen preparation & delivery tracking</p>
+      <h3 class="text-base font-bold text-[#000104]">Recent Customer Orders</h3>
+      <p class="text-xs text-[#5E666C]">Live order status & customer delivery updates</p>
     </div>
 
     {showFilters && (
-      <div class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1 text-xs font-semibold">
+      <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 text-xs font-semibold">
         <button class="order-filter-btn px-3 py-1.5 rounded-lg bg-[#000104] text-white" data-status="all">All</button>
         <button class="order-filter-btn px-3 py-1.5 rounded-lg text-neutral-600 hover:bg-neutral-100" data-status="Pending">Pending</button>
         <button class="order-filter-btn px-3 py-1.5 rounded-lg text-neutral-600 hover:bg-neutral-100" data-status="Preparing">Preparing</button>
@@ -30,7 +30,7 @@ const displayOrders = adminOrdersList.slice(0, limit);
     )}
   </div>
 
-  <!-- Table Container (Horizontal scroll on mobile) -->
+  <!-- Clean Table -->
   <div class="overflow-x-auto">
     <table class="w-full text-left border-collapse text-xs">
       <thead>
@@ -39,9 +39,8 @@ const displayOrders = adminOrdersList.slice(0, limit);
           <th class="py-3.5 px-5">Customer & Phone</th>
           <th class="py-3.5 px-5">Items Summary</th>
           <th class="py-3.5 px-5">Total (PKR)</th>
-          <th class="py-3.5 px-5">Live Status</th>
-          <th class="py-3.5 px-5">Rider / Dispatch</th>
-          <th class="py-3.5 px-5 text-right">Actions</th>
+          <th class="py-3.5 px-5">Status</th>
+          <th class="py-3.5 px-5 text-right">Update Status</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-neutral-100 text-neutral-700">
@@ -49,26 +48,26 @@ const displayOrders = adminOrdersList.slice(0, limit);
           let badgeClass = 'bg-neutral-100 text-neutral-700';
           if (order.status === 'Pending') badgeClass = 'bg-amber-100 text-amber-800 border border-amber-200';
           if (order.status === 'Preparing') badgeClass = 'bg-blue-100 text-blue-800 border border-blue-200';
-          if (order.status === 'Out for Delivery') badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200 animate-pulse';
+          if (order.status === 'Out for Delivery') badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200';
           if (order.status === 'Delivered') badgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200';
 
           return (
             <tr class="hover:bg-neutral-50/70 transition-colors order-row" data-status={order.status}>
               <!-- Order ID -->
-              <td class="py-4 px-5 font-bold text-[#000104]">
+              <td class="py-3.5 px-5 font-bold text-[#000104]">
                 #{order.id}
                 <span class="block text-[10px] text-neutral-400 font-normal">{order.time}</span>
               </td>
 
               <!-- Customer -->
-              <td class="py-4 px-5">
+              <td class="py-3.5 px-5">
                 <span class="font-bold text-neutral-900 block">{order.customer}</span>
                 <span class="text-neutral-500 text-[11px] block">{order.phone}</span>
                 <span class="text-neutral-400 text-[10px] block truncate max-w-[180px]">{order.address}</span>
               </td>
 
               <!-- Items -->
-              <td class="py-4 px-5">
+              <td class="py-3.5 px-5">
                 <span class="font-semibold text-neutral-800">{order.itemsCount} Items</span>
                 <div class="text-[11px] text-neutral-500 truncate max-w-[180px]">
                   {order.items.map(it => `${it.name} (x${it.qty})`).join(', ')}
@@ -76,41 +75,25 @@ const displayOrders = adminOrdersList.slice(0, limit);
               </td>
 
               <!-- Total in PKR -->
-              <td class="py-4 px-5">
-                <span class="font-extrabold text-[#000104] text-sm block">
-                  PKR {order.total.toLocaleString()}
-                </span>
-                <span class="text-[10px] text-neutral-500">
-                  {order.paymentMethod}
-                </span>
+              <td class="py-3.5 px-5 font-bold text-[#000104]">
+                PKR {order.total.toLocaleString()}
+                <span class="block text-[10px] text-neutral-400 font-normal">{order.paymentMethod}</span>
               </td>
 
               <!-- Status Badge -->
-              <td class="py-4 px-5">
-                <span class={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass}`}>
+              <td class="py-3.5 px-5">
+                <span class={`order-badge inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass}`}>
                   {order.status}
                 </span>
               </td>
 
-              <!-- Rider -->
-              <td class="py-4 px-5">
-                <span class="font-medium text-neutral-800 text-[11px] block">{order.rider}</span>
-                {order.riderPhone !== '-' && (
-                  <span class="text-[10px] text-neutral-400">{order.riderPhone}</span>
-                )}
-              </td>
-
-              <!-- Actions Dropdown -->
-              <td class="py-4 px-5 text-right space-x-1.5 whitespace-nowrap">
-                <select 
-                  class="bg-white border border-neutral-300 rounded-lg text-[11px] font-semibold py-1 px-2 text-neutral-700 focus:outline-none focus:border-black cursor-pointer shadow-sm"
-                  onchange="alert('Order status updated in system!')"
-                >
-                  <option selected disabled>Change Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Preparing">Preparing</option>
-                  <option value="Out for Delivery">Out for Delivery</option>
-                  <option value="Delivered">Delivered</option>
+              <!-- Actions: Dropdown to Change Status -->
+              <td class="py-3.5 px-5 text-right whitespace-nowrap">
+                <select class="order-status-changer text-xs bg-white border border-neutral-300 rounded-lg px-2.5 py-1 text-neutral-800 focus:outline-none focus:border-black font-medium cursor-pointer">
+                  <option value="Pending" selected={order.status === 'Pending'}>Pending</option>
+                  <option value="Preparing" selected={order.status === 'Preparing'}>Preparing</option>
+                  <option value="Out for Delivery" selected={order.status === 'Out for Delivery'}>Out for Delivery</option>
+                  <option value="Delivered" selected={order.status === 'Delivered'}>Delivered</option>
                 </select>
               </td>
             </tr>
@@ -120,15 +103,15 @@ const displayOrders = adminOrdersList.slice(0, limit);
     </table>
   </div>
 
-  <div class="p-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500 bg-[#FAF8F5]/50">
-    <span>Showing {displayOrders.length} of {adminOrdersList.length} orders</span>
-    <a href="/admin/orders" class="font-bold text-[#000104] hover:underline">View All Orders →</a>
+  <div class="p-4 border-t border-neutral-100 flex items-center justify-between text-xs text-neutral-500">
+    <span>Showing {displayOrders.length} recent customer orders</span>
+    <a href="/orders" class="font-bold text-[#000104] hover:underline">View All Orders →</a>
   </div>
 
 </div>
 
 <script>
-  // Simple order filter tabs
+  // Filter tabs
   const filterBtns = document.querySelectorAll('.order-filter-btn');
   const rows = document.querySelectorAll('.order-row');
 
@@ -150,6 +133,24 @@ const displayOrders = adminOrdersList.slice(0, limit);
           (r as HTMLElement).style.display = 'none';
         }
       });
+    });
+  });
+
+  // Dropdown Status Changer
+  document.querySelectorAll('.order-status-changer').forEach(sel => {
+    sel.addEventListener('change', (e) => {
+      const target = e.target as HTMLSelectElement;
+      const row = target.closest('.order-row');
+      const badge = row?.querySelector('.order-badge');
+      if (badge && row) {
+        badge.textContent = target.value;
+        row.setAttribute('data-status', target.value);
+        badge.className = 'order-badge inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ';
+        if (target.value === 'Pending') badge.className += 'bg-amber-100 text-amber-800 border border-amber-200';
+        if (target.value === 'Preparing') badge.className += 'bg-blue-100 text-blue-800 border border-blue-200';
+        if (target.value === 'Out for Delivery') badge.className += 'bg-purple-100 text-purple-800 border border-purple-200';
+        if (target.value === 'Delivered') badge.className += 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+      }
     });
   });
 </script>

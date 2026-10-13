@@ -1,0 +1,185 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { adminArticlesList } from '../data/adminMockData.js';
+---
+
+<AdminLayout title="News & Articles CMS" activeNav="news">
+  <div class="space-y-6">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#000104] tracking-tight">Pottery News & Articles (/news)</h1>
+        <p class="text-xs text-[#5E666C] mt-1">
+          Publish guides, craftsmanship spotlights, and ceramic care stories visible on /news.
+        </p>
+      </div>
+
+      <button 
+        id="btn-add-article"
+        type="button" 
+        class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
+      >
+        <span>+ Write New Article</span>
+      </button>
+    </div>
+
+    <!-- Articles Table -->
+    <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-[#FAF8F5] text-neutral-500 uppercase tracking-wider font-bold text-[10px] border-b border-neutral-100">
+            <tr>
+              <th class="py-3 px-4">Article Title</th>
+              <th class="py-3 px-4">Author</th>
+              <th class="py-3 px-4">Category</th>
+              <th class="py-3 px-4">Publish Date</th>
+              <th class="py-3 px-4">Tags</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="articles-body" class="divide-y divide-neutral-100 text-neutral-700">
+            {adminArticlesList.map((art, idx) => (
+              <tr id={`art-row-${idx}`} class="hover:bg-neutral-50/70 transition-colors">
+                <td class="py-3.5 px-4 font-bold text-[#000104] max-w-xs truncate art-title">
+                  {art.title}
+                </td>
+                <td class="py-3.5 px-4 font-medium art-author">{art.author}</td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700">
+                    {art.category}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-neutral-500">{art.date}</td>
+                <td class="py-3.5 px-4">
+                  <div class="flex flex-wrap gap-1">
+                    {art.tags.map(t => (
+                      <span class="text-[10px] text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded">
+                        #{t}
+                      </span>
+                    ))}
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {art.status}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-right space-x-2">
+                  <button class="btn-edit-art text-[#000104] font-semibold underline" data-idx={idx}>Edit</button>
+                  <button class="btn-del-art text-red-500 font-semibold underline" data-idx={idx}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Article Modal -->
+  <div id="article-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="art-modal-title" class="font-bold text-base text-[#000104]">Publish New Article</h3>
+        <button id="close-art-modal" class="text-neutral-400 hover:text-black font-bold text-lg">✕</button>
+      </div>
+
+      <form id="art-form" class="space-y-4 text-xs">
+        <input type="hidden" id="art-idx" value="-1" />
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Article Title</label>
+          <input type="text" id="art-title-input" required class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Author Name</label>
+            <input type="text" id="art-author-input" required class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+          </div>
+          <div>
+            <label class="block font-semibold mb-1 text-neutral-800">Category</label>
+            <input type="text" id="art-cat-input" required placeholder="e.g. Ceramic Art, Techniques" class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+          </div>
+        </div>
+        <div class="pt-3 flex justify-end gap-2 border-t">
+          <button type="button" id="cancel-art-btn" class="px-4 py-2 border rounded-lg font-semibold text-neutral-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-[#000104] text-white rounded-lg font-bold">Save Article</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  const modal = document.getElementById('article-modal');
+  const modalTitle = document.getElementById('art-modal-title');
+  const form = document.getElementById('art-form');
+  const artIdx = document.getElementById('art-idx') as HTMLInputElement;
+  const titleInput = document.getElementById('art-title-input') as HTMLInputElement;
+  const authorInput = document.getElementById('art-author-input') as HTMLInputElement;
+  const catInput = document.getElementById('art-cat-input') as HTMLInputElement;
+
+  document.getElementById('btn-add-article')?.addEventListener('click', () => {
+    artIdx.value = '-1';
+    titleInput.value = '';
+    authorInput.value = '';
+    catInput.value = '';
+    if (modalTitle) modalTitle.textContent = 'Publish New Article';
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+  });
+
+  document.getElementById('close-art-modal')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+  document.getElementById('cancel-art-btn')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  function attachArtListeners() {
+    document.querySelectorAll('.btn-edit-art').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        const row = document.getElementById(`art-row-${idx}`);
+        if (!row) return;
+        artIdx.value = idx;
+        titleInput.value = row.querySelector('.art-title')?.textContent?.trim() || '';
+        authorInput.value = row.querySelector('.art-author')?.textContent?.trim() || '';
+        catInput.value = 'Ceramics';
+        if (modalTitle) modalTitle.textContent = 'Edit Article';
+        modal?.classList.remove('opacity-0', 'pointer-events-none');
+      };
+    });
+
+    document.querySelectorAll('.btn-del-art').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        if (confirm('Delete this article?')) {
+          document.getElementById(`art-row-${idx}`)?.remove();
+        }
+      };
+    });
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const idx = parseInt(artIdx.value);
+    const title = titleInput.value;
+    const author = authorInput.value;
+
+    if (idx !== -1) {
+      const row = document.getElementById(`art-row-${idx}`);
+      if (row) {
+        const t = row.querySelector('.art-title');
+        const a = row.querySelector('.art-author');
+        if (t) t.textContent = title;
+        if (a) a.textContent = author;
+      }
+    }
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  attachArtListeners();
+</script>
+

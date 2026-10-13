@@ -1,0 +1,222 @@
+---
+import AdminLayout from '../layouts/AdminLayout.astro';
+import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.js';
+---
+
+<AdminLayout title="Services & Quotation Leads" activeNav="services">
+  <div class="space-y-6">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-[#000104] tracking-tight">Services & Quotations (/service)</h1>
+        <p class="text-xs text-[#5E666C] mt-1">
+          Manage pottery services displayed on the storefront /service page and handle corporate B2B quotation inquiries.
+        </p>
+      </div>
+
+      <button 
+        id="btn-add-service"
+        type="button" 
+        class="inline-flex items-center gap-2 bg-[#000104] hover:bg-neutral-800 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all"
+      >
+        <span>+ Add New Service</span>
+      </button>
+    </div>
+
+    <!-- Incoming Client Inquiries Table -->
+    <div class="bg-white rounded-2xl border border-neutral-200/80 shadow-xs overflow-hidden">
+      <div class="px-5 py-4 border-b border-neutral-100 flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-bold text-[#000104]">Incoming B2B & Custom Leads</h2>
+          <p class="text-xs text-[#5E666C]">Direct quote requests submitted by clients on the storefront Service page.</p>
+        </div>
+        <span class="text-xs font-semibold text-neutral-600 bg-neutral-100 px-2.5 py-1 rounded-full">
+          {adminServiceInquiries.length} Active Leads
+        </span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-[#FAF8F5] text-neutral-500 uppercase tracking-wider font-bold text-[10px] border-b border-neutral-100">
+            <tr>
+              <th class="py-3 px-4">Lead ID</th>
+              <th class="py-3 px-4">Client Name</th>
+              <th class="py-3 px-4">Service Requested</th>
+              <th class="py-3 px-4">Quantity / Units</th>
+              <th class="py-3 px-4">Budget</th>
+              <th class="py-3 px-4">Contact</th>
+              <th class="py-3 px-4">Status</th>
+              <th class="py-3 px-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-100 text-neutral-700">
+            {adminServiceInquiries.map((inq) => (
+              <tr class="hover:bg-neutral-50/70 transition-colors">
+                <td class="py-3.5 px-4 font-mono font-bold text-[#000104]">{inq.id}</td>
+                <td class="py-3.5 px-4 font-semibold text-[#000104]">{inq.client}</td>
+                <td class="py-3.5 px-4 font-medium">{inq.service}</td>
+                <td class="py-3.5 px-4">{inq.units} units</td>
+                <td class="py-3.5 px-4 font-semibold text-emerald-700">{inq.budget}</td>
+                <td class="py-3.5 px-4">
+                  <div class="space-y-0.5">
+                    <p class="text-[#000104]">{inq.phone}</p>
+                    <p class="text-[11px] text-neutral-400">{inq.email}</p>
+                  </div>
+                </td>
+                <td class="py-3.5 px-4">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                    {inq.status}
+                  </span>
+                </td>
+                <td class="py-3.5 px-4 text-right">
+                  <button class="text-[#000104] font-semibold hover:underline" onclick={`alert('Replying to client: ${inq.email}')`}>
+                    Reply / Quote →
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Active Store Services Grid -->
+    <div class="space-y-3">
+      <h2 class="text-sm font-bold text-[#000104]">Active Storefront Services Catalog</h2>
+      <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {adminServicesList.map((srv, idx) => (
+          <div id={`srv-card-${idx}`} class="bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs flex flex-col justify-between space-y-4 hover:border-black transition-colors">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded">
+                  {srv.category}
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                  {srv.status}
+                </span>
+              </div>
+              <h3 class="srv-title text-sm font-bold text-[#000104]">{srv.title}</h3>
+              <p class="srv-desc text-xs text-[#5E666C] mt-2 leading-relaxed">
+                {srv.description}
+              </p>
+            </div>
+            
+            <div class="pt-3 border-t border-neutral-100 flex items-center justify-between">
+              <span class="text-xs font-medium text-neutral-500">
+                <strong class="text-[#000104]">{srv.activeRequests}</strong> inquiries
+              </span>
+              <div class="space-x-2">
+                <button class="btn-edit-srv text-xs font-semibold text-neutral-800 underline" data-idx={idx}>Edit</button>
+                <button class="btn-del-srv text-xs font-semibold text-red-500 underline" data-idx={idx}>Delete</button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Service Modal -->
+  <div id="service-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="srv-modal-title" class="font-bold text-base text-[#000104]">Add New Service</h3>
+        <button id="close-srv-modal" class="text-neutral-400 hover:text-black font-bold text-lg">✕</button>
+      </div>
+
+      <form id="srv-form" class="space-y-4 text-xs">
+        <input type="hidden" id="srv-index" value="-1" />
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Service Title</label>
+          <input type="text" id="srv-title-input" required class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+        </div>
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Category</label>
+          <input type="text" id="srv-cat-input" required placeholder="e.g. Commercial, Gifting, Restoration" class="w-full border rounded-lg p-2.5 bg-neutral-50" />
+        </div>
+        <div>
+          <label class="block font-semibold mb-1 text-neutral-800">Description</label>
+          <textarea id="srv-desc-input" rows="3" required class="w-full border rounded-lg p-2.5 bg-neutral-50"></textarea>
+        </div>
+        <div class="pt-3 flex justify-end gap-2 border-t">
+          <button type="button" id="cancel-srv-btn" class="px-4 py-2 border rounded-lg font-semibold text-neutral-600">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-[#000104] text-white rounded-lg font-bold">Save Service</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</AdminLayout>
+
+<script>
+  const modal = document.getElementById('service-modal');
+  const modalTitle = document.getElementById('srv-modal-title');
+  const form = document.getElementById('srv-form');
+  const srvIdx = document.getElementById('srv-index') as HTMLInputElement;
+  const titleInput = document.getElementById('srv-title-input') as HTMLInputElement;
+  const catInput = document.getElementById('srv-cat-input') as HTMLInputElement;
+  const descInput = document.getElementById('srv-desc-input') as HTMLTextAreaElement;
+
+  document.getElementById('btn-add-service')?.addEventListener('click', () => {
+    srvIdx.value = '-1';
+    titleInput.value = '';
+    catInput.value = '';
+    descInput.value = '';
+    if (modalTitle) modalTitle.textContent = 'Add New Service';
+    modal?.classList.remove('opacity-0', 'pointer-events-none');
+  });
+
+  document.getElementById('close-srv-modal')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+  document.getElementById('cancel-srv-btn')?.addEventListener('click', () => {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  function attachSrvListeners() {
+    document.querySelectorAll('.btn-edit-srv').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        const card = document.getElementById(`srv-card-${idx}`);
+        if (!card) return;
+        srvIdx.value = idx;
+        titleInput.value = card.querySelector('.srv-title')?.textContent || '';
+        descInput.value = card.querySelector('.srv-desc')?.textContent || '';
+        catInput.value = 'Custom';
+        if (modalTitle) modalTitle.textContent = 'Edit Service';
+        modal?.classList.remove('opacity-0', 'pointer-events-none');
+      };
+    });
+
+    document.querySelectorAll('.btn-del-srv').forEach(b => {
+      b.onclick = (e) => {
+        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        if (confirm('Delete this service?')) {
+          document.getElementById(`srv-card-${idx}`)?.remove();
+        }
+      };
+    });
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const idx = parseInt(srvIdx.value);
+    const title = titleInput.value;
+    const desc = descInput.value;
+
+    if (idx !== -1) {
+      const card = document.getElementById(`srv-card-${idx}`);
+      if (card) {
+        const t = card.querySelector('.srv-title');
+        const d = card.querySelector('.srv-desc');
+        if (t) t.textContent = title;
+        if (d) d.textContent = desc;
+      }
+    }
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  attachSrvListeners();
+</script>
+
