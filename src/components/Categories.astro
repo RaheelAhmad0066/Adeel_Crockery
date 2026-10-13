@@ -14,9 +14,9 @@ import { categoriesData } from '../data/mockData.js';
       </p>
     </div>
 
-    <!-- Categories Container with Right Arrow -->
+    <!-- Categories Container: Grid on Mobile (2 columns), Carousel on Desktop -->
     <div class="relative">
-      <div id="categories-grid-container" class="flex gap-6 overflow-x-auto pb-6 hide-scrollbar scroll-smooth">
+      <div id="categories-grid-container" class="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-nowrap gap-4 sm:gap-6 lg:overflow-x-auto pb-4 lg:pb-6 hide-scrollbar scroll-smooth">
         {categoriesData.map((cat, index) => {
           const isSelected = index === 0;
           const cardBgClass = isSelected ? 'bg-[#EDEDED]' : 'bg-white border border-neutral-200/80';
@@ -25,27 +25,27 @@ import { categoriesData } from '../data/mockData.js';
           return (
             <div 
               onclick={`window.location.href='/product?id=${cat.id}'`}
-              class="w-[230px] flex-shrink-0 flex flex-col group cursor-pointer relative"
+              class="w-full lg:w-[230px] lg:flex-shrink-0 flex flex-col group cursor-pointer relative"
             >
               <!-- Card Image Container -->
-              <div class={`h-[290px] w-full rounded-2xl ${cardBgClass} flex items-center justify-center overflow-hidden relative card-hover transition-transform duration-300 group-hover:shadow-md`}>
+              <div class={`h-[200px] sm:h-[250px] lg:h-[290px] w-full rounded-2xl ${cardBgClass} flex items-center justify-center overflow-hidden relative card-hover transition-transform duration-300 group-hover:shadow-md p-3`}>
                 {isSelected && (
-                  <div class="w-40 h-40 rounded-full bg-white absolute pointer-events-none shadow-sm"></div>
+                  <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white absolute pointer-events-none shadow-sm"></div>
                 )}
                 <img 
                   src={imgSrc} 
                   alt={cat.name} 
-                  class="h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth"
+                  class="h-28 sm:h-36 lg:h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth"
                 />
               </div>
 
               <!-- Title & Price (Under the Box) -->
-              <div class="pt-3 flex flex-col items-start">
-                <h4 class="font-bold text-[18px] text-[#000104] group-hover:text-neutral-700 transition-colors">
+              <div class="pt-2 sm:pt-3 flex flex-col items-start">
+                <h4 class="font-bold text-sm sm:text-base lg:text-[18px] text-[#000104] group-hover:text-neutral-700 transition-colors">
                   {cat.name}
                 </h4>
-                <span class="text-[15px] font-medium text-[#5E666C] mt-0.5">
-                  ${cat.price}
+                <span class="text-xs sm:text-[15px] font-medium text-[#5E666C] mt-0.5">
+                  PKR {cat.price}
                 </span>
               </div>
             </div>
@@ -53,10 +53,10 @@ import { categoriesData } from '../data/mockData.js';
         })}
       </div>
 
-      <!-- Carousel Right Arrow -->
+      <!-- Carousel Right Arrow (Only on Desktop Carousel) -->
       <button 
         id="cat-scroll-right-btn" 
-        class="absolute right-0 top-1/2 -translate-y-8 w-12 h-12 rounded-full bg-white shadow-xl border border-neutral-200 flex items-center justify-center text-neutral-800 z-30 hover:scale-110 transition-smooth btn-press" 
+        class="hidden lg:flex absolute right-0 top-1/2 -translate-y-8 w-12 h-12 rounded-full bg-white shadow-xl border border-neutral-200 items-center justify-center text-neutral-800 z-30 hover:scale-110 transition-smooth btn-press" 
         aria-label="Next Category"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -46,10 +46,10 @@ export class CartDrawerView {
   render() {
     this.countBadges.forEach(b => b.textContent = this.vm.totalItemsCount);
 
-    if (this.subtotalEl) this.subtotalEl.textContent = `$${this.vm.subtotal} USD`;
-    if (this.discountEl) this.discountEl.textContent = this.vm.discount > 0 ? `-$${this.vm.discount} USD` : '$0 USD';
-    if (this.vatEl) this.vatEl.textContent = `$${this.vm.vat} USD`;
-    if (this.totalEl) this.totalEl.textContent = `$${this.vm.grandTotal} USD`;
+    if (this.subtotalEl) this.subtotalEl.textContent = `PKR ${this.vm.subtotal}`;
+    if (this.discountEl) this.discountEl.textContent = this.vm.discount > 0 ? `-PKR ${this.vm.discount}` : 'PKR 0';
+    if (this.vatEl) this.vatEl.textContent = `PKR ${this.vm.vat}`;
+    if (this.totalEl) this.totalEl.textContent = `PKR ${this.vm.grandTotal}`;
 
     if (!this.container) return;
 
@@ -73,7 +73,7 @@ export class CartDrawerView {
         </div>
         <div class="flex-1 min-w-0">
           <h4 class="font-semibold text-neutral-900 text-sm sm:text-base truncate">${item.name}</h4>
-          <span class="text-sm font-medium text-neutral-500">$${item.price} USD</span>
+          <span class="text-sm font-medium text-neutral-500">PKR ${item.price}</span>
           <div class="flex items-center justify-between mt-2">
             <div class="flex items-center border border-neutral-200 rounded-lg overflow-hidden bg-neutral-50 text-xs font-semibold">
               <button data-action="dec" data-id="${item.id}" class="px-2 py-1 hover:bg-neutral-200 transition-colors">-</button>

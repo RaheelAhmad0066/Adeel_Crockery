@@ -18,7 +18,7 @@ export function renderProductCard(product, onAddToCart) {
         ${product.name}
       </a>
       <div class="text-xl font-bold text-[#000104]">
-        ${product.formattedPrice || ((product.currency || '€') + product.price)}
+        ${product.formattedPrice || ((product.currency || 'PKR ') + product.price)}
       </div>
       <button class="add-cart-btn mt-2 inline-flex items-center gap-2 px-4 py-1.5 border border-neutral-400 rounded text-xs font-semibold text-[#000104] hover:bg-[#000104] hover:text-white transition-smooth btn-press">
         <img src="/assets/icons/cart.svg" alt="" class="w-3.5 h-3.5 object-contain">
@@ -56,7 +56,7 @@ export function renderCategoryCard(cat, onAddToCart) {
       <h4 class="font-bold text-[18px] text-[#000104] group-hover:text-neutral-700 transition-colors">
         ${cat.name}
       </h4>
-      <span class="text-[15px] font-medium text-[#5E666C] mt-0.5">$${cat.price}</span>
+      <span class="text-[15px] font-medium text-[#5E666C] mt-0.5">PKR ${cat.price}</span>
     </div>
   `;
 

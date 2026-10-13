@@ -12,30 +12,30 @@ import CartDrawer from '../components/CartDrawer.astro';
   <main class="bg-white min-h-screen relative overflow-hidden flex flex-col justify-between">
 
     <!-- ================= 1. HERO BANNER (Figma Create Account Texture) ================= -->
-    <section class="relative overflow-hidden py-14 sm:py-20 bg-[#F4EBE1] border-b border-neutral-200/50">
+    <section class="relative overflow-hidden py-10 sm:py-20 bg-[#F4EBE1] border-b border-neutral-200/50">
       <img 
         src="/assets/images/Hero Section.svg" 
         alt="" 
         class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-60 mix-blend-multiply"
       />
 
-      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 text-center relative z-10 space-y-3">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 text-center relative z-10 space-y-2">
         <div class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
           <span>Create</span>
           <span class="bg-[#000104] text-white px-2.5 py-0.5 rounded text-xs font-semibold">Account</span>
         </div>
 
-        <h1 class="font-gallient text-4xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
+        <h1 class="font-gallient text-3xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
           Sign Up
         </h1>
       </div>
     </section>
 
     <!-- ================= 2. SIGNUP FORM SECTION ================= -->
-    <section class="relative py-16 sm:py-24 px-4 flex-1 flex items-center justify-center">
+    <section class="relative py-10 sm:py-24 px-4 flex-1 flex items-center justify-center">
       
-      <!-- Decorative Background Tag (matching Figma bottom left corner - flush to left edge) -->
-      <div class="absolute bottom-0 left-0 w-48 sm:w-64 opacity-75 sm:opacity-90 pointer-events-none select-none z-0">
+      <!-- Decorative Background Tag (hidden on small mobile to avoid layout shifts) -->
+      <div class="absolute bottom-0 left-0 w-48 sm:w-64 opacity-50 sm:opacity-90 pointer-events-none select-none z-0 hidden sm:block">
         <img 
           src="/assets/icons/tag-icon.svg" 
           alt="" 
@@ -44,10 +44,10 @@ import CartDrawer from '../components/CartDrawer.astro';
       </div>
 
       <!-- Centered Card -->
-      <div class="relative z-10 w-full max-w-[460px] bg-[#F1EFE6] rounded-2xl p-8 sm:p-11 shadow-sm border border-neutral-200/40">
+      <div class="relative z-10 w-full max-w-[460px] bg-[#F1EFE6] rounded-2xl p-6 sm:p-11 shadow-sm border border-neutral-200/40">
         
         <!-- Form Header -->
-        <h2 class="font-gallient text-3xl sm:text-4xl text-[#000104] font-normal mb-8">
+        <h2 class="font-gallient text-2xl sm:text-4xl text-[#000104] font-normal mb-6 sm:mb-8 text-center sm:text-left">
           Signup
         </h2>
 
@@ -55,7 +55,7 @@ import CartDrawer from '../components/CartDrawer.astro';
           
           <!-- Email Field -->
           <div class="space-y-1.5">
-            <label for="email" class="block text-xs font-medium text-[#4A4F54]">
+            <label for="email" class="block text-xs font-semibold text-[#4A4F54]">
               Email
             </label>
             <div class="relative flex items-center">
@@ -70,14 +70,14 @@ import CartDrawer from '../components/CartDrawer.astro';
                 name="email" 
                 required 
                 placeholder="Enter your email" 
-                class="w-full bg-transparent border border-[#CCD0CA] rounded-md pl-10 pr-4 py-2.5 text-xs text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+                class="w-full bg-white/70 focus:bg-white border border-[#CCD0CA] rounded-lg pl-10 pr-4 py-2.5 sm:py-3 text-sm text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               />
             </div>
           </div>
 
           <!-- Password Field 1 -->
           <div class="space-y-1.5">
-            <label for="password" class="block text-xs font-medium text-[#4A4F54]">
+            <label for="password" class="block text-xs font-semibold text-[#4A4F54]">
               Password
             </label>
             <div class="relative flex items-center">
@@ -92,7 +92,7 @@ import CartDrawer from '../components/CartDrawer.astro';
                 name="password" 
                 required 
                 placeholder="••••••••" 
-                class="w-full bg-transparent border border-[#CCD0CA] rounded-md pl-10 pr-10 py-2.5 text-xs text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+                class="w-full bg-white/70 focus:bg-white border border-[#CCD0CA] rounded-lg pl-10 pr-10 py-2.5 sm:py-3 text-sm text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               />
               <button 
                 type="button" 
@@ -110,8 +110,8 @@ import CartDrawer from '../components/CartDrawer.astro';
 
           <!-- Confirm Password Field 2 -->
           <div class="space-y-1.5">
-            <label for="confirm-password" class="block text-xs font-medium text-[#4A4F54]">
-              Password
+            <label for="confirm-password" class="block text-xs font-semibold text-[#4A4F54]">
+              Confirm Password
             </label>
             <div class="relative flex items-center">
               <span class="absolute left-3.5 text-neutral-400 pointer-events-none flex items-center">
@@ -124,8 +124,8 @@ import CartDrawer from '../components/CartDrawer.astro';
                 id="confirm-password" 
                 name="confirm-password" 
                 required 
-                placeholder="Enter password" 
-                class="w-full bg-transparent border border-[#CCD0CA] rounded-md pl-10 pr-10 py-2.5 text-xs text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+                placeholder="Re-enter password" 
+                class="w-full bg-white/70 focus:bg-white border border-[#CCD0CA] rounded-lg pl-10 pr-10 py-2.5 sm:py-3 text-sm text-[#000104] placeholder:text-neutral-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
               />
               <button 
                 type="button" 
@@ -143,23 +143,23 @@ import CartDrawer from '../components/CartDrawer.astro';
 
           <!-- Terms & Conditions checkbox matching Figma -->
           <div class="pt-1">
-            <label class="flex items-start gap-2 cursor-pointer text-[11px] text-[#5E666C] leading-snug">
+            <label class="flex items-start gap-2 cursor-pointer text-xs text-[#5E666C] leading-snug">
               <input 
                 type="checkbox" 
                 required 
                 class="w-3.5 h-3.5 mt-0.5 rounded border-neutral-300 text-black focus:ring-black accent-black cursor-pointer"
               />
               <span>
-                I agree to platform's <a href="#" class="text-[#E04F36] hover:underline">Terms of Service</a> and <a href="#" class="text-[#E04F36] hover:underline">Privacy Policy</a>
+                I agree to platform's <a href="#" class="text-[#E04F36] hover:underline font-medium">Terms of Service</a> and <a href="#" class="text-[#E04F36] hover:underline font-medium">Privacy Policy</a>
               </span>
             </label>
           </div>
 
           <!-- Submit Button -->
-          <div class="pt-3">
+          <div class="pt-2">
             <button 
               type="submit" 
-              class="w-full bg-[#000104] text-white py-3 rounded-md text-xs font-semibold tracking-wide hover:bg-neutral-800 transition-colors btn-press shadow-sm"
+              class="w-full bg-[#000104] text-white py-3 sm:py-3.5 rounded-lg text-sm font-semibold tracking-wide hover:bg-neutral-800 transition-colors btn-press shadow-sm"
             >
               Sign Up
             </button>
@@ -168,7 +168,7 @@ import CartDrawer from '../components/CartDrawer.astro';
           <!-- Footer Switch to Login -->
           <div class="text-center pt-2 text-xs text-[#5E666C]">
             <span>Already have an account? </span>
-            <a href="/login" class="font-semibold text-[#000104] hover:underline underline-offset-2">
+            <a href="/login" class="font-bold text-[#000104] hover:underline underline-offset-2">
               Login
             </a>
           </div>

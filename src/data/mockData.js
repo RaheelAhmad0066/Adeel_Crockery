@@ -13,11 +13,11 @@ export const categoriesData = [
  * Exact Products Data matching Figma Node 1754:2258
  */
 export const productsData = [
-  { id: 101, name: 'Box Deal B-Stock ASA', price: 32999, currency: '€', image: 'assets/images/prod-1.png' },
-  { id: 102, name: 'Box Deal B-Stock ASA', price: 32999, currency: '€', image: 'assets/images/prod-2.png' },
-  { id: 103, name: 'Box Deal B-Stock ASA', price: 32999, currency: '€', image: 'assets/images/prod-3.png' },
-  { id: 104, name: 'Box Deal B-Stock ASA', price: 32999, currency: '€', image: 'assets/images/prod-4.png' },
-  { id: 105, name: 'Box Deal B-Stock ASA', price: 32999, currency: '€', image: 'assets/images/prod-5.png' }
+  { id: 101, name: 'Box Deal B-Stock ASA', price: 32999, currency: 'PKR ', image: 'assets/images/prod-1.png' },
+  { id: 102, name: 'Box Deal B-Stock ASA', price: 32999, currency: 'PKR ', image: 'assets/images/prod-2.png' },
+  { id: 103, name: 'Box Deal B-Stock ASA', price: 32999, currency: 'PKR ', image: 'assets/images/prod-3.png' },
+  { id: 104, name: 'Box Deal B-Stock ASA', price: 32999, currency: 'PKR ', image: 'assets/images/prod-4.png' },
+  { id: 105, name: 'Box Deal B-Stock ASA', price: 32999, currency: 'PKR ', image: 'assets/images/prod-5.png' }
 ];
 
 /**

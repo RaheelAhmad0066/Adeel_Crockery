@@ -26,22 +26,23 @@ const { active = 'home', showCategoryBar = true } = Astro.props;
     </nav>
 
     <!-- Right Action Items (Figma cart.svg) -->
-    <div class="flex items-center gap-4 sm:gap-6 flex-shrink-0">
-      <button id="cart-btn" class="flex items-center gap-2 text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press">
+    <div class="flex items-center gap-2.5 sm:gap-6 flex-shrink-0">
+      <button id="cart-btn" class="flex items-center gap-1.5 sm:gap-2 text-[15px] sm:text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press p-1 sm:p-0">
         <img src="/assets/icons/cart.svg" alt="Cart" class="w-5 h-5 object-contain">
         <span class="hidden sm:inline">Cart</span>
-        <span class="cart-count-badge bg-[#000104] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
+        <span class="cart-count-badge bg-[#000104] text-white text-[11px] rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
       </button>
 
       <span class="hidden sm:inline-block h-5 w-[1px] bg-neutral-300"></span>
 
       <a href="/login" class="hidden sm:inline-block text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
 
-      <a href="/signup" class="bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+      <a href="/signup" class="hidden sm:inline-block bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
         Sign Up
       </a>
 
-      <button id="mobile-menu-btn" class="lg:hidden text-[#000104] p-2" aria-label="Toggle navigation menu">
+      <!-- Mobile Hamburger Button -->
+      <button id="mobile-menu-btn" class="lg:hidden text-[#000104] p-2 hover:bg-neutral-100 rounded-lg transition-colors" aria-label="Toggle navigation menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
@@ -163,80 +164,168 @@ const { active = 'home', showCategoryBar = true } = Astro.props;
   </div>
   )}
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
-    <a href="/" class={active === 'home' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Home</a>
-    <a href="/about" class={active === 'about' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>About</a>
-    <a href="/shop" class={active === 'shop' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Shop</a>
-    <a href="/service" class={active === 'service' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Service</a>
-    <a href="/news" class={active === 'news' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>News</a>
+</header>
 
-    <div class="flex items-center gap-3 pt-2">
-      <a href="/login" class="flex-1 text-center py-2 text-sm font-medium border border-neutral-300 rounded text-[#000104]">Login</a>
-      <a href="/signup" class="flex-1 text-center py-2 text-sm font-medium bg-[#000104] text-white rounded">Sign Up</a>
-    </div>
+<!-- Mobile Menu Backdrop Overlay (Full Screen z-[998]) -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 z-[998] opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
 
-    <!-- Mobile Categories Accordion -->
-    <div class="pt-3 border-t border-neutral-200">
-      <p class="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">Categories</p>
+<!-- Mobile Off-Canvas Slide Drawer (Full Screen z-[999]) -->
+<aside id="mobile-menu" class="fixed top-0 right-0 h-full w-[85%] max-w-[340px] bg-white z-[999] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col justify-between lg:hidden overflow-hidden">
+  
+  <!-- Drawer Header -->
+  <div class="p-5 border-b border-neutral-100 flex items-center justify-between bg-white flex-shrink-0">
+    <a href="/" class="flex items-center gap-2">
+      <img src="/assets/icons/logo.svg" alt="Earthware" class="h-7 w-auto object-contain">
+    </a>
+    <button id="close-mobile-menu-btn" class="p-2 text-neutral-500 hover:text-black rounded-lg transition-colors" aria-label="Close menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Drawer Navigation Content -->
+  <div class="p-5 space-y-5 overflow-y-auto flex-1 bg-white">
+    <!-- Main Nav Links (ListTile Style with Horizontal Chevron) -->
+    <nav class="space-y-1 text-sm font-semibold">
+      <a href="/" class={active === 'home' ? "group flex items-center justify-between py-2.5 px-3 rounded-lg bg-neutral-100 text-[#000104] font-bold" : "group flex items-center justify-between py-2.5 px-3 rounded-lg text-neutral-700 hover:text-black hover:bg-neutral-50 transition-colors"}>
+        <span>Home</span>
+        <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </a>
+      <a href="/about" class={active === 'about' ? "group flex items-center justify-between py-2.5 px-3 rounded-lg bg-neutral-100 text-[#000104] font-bold" : "group flex items-center justify-between py-2.5 px-3 rounded-lg text-neutral-700 hover:text-black hover:bg-neutral-50 transition-colors"}>
+        <span>About</span>
+        <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </a>
+      <a href="/shop" class={active === 'shop' ? "group flex items-center justify-between py-2.5 px-3 rounded-lg bg-neutral-100 text-[#000104] font-bold" : "group flex items-center justify-between py-2.5 px-3 rounded-lg text-neutral-700 hover:text-black hover:bg-neutral-50 transition-colors"}>
+        <span>Shop</span>
+        <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </a>
+      <a href="/service" class={active === 'service' ? "group flex items-center justify-between py-2.5 px-3 rounded-lg bg-neutral-100 text-[#000104] font-bold" : "group flex items-center justify-between py-2.5 px-3 rounded-lg text-neutral-700 hover:text-black hover:bg-neutral-50 transition-colors"}>
+        <span>Service</span>
+        <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </a>
+      <a href="/news" class={active === 'news' ? "group flex items-center justify-between py-2.5 px-3 rounded-lg bg-neutral-100 text-[#000104] font-bold" : "group flex items-center justify-between py-2.5 px-3 rounded-lg text-neutral-700 hover:text-black hover:bg-neutral-50 transition-colors"}>
+        <span>News</span>
+        <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+      </a>
+    </nav>
+
+
+    <!-- Categories Accordion Section (ListTile Style) -->
+    <div class="pt-4 border-t border-neutral-100">
+      <p class="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2 px-1">Explore Categories</p>
       <div class="space-y-1 text-sm font-medium text-neutral-700">
-        <details class="group py-1">
-          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
-            Crockery <span class="text-xs">▾</span>
+        
+        <!-- Crockery (Expandable ListTile with horizontal arrow rotating to down) -->
+        <details class="group">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-2 px-2.5 rounded-lg hover:bg-neutral-50 font-semibold text-[#000104] transition-colors">
+            <span>Crockery</span>
+            <svg class="w-4 h-4 text-neutral-400 group-open:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </summary>
-          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
-            <a href="/shop?cat=plate-sets" class="block py-0.5">Plate sets</a>
-            <a href="/shop?cat=tea-cups-and-saucers" class="block py-0.5">Tea cups and Saucers</a>
-            <a href="/shop?cat=2-tier-3-tier" class="block py-0.5">2-Tier & 3-Tier</a>
-            <a href="/shop?cat=dessert-set" class="block py-0.5">Dessert Set</a>
-            <a href="/shop?cat=cutlery" class="block py-0.5">Cutlery</a>
-            <a href="/shop?cat=cake-stand" class="block py-0.5">Cake Stand</a>
-            <a href="/shop?cat=cake-lifter" class="block py-0.5">Cake Lifter</a>
-            <a href="/shop?cat=mugs" class="block py-0.5">Mugs</a>
-            <a href="/shop?cat=trays" class="block py-0.5">Trays</a>
-            <a href="/shop?cat=glass-and-water-set" class="block py-0.5">Glass and water set</a>
-            <a href="/shop?cat=jars" class="block py-0.5">Jars</a>
-            <a href="/shop?cat=glasslock-containers" class="block py-0.5">GlassLock Storage Containers</a>
+          <div class="pl-4 pr-1 pt-1 pb-2 space-y-1 text-xs text-[#5E666C] border-l-2 border-neutral-100 ml-3.5 my-1">
+            <a href="/shop?cat=plate-sets" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Plate sets</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=tea-cups-and-saucers" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Tea cups and Saucers</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=2-tier-3-tier" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>2-Tier & 3-Tier</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=dessert-set" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Dessert Set</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=cutlery" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Cutlery</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=cake-stand" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Cake Stand</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=cake-lifter" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Cake Lifter</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=mugs" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Mugs</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=trays" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Trays</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=glass-and-water-set" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Glass and water set</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=jars" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Jars</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=glasslock-containers" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>GlassLock Storage Containers</span><span class="text-neutral-300">›</span></a>
           </div>
         </details>
-        <a href="/shop?tag=new-arrivals" class="block py-1">New Arrivals</a>
-        <details class="group py-1">
-          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
-            Silverware <span class="text-xs">▾</span>
+
+        <!-- New Arrivals (Direct ListTile) -->
+        <a href="/shop?tag=new-arrivals" class="group flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-neutral-50 text-neutral-800 hover:text-black transition-colors">
+          <span>New Arrivals</span>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <!-- Silverware -->
+        <details class="group">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-2 px-2.5 rounded-lg hover:bg-neutral-50 font-semibold text-[#000104] transition-colors">
+            <span>Silverware</span>
+            <svg class="w-4 h-4 text-neutral-400 group-open:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </summary>
-          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
-            <a href="/shop?cat=silver-bowl" class="block py-0.5">Silver Bowl</a>
-            <a href="/shop?cat=silver-platters" class="block py-0.5">Silver Platters</a>
-            <a href="/shop?cat=chafing-dish" class="block py-0.5">Chafing Dish</a>
+          <div class="pl-4 pr-1 pt-1 pb-2 space-y-1 text-xs text-[#5E666C] border-l-2 border-neutral-100 ml-3.5 my-1">
+            <a href="/shop?cat=silver-bowl" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Silver Bowl</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=silver-platters" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Silver Platters</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=chafing-dish" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Chafing Dish</span><span class="text-neutral-300">›</span></a>
           </div>
         </details>
-        <a href="/shop?cat=copperware" class="block py-1">Copperware</a>
-        <details class="group py-1">
-          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
-            Brass Ware <span class="text-xs">▾</span>
+
+        <!-- Copperware -->
+        <a href="/shop?cat=copperware" class="group flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-neutral-50 text-neutral-800 hover:text-black transition-colors">
+          <span>Copperware</span>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <!-- Brass Ware -->
+        <details class="group">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-2 px-2.5 rounded-lg hover:bg-neutral-50 font-semibold text-[#000104] transition-colors">
+            <span>Brass Ware</span>
+            <svg class="w-4 h-4 text-neutral-400 group-open:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </summary>
-          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
-            <a href="/shop?cat=brass-ware" class="block py-0.5">Brass Ware</a>
-            <a href="/shop?cat=brass-serving-thaal" class="block py-0.5">Brass Serving / Thaal</a>
-            <a href="/shop?cat=brass-chafing-dish" class="block py-0.5">Brass Chafing Dish</a>
+          <div class="pl-4 pr-1 pt-1 pb-2 space-y-1 text-xs text-[#5E666C] border-l-2 border-neutral-100 ml-3.5 my-1">
+            <a href="/shop?cat=brass-ware" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Brass Ware</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=brass-serving-thaal" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Brass Serving / Thaal</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=brass-chafing-dish" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Brass Chafing Dish</span><span class="text-neutral-300">›</span></a>
           </div>
         </details>
-        <a href="/shop?cat=serveware" class="block py-1">Serveware</a>
-        <a href="/shop?cat=casserole-dish" class="block py-1">Casserole Dish</a>
-        <details class="group py-1">
-          <summary class="cursor-pointer list-none flex justify-between items-center py-1 font-semibold text-[#000104]">
-            Home Decor <span class="text-xs">▾</span>
+
+        <!-- Serveware -->
+        <a href="/shop?cat=serveware" class="group flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-neutral-50 text-neutral-800 hover:text-black transition-colors">
+          <span>Serveware</span>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <!-- Casserole Dish -->
+        <a href="/shop?cat=casserole-dish" class="group flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-neutral-50 text-neutral-800 hover:text-black transition-colors">
+          <span>Casserole Dish</span>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <!-- Home Decor -->
+        <details class="group">
+          <summary class="cursor-pointer list-none flex justify-between items-center py-2 px-2.5 rounded-lg hover:bg-neutral-50 font-semibold text-[#000104] transition-colors">
+            <span>Home Decor</span>
+            <svg class="w-4 h-4 text-neutral-400 group-open:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
           </summary>
-          <div class="pl-4 pt-1 space-y-1.5 text-xs text-[#5E666C]">
-            <a href="/shop?cat=candle-stands" class="block py-0.5">Candle stands</a>
-            <a href="/shop?cat=accessories" class="block py-0.5">Accessories</a>
-            <a href="/shop?cat=planters" class="block py-0.5">Planters</a>
-            <a href="/shop?cat=table-mats-placemats" class="block py-0.5">Table mats/ placemats</a>
+          <div class="pl-4 pr-1 pt-1 pb-2 space-y-1 text-xs text-[#5E666C] border-l-2 border-neutral-100 ml-3.5 my-1">
+            <a href="/shop?cat=candle-stands" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Candle stands</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=accessories" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Accessories</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=planters" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Planters</span><span class="text-neutral-300">›</span></a>
+            <a href="/shop?cat=table-mats-placemats" class="flex items-center justify-between py-1.5 px-2 rounded hover:bg-neutral-50 hover:text-black transition-colors"><span>Table mats/ placemats</span><span class="text-neutral-300">›</span></a>
           </div>
         </details>
-        <a href="/shop?cat=bathroom-set" class="block py-1">Bathroom Set</a>
+
+        <!-- Bathroom Set -->
+        <a href="/shop?cat=bathroom-set" class="group flex items-center justify-between py-2 px-2.5 rounded-lg hover:bg-neutral-50 text-neutral-800 hover:text-black transition-colors">
+          <span>Bathroom Set</span>
+          <svg class="w-4 h-4 text-neutral-400 group-hover:text-black group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
       </div>
     </div>
   </div>
-</header>
+
+  <!-- Drawer Footer (Login at bottom, no signup) -->
+  <div class="p-4 bg-[#FAF8F5] border-t border-neutral-100 space-y-3 flex-shrink-0">
+    <a href="/login" class="flex items-center justify-center gap-2 w-full py-2.5 text-xs font-bold uppercase tracking-wider border border-[#000104] text-[#000104] hover:bg-[#000104] hover:text-white rounded-lg transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
+      <span>Login</span>
+    </a>
+    <div class="text-[11px] text-neutral-400 text-center">
+      © 2024 Earthware Pottery Store
+    </div>
+  </div>
+</aside>
 

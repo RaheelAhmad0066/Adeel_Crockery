@@ -81,7 +81,7 @@ class App {
   }
 
   setupTestimonials() {
-    const container = document.getElementById('testimonials-grid-container');
+    const container = document.getElementById('testimonials-container');
     if (!container) return;
 
     const render = () => {
@@ -108,11 +108,28 @@ class App {
   setupNavigation() {
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileBtn && mobileMenu) {
-      mobileBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-      });
-    }
+    const mobileOverlay = document.getElementById('mobile-menu-overlay');
+    const closeBtn = document.getElementById('close-mobile-menu-btn');
+
+    const openMenu = () => {
+      if (mobileMenu && mobileOverlay) {
+        mobileMenu.classList.remove('translate-x-full');
+        mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden';
+      }
+    };
+
+    const closeMenu = () => {
+      if (mobileMenu && mobileOverlay) {
+        mobileMenu.classList.add('translate-x-full');
+        mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = '';
+      }
+    };
+
+    if (mobileBtn) mobileBtn.addEventListener('click', openMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+    if (mobileOverlay) mobileOverlay.addEventListener('click', closeMenu);
   }
 
   setupNewsletter() {

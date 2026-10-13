@@ -2,7 +2,7 @@
  * Cart Item Model & Domain Logic
  */
 export class CartItem {
-  constructor(id, name, price, qty = 1, image = '', currency = 'USD') {
+  constructor(id, name, price, qty = 1, image = '', currency = 'PKR') {
     this.id = id;
     this.name = name;
     this.price = Number(price);

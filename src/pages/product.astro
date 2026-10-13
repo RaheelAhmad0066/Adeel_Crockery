@@ -97,10 +97,10 @@ const similarProducts = [
               <h4 class="font-bold text-base sm:text-lg text-[#000104]">Price</h4>
               <div class="flex items-center gap-4">
                 <span id="detail-price" class="text-2xl font-bold text-[#000104]">
-                  $ {initialProduct.price.toFixed(2)} USD
+                  PKR {initialProduct.price.toFixed(2)}
                 </span>
                 <span id="detail-orig-price" class="text-lg text-neutral-400 font-medium line-through">
-                  $ {initialProduct.originalPrice.toFixed(2)} USD
+                  PKR {initialProduct.originalPrice.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -209,21 +209,21 @@ const similarProducts = [
           </h3>
         </div>
 
-        <!-- 4 Similar Product Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+        <!-- 4 Similar Product Cards (Grid 2 cols mobile, 4 cols desktop) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {similarProducts.map((prod) => (
-            <div class="bg-white rounded-2xl p-4 sm:p-5 border border-[#E8E8E8] hover:border-neutral-400 hover:shadow-md transition-smooth flex flex-col group relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-3 sm:p-5 border border-[#E8E8E8] hover:border-neutral-400 hover:shadow-md transition-smooth flex flex-col group relative overflow-hidden">
               
               <!-- Product Image Link -->
-              <a href={`/product?id=${prod.id}`} class="relative w-full h-[220px] sm:h-[240px] flex items-center justify-center p-3 rounded-xl bg-neutral-50/50 group-hover:bg-neutral-50 transition-colors">
+              <a href={`/product?id=${prod.id}`} class="relative w-full h-[150px] sm:h-[240px] flex items-center justify-center p-2 sm:p-3 rounded-xl bg-neutral-50/50 group-hover:bg-neutral-50 transition-colors">
                 <img 
                   src={prod.image} 
                   alt={prod.name} 
                   class="max-h-full max-w-full object-contain group-hover:scale-105 transition-smooth duration-500 drop-shadow-sm"
                 />
 
-                <!-- Add to Cart Hover Button Overlay -->
-                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth bg-black/10 rounded-xl">
+                <!-- Add to Cart Hover Button Overlay (Only on Desktop hover; on mobile directly navigates to product view) -->
+                <div class="hidden md:flex absolute inset-0 items-center justify-center opacity-0 group-hover:opacity-100 transition-smooth bg-black/10 rounded-xl">
                   <button 
                     class="similar-add-to-cart-btn bg-[#000104] text-white text-xs font-semibold px-6 py-2.5 rounded shadow-lg hover:bg-neutral-800 transition-smooth btn-press"
                     data-id={prod.id}
@@ -238,9 +238,9 @@ const similarProducts = [
               </a>
 
               <!-- Product Details -->
-              <div class="pt-4 space-y-1">
+              <div class="pt-3 sm:pt-4 space-y-1">
                 <!-- 5 Stars Rating -->
-                <div class="flex items-center text-amber-400 text-sm gap-0.5">
+                <div class="flex items-center text-amber-400 text-xs sm:text-sm gap-0.5">
                   <span>★</span>
                   <span>★</span>
                   <span>★</span>
@@ -249,16 +249,15 @@ const similarProducts = [
                 </div>
 
                 <!-- Product Title Link -->
-                <a href={`/product?id=${prod.id}`} class="block font-bold text-base text-[#000104] group-hover:text-neutral-700 transition-colors">
+                <a href={`/product?id=${prod.id}`} class="block font-bold text-xs sm:text-base text-[#000104] group-hover:text-neutral-700 transition-colors line-clamp-1 sm:line-clamp-none">
                   {prod.name}
                 </a>
 
                 <!-- Price -->
-                <p class="text-sm font-semibold text-[#5E666C]">
-                  ${prod.price}
+                <p class="text-xs sm:text-sm font-semibold text-[#5E666C]">
+                  PKR {prod.price}
                 </p>
               </div>
-
             </div>
           ))}
         </div>
@@ -314,10 +313,9 @@ const similarProducts = [
         
         const formattedPrice = typeof prod.price === 'number' ? prod.price.toFixed(2) : prod.price;
         const formattedOrig = typeof prod.originalPrice === 'number' ? prod.originalPrice.toFixed(2) : prod.originalPrice;
-        const curr = prod.currency || '$';
 
-        if (detailPrice) detailPrice.textContent = `${curr} ${formattedPrice} USD`;
-        if (detailOrigPrice) detailOrigPrice.textContent = `${curr} ${formattedOrig} USD`;
+        if (detailPrice) detailPrice.textContent = `PKR ${formattedPrice}`;
+        if (detailOrigPrice) detailOrigPrice.textContent = `PKR ${formattedOrig}`;
         
         if (addToCartBtn) {
           addToCartBtn.dataset.id = String(prod.id);

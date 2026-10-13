@@ -76,10 +76,10 @@ import OrderReviewModal from '../components/checkout/OrderReviewModal.astro';
           Cart is empty. Please add items from the shop.
         </div>
       `;
-      if (subtotalEl) subtotalEl.textContent = '$0.00 USD';
-      if (discountEl) discountEl.textContent = '-$0.00 USD';
-      if (vatEl) vatEl.textContent = '$0.00 USD';
-      if (totalEl) totalEl.textContent = '$0.00 USD';
+      if (subtotalEl) subtotalEl.textContent = 'PKR 0.00';
+      if (discountEl) discountEl.textContent = '-PKR 0.00';
+      if (vatEl) vatEl.textContent = 'PKR 0.00';
+      if (totalEl) totalEl.textContent = 'PKR 0.00';
       return;
     }
 
@@ -89,17 +89,17 @@ import OrderReviewModal from '../components/checkout/OrderReviewModal.astro';
           <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-contain bg-[#FAF8F5] rounded-md border p-0.5" />
           <div>
             <h4 class="font-bold text-xs text-[#000104]">${item.name}</h4>
-            <span class="text-[11px] text-neutral-500">Qty: ${item.qty} × $${item.price}</span>
+            <span class="text-[11px] text-neutral-500">Qty: ${item.qty} × PKR ${item.price}</span>
           </div>
         </div>
-        <span class="font-bold text-xs text-[#000104]">$${item.total} USD</span>
+        <span class="font-bold text-xs text-[#000104]">PKR ${item.total}</span>
       </div>
     `).join('');
 
-    if (subtotalEl) subtotalEl.textContent = `$${cartVM.subtotal} USD`;
-    if (discountEl) discountEl.textContent = `-$${cartVM.discount} USD`;
-    if (vatEl) vatEl.textContent = `$${cartVM.vat} USD`;
-    if (totalEl) totalEl.textContent = `$${cartVM.grandTotal} USD`;
+    if (subtotalEl) subtotalEl.textContent = `PKR ${cartVM.subtotal}`;
+    if (discountEl) discountEl.textContent = `-PKR ${cartVM.discount}`;
+    if (vatEl) vatEl.textContent = `PKR ${cartVM.vat}`;
+    if (totalEl) totalEl.textContent = `PKR ${cartVM.grandTotal}`;
   }
 
   renderOrderSummary();
