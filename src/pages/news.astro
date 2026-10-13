@@ -1,0 +1,340 @@
+---
+// src/pages/news.astro - Exactly matching Figma media_1791878106964_1d6318f3.png
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Newsletter from '../components/Newsletter.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+import ProductCard from '../components/ProductCard.astro';
+
+// Recent Articles matching the screenshot sidebar
+const recentArticles = [
+  {
+    title: 'Limited-Edition Handmade Mug',
+    date: 'Apr 16, 2024, 2:30 am',
+    author: 'By American Spa Staff',
+    image: '/assets/images/blog-side-1.png',
+    link: '#'
+  },
+  {
+    title: 'Spa Treatments: Luxury for Wellness',
+    date: 'Apr 16, 2024, 2:30 am',
+    author: 'By American Spa Staff',
+    image: '/assets/images/blog-side-2.png',
+    link: '#'
+  },
+  {
+    title: 'The Latest Makeup Trends to Try',
+    date: 'Apr 16, 2024, 2:30 am',
+    author: 'By American Spa Staff',
+    image: '/assets/images/blog-side-3.png',
+    link: '#'
+  }
+];
+
+// Popular tags matching the screenshot
+const popularTags = [
+  'TERRATASSE', 'EARTHSIP', 'PURECLAY',
+  'MUGAURA', 'CLAYCRAFT', 'ECOMUG'
+];
+
+// Similar Blogs / Related Products for the bottom section
+const relatedProducts = [
+  {
+    id: 'sp-5',
+    name: 'Stoneware Bowl',
+    price: 100,
+    priceDisplay: '$100',
+    image: '/assets/images/shop-5.svg',
+    rating: 5,
+    category: 'serveware'
+  },
+  {
+    id: 'sp-2',
+    name: 'Terracotta Mug',
+    price: 100,
+    priceDisplay: '$100',
+    image: '/assets/images/shop-2.svg',
+    rating: 5,
+    category: 'mugs'
+  },
+  {
+    id: 'sp-3',
+    name: 'Earthenware Tea Pot',
+    price: 100,
+    priceDisplay: '$100',
+    image: '/assets/images/shop-3.svg',
+    rating: 5,
+    category: 'tea-sets'
+  },
+  {
+    id: 'sp-1',
+    name: 'Stoneware Bowl',
+    price: 100,
+    priceDisplay: '$100',
+    image: '/assets/images/shop-5.svg',
+    rating: 5,
+    category: 'serveware'
+  }
+];
+---
+
+<Layout title="Our News — Earthware">
+  <Navbar active="news" />
+
+  <main class="bg-white min-h-screen">
+
+    <!-- ================= 1. HERO BANNER (Exact Figma Texture Banner) ================= -->
+    <section class="relative overflow-hidden py-14 sm:py-20 bg-[#F4EBE1] border-b border-neutral-200/50">
+      <img 
+        src="/assets/images/Hero Section.svg" 
+        alt="" 
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-60 mix-blend-multiply"
+      />
+
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 text-center relative z-10 space-y-3">
+        <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
+          <span>What We</span>
+          <span class="bg-[#000104] text-white px-2.5 py-0.5 rounded text-xs font-semibold">Offer</span>
+        </div>
+
+        <h1 class="font-gallient text-4xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
+          Our News
+        </h1>
+      </div>
+    </section>
+
+    <!-- ================= 2. MAIN EDITORIAL ARTICLE & SIDEBAR SECTION ================= -->
+    <section class="py-12 sm:py-16">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-20">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
+
+          <!-- Left Column: Main Feature Article (8 cols) -->
+          <article class="lg:col-span-8 space-y-6 w-full min-w-0">
+            
+            <!-- Big Hero Image matching screenshot (news2.svg) -->
+            <div class="w-full rounded-2xl overflow-hidden bg-[#F4EBE1]/40 shadow-sm">
+              <img 
+                src="/assets/images/news2.svg" 
+                alt="Sip in Style with Earthware" 
+                class="w-full h-auto object-cover block"
+              />
+            </div>
+
+            <!-- Meta: Author & Date -->
+            <div class="text-xs text-[#78716C] pt-1">
+              <span>By American Spa Staff</span>
+              <span class="mx-1.5">•</span>
+              <span>Apr 16, 2024, 2:30 am</span>
+            </div>
+
+            <!-- Article Title -->
+            <h2 class="font-gallient text-3xl sm:text-4xl md:text-5xl font-normal text-[#000104] tracking-tight leading-tight">
+              Sip in Style with Earthware
+            </h2>
+
+            <!-- Colored Subtitle -->
+            <p class="text-sm sm:text-base font-medium text-[#C87A54] leading-relaxed">
+              Discover the perfect blend of elegance and sustainability with ceramic mugs
+            </p>
+
+            <!-- Article Body Paragraph 1 -->
+            <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+              Sip in style with Earthware, the ceramic mug brand that brings elegance, quality, and sustainability into each cup. Earthware's handcrafted mugs are designed with a commitment to natural beauty and eco-conscious production, offering a distinctive way to elevate your drinking experience. Every mug is crafted to enhance the simple pleasure of a warm drink, whether it's a morning coffee.
+            </p>
+
+            <!-- Article Body Paragraph 2 -->
+            <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+              evening tea, or something in between. With Earthware, each sip is a reminder of the artistry and care poured into every piece, making it not just a mug but an experience. Embrace style and sustainability—choose Earthware for your next sip.
+            </p>
+
+            <!-- Secondary Article Inset Image matching screenshot (news1.svg) -->
+            <div class="w-full rounded-xl overflow-hidden shadow-sm my-6">
+              <img 
+                src="/assets/images/news1.svg" 
+                alt="Earthware Handcrafted Collection" 
+                class="w-full h-auto object-cover block"
+              />
+            </div>
+
+            <!-- Bullet List with black squares matching screenshot -->
+            <ul class="space-y-3 pt-2 text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+              <li class="flex items-start gap-2.5">
+                <span class="w-1.5 h-1.5 bg-[#000104] mt-1.5 flex-shrink-0"></span>
+                <span><strong>Earthware: The best ceramic mugs, perfectly simple and uniquely crafted to stand out.</strong> Co-Founder & Designer: With over 15 years of experience in artisan craftsmanship, Sarah specializes in creating unique, personalized ceramic mugs with an artistic touch.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="w-1.5 h-1.5 bg-[#000104] mt-1.5 flex-shrink-0"></span>
+                <span><strong>Earthware: The best ceramic mugs, perfectly simple with a refreshing touch of elegance.</strong> Co-Founder & Ceramic Specialist: Emily is an expert in advanced ceramic techniques and has a keen eye for crafting each mug with unique, personalized designs.</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <span class="w-1.5 h-1.5 bg-[#000104] mt-1.5 flex-shrink-0"></span>
+                <span><strong>The best ceramic mugs, perfectly simple and easy to recognize for their unique design.</strong> Design Specialist: John's keen eye for detail and expertise in ceramic craftsmanship will help you discover the perfect mug for your style.</span>
+              </li>
+            </ul>
+
+            <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed pt-2">
+              Earthware is the best ceramic mug brand, offering perfectly simple designs that are easy to distinguish. Take a moment to relax and enjoy a warm beverage in a mug that brings both comfort and style. With Earthware, every sip brings a sense of tranquility, providing you with the perfect way to unwind and refresh your mind.
+            </p>
+
+            <!-- Bottom Tags & Share Bar matching screenshot -->
+            <div class="pt-6 border-t border-neutral-200 flex flex-wrap items-center justify-between gap-4 text-xs text-[#5E666C]">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-[#000104]">Tags:</span>
+                <span class="text-neutral-500">terracottamug</span>
+                <span class="text-neutral-500">EcoMug</span>
+                <span class="text-neutral-500">EcoMug</span>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <span class="font-semibold text-[#000104]">Share this:</span>
+                <div class="flex items-center gap-2.5 text-[#000104]">
+                  <a href="#" class="hover:opacity-70 transition-opacity">f</a>
+                  <a href="#" class="hover:opacity-70 transition-opacity">𝕏</a>
+                  <a href="#" class="hover:opacity-70 transition-opacity">in</a>
+                  <a href="#" class="hover:opacity-70 transition-opacity">📷</a>
+                </div>
+              </div>
+            </div>
+
+          </article>
+
+          <!-- Right Column: Sidebar (4 cols) -->
+          <aside class="lg:col-span-4 space-y-12">
+            
+            <!-- 1. Recent Articles -->
+            <div class="space-y-5">
+              <h3 class="font-gallient text-2xl sm:text-3xl text-[#000104] font-normal">
+                Recent Articles
+              </h3>
+
+              <div class="space-y-4">
+                {recentArticles.map((article) => (
+                  <a href={article.link} class="flex items-center gap-3.5 group">
+                    <img 
+                      src={article.image} 
+                      alt={article.title} 
+                      class="w-16 h-16 rounded-lg object-cover flex-shrink-0 bg-neutral-100 group-hover:scale-105 transition-transform"
+                    />
+                    <div class="space-y-0.5">
+                      <p class="text-[10px] text-[#78716C]">{article.author} • {article.date}</p>
+                      <h4 class="text-xs sm:text-[13px] font-bold text-[#000104] group-hover:text-neutral-600 transition-colors line-clamp-2">
+                        {article.title}
+                      </h4>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            <!-- 2. New Arrivals Mini Showcase -->
+            <div class="space-y-4">
+              <h3 class="font-gallient text-2xl sm:text-3xl text-[#000104] font-normal">
+                New Arrivals
+              </h3>
+
+              <div class="bg-[#FAF8F5] rounded-xl p-6 text-center space-y-3 border border-neutral-200/60">
+                <div class="w-full aspect-square flex items-center justify-center p-2">
+                  <img 
+                    src="/assets/images/shop-2.svg" 
+                    alt="Terracotta Mug" 
+                    class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                <div class="flex items-center justify-center text-amber-400 text-xs gap-0.5">
+                  <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+
+                <h4 class="font-bold text-sm text-[#000104]">Terracotta Mug</h4>
+
+                <div class="flex items-center justify-center gap-2 text-xs font-semibold text-[#000104]">
+                  <span class="line-through text-neutral-400 font-normal">$100 USD</span>
+                  <span>$63.29 USD</span>
+                </div>
+
+                <div class="flex items-center justify-center gap-2 pt-1">
+                  <button class="w-7 h-7 rounded-full border border-neutral-300 flex items-center justify-center text-xs text-neutral-600 hover:bg-neutral-100">
+                    ←
+                  </button>
+                  <button class="w-7 h-7 rounded-full bg-[#000104] text-white flex items-center justify-center text-xs hover:bg-neutral-800">
+                    →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Popular Tags -->
+            <div class="space-y-4">
+              <h3 class="font-gallient text-2xl sm:text-3xl text-[#000104] font-normal">
+                Popular Tags
+              </h3>
+
+              <div class="flex flex-wrap gap-2">
+                {popularTags.map((tag) => (
+                  <span class="bg-[#F8EFEA] text-[#1F2937] text-[11px] font-semibold px-3 py-1.5 rounded uppercase hover:bg-neutral-200 cursor-pointer transition-colors">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </aside>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. RELATED / SIMILAR BLOGS SECTION ================= -->
+    <section class="py-14 sm:py-20 border-t border-neutral-200/60">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-10">
+        
+        <!-- Header row with "Related Post" badge & "More Blogs" button -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
+              <span>Related</span>
+              <span class="bg-[#000104] text-white px-2 py-0.5 rounded text-xs font-semibold">Post</span>
+            </div>
+            <h2 class="font-gallient text-3xl sm:text-5xl text-[#000104] font-normal tracking-tight">
+              Similar Blogs
+            </h2>
+          </div>
+
+          <a 
+            href="#more-blogs" 
+            class="bg-[#000104] text-white text-xs font-semibold px-6 py-3 rounded hover:bg-neutral-800 transition-smooth btn-press shadow-sm"
+          >
+            More Blogs
+          </a>
+        </div>
+
+        <!-- 4 Column Grid matching screenshot -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+          {relatedProducts.map((prod) => (
+            <ProductCard 
+              id={prod.id}
+              name={prod.name}
+              price={prod.price}
+              priceDisplay={prod.priceDisplay}
+              image={prod.image}
+              rating={prod.rating}
+              category={prod.category}
+            />
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 4. NEWSLETTER ================= -->
+    <Newsletter />
+
+  </main>
+
+  <Footer />
+  <CartDrawer />
+</Layout>
+

@@ -21,7 +21,7 @@ const { active = 'home' } = Astro.props;
       <a href="/about" class={active === 'about' ? "text-[#000104] font-semibold" : "hover:text-[#000104] transition-colors"}>About</a>
       <a href="/shop" class={active === 'shop' ? "text-[#000104] font-semibold" : "hover:text-[#000104] transition-colors"}>Shop</a>
       <a href="/service" class={active === 'service' ? "text-[#000104] font-semibold" : "hover:text-[#000104] transition-colors"}>Service</a>
-      <a href="/#blog" class={active === 'news' ? "text-[#000104] font-semibold" : "hover:text-[#000104] transition-colors"}>News</a>
+      <a href="/news" class={active === 'news' ? "text-[#000104] font-semibold" : "hover:text-[#000104] transition-colors"}>News</a>
     </nav>
 
     <!-- Right Action Items (Figma cart.svg) -->
@@ -166,7 +166,7 @@ const { active = 'home' } = Astro.props;
     <a href="/about" class={active === 'about' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>About</a>
     <a href="/shop" class={active === 'shop' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Shop</a>
     <a href="/service" class={active === 'service' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Service</a>
-    <a href="/#blog" class="block text-[#5E666C] hover:text-[#000104]">News</a>
+    <a href="/news" class={active === 'news' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>News</a>
 
     <!-- Mobile Categories Accordion -->
     <div class="pt-3 border-t border-neutral-200">
