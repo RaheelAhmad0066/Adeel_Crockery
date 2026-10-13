@@ -1,0 +1,164 @@
+---
+// src/pages/service.astro - Exactly matching Figma media_1791877926216_2cf859cf.png
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Newsletter from '../components/Newsletter.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+
+// Service Items matching the exact screenshot layout & pottery images
+const serviceItems = [
+  {
+    id: 'srv-1',
+    title: 'Gift Items',
+    description: 'Exquisite range of pottery services designed to elevate and enhance your living space.',
+    image: '/assets/images/shop-2.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-2',
+    title: 'Office & Desk',
+    description: 'Artisan hand-finished desk planters and containers suited for contemporary workspaces.',
+    image: '/assets/images/shop-1.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-3',
+    title: 'Gift Items',
+    description: 'Bespoke hand-crafted earthenware tea and beverage vessels made with organic local clays.',
+    image: '/assets/images/shop-2.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-4',
+    title: 'Home Decor',
+    description: 'Tactile pastel ceramic tumblers and minimalist decorative pieces for table settings.',
+    image: '/assets/images/shop-4.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-5',
+    title: 'Tableware',
+    description: 'Textured coastal stoneware bowls with organic glazes suited for everyday dining.',
+    image: '/assets/images/shop-5.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-6',
+    title: 'Garden & Outdoor',
+    description: 'Deep glazed ornate pottery and planters designed to endure indoor and outdoor environments.',
+    image: '/assets/images/shop-2.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-7',
+    title: 'Tableware',
+    description: 'Fluted rustic clay bowls individually wheel-thrown for an authentic artisanal touch.',
+    image: '/assets/images/shop-5.svg',
+    link: '/shop'
+  },
+  {
+    id: 'srv-8',
+    title: 'Wellness & Self-Care',
+    description: 'High-fire ceramic teapots with precision strainers for mindful afternoon infusions.',
+    image: '/assets/images/shop-3.svg',
+    link: '/shop'
+  }
+];
+---
+
+<Layout title="Our Services — Earthware">
+  <Navbar active="service" />
+
+  <main class="bg-white min-h-screen">
+
+    <!-- ================= 1. HERO BANNER (Exact Figma texture banner from Shop) ================= -->
+    <section class="relative overflow-hidden py-14 sm:py-20 bg-[#F4EBE1] border-b border-neutral-200/50">
+      <img 
+        src="/assets/images/Hero Section.svg" 
+        alt="" 
+        class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-60 mix-blend-multiply"
+      />
+
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 text-center relative z-10 space-y-3">
+        <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
+          <span>What We</span>
+          <span class="bg-[#000104] text-white px-2.5 py-0.5 rounded text-xs font-semibold">Offer</span>
+        </div>
+
+        <h1 class="font-gallient text-4xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
+          Our Services
+        </h1>
+      </div>
+    </section>
+
+    <!-- ================= 2. SERVICES CONTENT SECTION ================= -->
+    <section class="py-16 sm:py-24">
+      <div class="max-w-[1440px] mx-auto px-6 lg:px-24 space-y-16">
+        
+        <!-- Section Subtitle & Heading matching exact screenshot typography -->
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+          <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
+            <span>Our</span>
+            <span class="bg-[#000104] text-white px-2.5 py-0.5 rounded text-xs font-semibold">Service</span>
+          </div>
+
+          <h2 class="font-gallient text-3xl sm:text-5xl md:text-[54px] font-normal text-[#000104] leading-tight">
+            Discover Our Exquisite Pottery Services
+          </h2>
+
+          <p class="text-xs sm:text-sm text-[#5E666C] leading-relaxed pt-2">
+            Our skilled therapists are dedicated to creating a personalized experience tailored to your unique needs. From massages to treatments.
+          </p>
+        </div>
+
+        <!-- 8-Card Services Grid (4 Columns Desktop / 2 Columns Mobile) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+          {serviceItems.map((item) => (
+            <div class="flex flex-col justify-between group">
+              
+              <!-- Square Image Container -->
+              <div class="relative w-full aspect-square bg-transparent flex items-center justify-center p-2 overflow-hidden block">
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+
+              <!-- Title, Description & Read More Link -->
+              <div class="pt-4 space-y-1.5 flex flex-col flex-1 justify-between">
+                <div>
+                  <h3 class="font-bold text-[15px] sm:text-[17px] text-[#000104]">
+                    {item.title}
+                  </h3>
+
+                  <p class="text-[11px] sm:text-xs text-[#5E666C] leading-relaxed line-clamp-2 mt-1">
+                    {item.description}
+                  </p>
+                </div>
+
+                <a 
+                  href={item.link} 
+                  class="inline-block text-[11px] sm:text-xs font-bold text-[#000104] hover:underline pt-2 tracking-wide uppercase"
+                >
+                  Read more
+                </a>
+              </div>
+
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. NEWSLETTER ================= -->
+    <Newsletter />
+
+  </main>
+
+  <Footer />
+  <CartDrawer />
+</Layout>
+
