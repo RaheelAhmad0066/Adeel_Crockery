@@ -1,5 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 ---
 
 <AdminLayout title="Hero Banners CMS" activeNav="banner">
@@ -145,6 +146,13 @@ import AdminLayout from '../layouts/AdminLayout.astro';
     </div>
   </div>
 
+  <!-- Reusable Delete Modal -->
+  <ConfirmDeleteModal 
+    id="delete-slide-modal" 
+    title="Delete Banner Slide?" 
+    description="Are you sure you want to delete this promotional banner slide? It will no longer appear on the live storefront." 
+  />
+
 </AdminLayout>
 
 <script>
@@ -264,15 +272,29 @@ import AdminLayout from '../layouts/AdminLayout.astro';
         });
       });
 
+      const delSlideModal = document.getElementById('delete-slide-modal');
+      let pendingSlideIdx = -1;
+
       document.querySelectorAll('.btn-del-slide').forEach(b => {
         b.addEventListener('click', (e) => {
-          const idx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
-          if (confirm('Delete this banner slide?')) {
-            slides.splice(idx, 1);
-            if (activeIndex >= slides.length) activeIndex = 0;
-            renderSlides();
-          }
+          pendingSlideIdx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
+          delSlideModal?.classList.remove('opacity-0', 'pointer-events-none');
         });
+      });
+
+      delSlideModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
+        delSlideModal.classList.add('opacity-0', 'pointer-events-none');
+        pendingSlideIdx = -1;
+      });
+
+      delSlideModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+        if (pendingSlideIdx !== -1) {
+          slides.splice(pendingSlideIdx, 1);
+          if (activeIndex >= slides.length) activeIndex = 0;
+          pendingSlideIdx = -1;
+          renderSlides();
+        }
+        delSlideModal.classList.add('opacity-0', 'pointer-events-none');
       });
     }
   }

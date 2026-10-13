@@ -1,0 +1,60 @@
+---
+interface Props {
+  id?: string;
+  title?: string;
+  description?: string;
+  confirmText?: string;
+}
+
+const {
+  id = "confirm-delete-modal",
+  title = "Confirm Deletion",
+  description = "Are you sure you want to delete this item? This action cannot be undone.",
+  confirmText = "Yes, Delete"
+} = Astro.props;
+---
+
+<div 
+  id={id} 
+  class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4 select-none"
+  aria-modal="true"
+  role="dialog"
+>
+  <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl transform scale-95 transition-transform duration-200 text-center">
+    
+    <!-- Red Warning Trash Icon -->
+    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 mx-auto flex items-center justify-center">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+    </div>
+
+    <!-- Title & Desc -->
+    <div class="space-y-1">
+      <h3 class="modal-delete-title font-bold text-base text-[#000104]">
+        {title}
+      </h3>
+      <p class="modal-delete-desc text-xs text-neutral-500 leading-relaxed">
+        {description}
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-center gap-2.5 pt-2">
+      <button 
+        type="button" 
+        class="modal-delete-cancel px-4 py-2 rounded-xl border border-neutral-300 text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors w-full"
+      >
+        Cancel
+      </button>
+      <button 
+        type="button" 
+        class="modal-delete-confirm px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors w-full shadow-sm"
+      >
+        {confirmText}
+      </button>
+    </div>
+
+  </div>
+</div>
+

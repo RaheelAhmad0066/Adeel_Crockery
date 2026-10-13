@@ -1,5 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.js';
 ---
 
@@ -147,6 +148,14 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
       </form>
     </div>
   </div>
+
+  <!-- Reusable Delete Modal -->
+  <ConfirmDeleteModal 
+    id="delete-service-modal" 
+    title="Delete Service Offering?" 
+    description="Are you sure you want to remove this service? It will no longer appear on the storefront /service page." 
+  />
+
 </AdminLayout>
 
 <script>
@@ -189,13 +198,27 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
       };
     });
 
+    const delModal = document.getElementById('delete-service-modal');
+    let pendingSrvIdx: string | null = null;
+
     document.querySelectorAll('.btn-del-srv').forEach(b => {
       b.onclick = (e) => {
-        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
-        if (confirm('Delete this service?')) {
-          document.getElementById(`srv-card-${idx}`)?.remove();
-        }
+        pendingSrvIdx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
+    });
+
+    delModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
+      delModal.classList.add('opacity-0', 'pointer-events-none');
+      pendingSrvIdx = null;
+    });
+
+    delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+      if (pendingSrvIdx !== null) {
+        document.getElementById(`srv-card-${pendingSrvIdx}`)?.remove();
+        pendingSrvIdx = null;
+      }
+      delModal.classList.add('opacity-0', 'pointer-events-none');
     });
   }
 

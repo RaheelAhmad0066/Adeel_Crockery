@@ -1,5 +1,6 @@
 ---
 import AdminLayout from '../layouts/AdminLayout.astro';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 import { initialNavbarCategories, initialProducts } from '../data/storeDataModel.js';
 ---
 
@@ -89,7 +90,14 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 
   </div>
 
-  <!-- ================= ADD / EDIT MAIN CATEGORY MODAL ================= -->
+  <!-- Reusable Delete Modal -->
+  <ConfirmDeleteModal 
+    id="delete-category-modal" 
+    title="Delete Navbar Category?" 
+    description="Are you sure you want to delete this category? All its subcategories will also be removed from the store navbar." 
+  />
+
+  <!-- Add / Edit Main Category Modal -->
   <div id="category-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-3">
@@ -118,7 +126,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     </div>
   </div>
 
-  <!-- ================= ADD SUBCATEGORY MODAL ================= -->
+  <!-- Add Subcategory Modal -->
   <div id="subcat-modal" class="fixed inset-0 bg-black/60 z-[1000] opacity-0 pointer-events-none transition-opacity duration-200 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-2xl">
       <div class="flex items-center justify-between border-b pb-2">
@@ -156,7 +164,10 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
   const subNameInput = document.getElementById('subcat-name-input') as HTMLInputElement;
   const targetCatIdx = document.getElementById('target-cat-idx') as HTMLInputElement;
 
-  // Open Add Category Modal
+  // Delete modal elements
+  const delModal = document.getElementById('delete-category-modal');
+  let pendingDeleteTarget: HTMLElement | null = null;
+
   document.getElementById('btn-add-main-cat')?.addEventListener('click', () => {
     catIndexInput.value = '-1';
     catNameInput.value = '';
@@ -172,14 +183,12 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     catModal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  // Auto slug generator
   catNameInput?.addEventListener('input', () => {
     if (catIndexInput.value === '-1') {
       catSlugInput.value = catNameInput.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
   });
 
-  // Attach Edit and Delete Listeners for Category Cards
   function attachCategoryListeners() {
     // Edit Main Category
     document.querySelectorAll('.btn-edit-main-cat').forEach(b => {
@@ -199,14 +208,15 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       };
     });
 
-    // Delete Main Category
+    // Delete Main Category (Pop-up Modal)
     document.querySelectorAll('.btn-delete-main-cat').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
-        const card = document.getElementById(`cat-card-${idx}`);
-        if (confirm(`Delete this category and all its subcategories?`)) {
-          card?.remove();
-        }
+        pendingDeleteTarget = document.getElementById(`cat-card-${idx}`);
+        const modalDesc = delModal?.querySelector('.modal-delete-desc');
+        const catName = pendingDeleteTarget?.getAttribute('data-cat-name') || 'this category';
+        if (modalDesc) modalDesc.textContent = `Are you sure you want to delete "${catName}" and all its subcategories?`;
+        delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
@@ -223,14 +233,32 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       };
     });
 
-    // Remove Subcategory
+    // Remove Subcategory (Pop-up Modal)
     document.querySelectorAll('.btn-del-sub').forEach(b => {
       b.onclick = (e) => {
-        const pill = (e.currentTarget as HTMLElement).closest('.subcat-pill');
-        pill?.remove();
+        const pill = (e.currentTarget as HTMLElement).closest('.subcat-pill') as HTMLElement;
+        pendingDeleteTarget = pill;
+        const subName = pill.querySelector('.sub-name')?.textContent || 'this subcategory';
+        const modalDesc = delModal?.querySelector('.modal-delete-desc');
+        if (modalDesc) modalDesc.textContent = `Remove subcategory "${subName}" from the navigation dropdown?`;
+        delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
   }
+
+  // Delete Modal actions
+  delModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
+    delModal.classList.add('opacity-0', 'pointer-events-none');
+    pendingDeleteTarget = null;
+  });
+
+  delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+    if (pendingDeleteTarget) {
+      pendingDeleteTarget.remove();
+      pendingDeleteTarget = null;
+    }
+    delModal.classList.add('opacity-0', 'pointer-events-none');
+  });
 
   // Handle Category Form Submit
   catForm?.addEventListener('submit', (e) => {
@@ -240,7 +268,6 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     const slug = catSlugInput.value;
 
     if (idx === -1) {
-      // Add new Category Card
       const grid = document.getElementById('cat-cards-grid');
       const newIdx = document.querySelectorAll('.cat-card').length;
       const newCard = document.createElement('div');
@@ -276,13 +303,13 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       `;
       grid?.prepend(newCard);
     } else {
-      // Update existing
       const card = document.getElementById(`cat-card-${idx}`);
       if (card) {
         const titleEl = card.querySelector('.cat-title');
         const slugEl = card.querySelector('.cat-slug');
         if (titleEl) titleEl.textContent = name;
         if (slugEl) slugEl.textContent = `/${slug}`;
+        card.setAttribute('data-cat-name', name);
       }
     }
 
@@ -319,6 +346,6 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     subModal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  // Initial Attach
   attachCategoryListeners();
 </script>
+//@mberRose91234&
