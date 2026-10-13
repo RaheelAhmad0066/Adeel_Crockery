@@ -1,0 +1,58 @@
+---
+// src/components/checkout/OrderReviewModal.astro - Review & Rating Screen
+---
+
+<div id="screen-review" class="hidden space-y-6">
+  <div class="bg-white rounded-3xl p-8 sm:p-12 border border-neutral-200/60 shadow-lg text-center max-w-xl mx-auto space-y-6">
+    
+    <div class="w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+      ✓
+    </div>
+
+    <div class="space-y-1">
+      <span class="text-xs uppercase font-bold tracking-wider text-emerald-600">Order Completed</span>
+      <h2 class="font-gallient text-3xl sm:text-4xl text-[#000104]">Parcel Delivered!</h2>
+      <p class="text-xs sm:text-sm text-[#5E666C]">
+        Your Crockery items have been safely handed over. How was your experience?
+      </p>
+    </div>
+
+    <!-- Review Box -->
+    <div class="bg-[#FAF8F5] rounded-2xl p-6 border border-neutral-200/60 space-y-4 text-left">
+      <div>
+        <label class="block text-xs font-bold text-[#000104] mb-2">Rate Rider & Pottery Quality</label>
+        <div id="star-rating" class="flex items-center gap-2 text-2xl text-neutral-300 cursor-pointer">
+          <span class="star hover:text-amber-400 transition-colors" data-v="1">★</span>
+          <span class="star hover:text-amber-400 transition-colors" data-v="2">★</span>
+          <span class="star hover:text-amber-400 transition-colors" data-v="3">★</span>
+          <span class="star hover:text-amber-400 transition-colors" data-v="4">★</span>
+          <span class="star hover:text-amber-400 transition-colors text-amber-400" data-v="5">★</span>
+        </div>
+      </div>
+
+      <div>
+        <label for="review-text" class="block text-xs font-bold text-[#000104] mb-1">Your Feedback</label>
+        <textarea 
+          id="review-text" 
+          rows="3" 
+          placeholder="The mugs arrived in perfect condition, no cracks, rider was very polite!" 
+          class="w-full text-xs p-3 bg-white border border-neutral-300 rounded-xl focus:outline-none focus:border-black"
+        ></textarea>
+      </div>
+
+      <button id="submit-review-btn" class="w-full bg-[#000104] hover:bg-neutral-800 text-white font-semibold text-xs py-3.5 rounded-xl transition-colors btn-press shadow-md">
+        Submit Review & Finish
+      </button>
+    </div>
+
+    <!-- Submitted Success Message -->
+    <div id="review-success" class="hidden p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-semibold">
+      🎉 Thank you for your review! Your feedback helps us keep our handcrafted pottery standards high.
+      <div class="pt-3">
+        <a href="/shop" class="inline-block bg-[#000104] text-white px-5 py-2 rounded-lg text-xs font-semibold">Back to Shop</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+

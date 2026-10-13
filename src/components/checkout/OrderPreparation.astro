@@ -1,0 +1,41 @@
+---
+// src/components/checkout/OrderPreparation.astro - 2-Minute Preparation Countdown
+---
+
+<div id="screen-preparing" class="hidden space-y-6">
+  <div class="bg-white rounded-3xl p-8 sm:p-12 border border-neutral-200/60 shadow-md text-center max-w-2xl mx-auto space-y-6">
+    
+    <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
+      <!-- Spinner Ring -->
+      <div class="absolute inset-0 rounded-full border-4 border-amber-200 border-t-amber-600 animate-spin"></div>
+      <!-- Pot Icon -->
+      <span class="text-3xl">🏺</span>
+    </div>
+
+    <div class="space-y-2">
+      <span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+        Order Confirmed & Preparing
+      </span>
+      <h2 class="font-gallient text-3xl sm:text-4xl text-[#000104]">
+        Pottery Studio is Packaging Your Items
+      </h2>
+      <p class="text-xs sm:text-sm text-[#5E666C] max-w-md mx-auto">
+        Our artisans are carefully inspecting and bubble-wrapping your handcrafted ceramic crockery pieces.
+      </p>
+    </div>
+
+    <!-- Countdown Timer Box (2 minutes) -->
+    <div class="bg-[#FAF8F5] rounded-2xl p-6 border border-neutral-200/60 max-w-sm mx-auto space-y-2">
+      <span class="text-xs text-neutral-500 font-medium">Estimated Packing Time</span>
+      <div id="prep-timer" class="font-mono text-4xl sm:text-5xl font-black text-[#000104] tracking-tight">
+        02:00
+      </div>
+      <p class="text-[11px] text-neutral-400">Rider will be dispatched automatically once packed</p>
+    </div>
+
+    <button id="skip-prep-btn" class="text-xs text-neutral-400 hover:text-black underline underline-offset-2">
+      Fast-forward simulation →
+    </button>
+  </div>
+</div>
+

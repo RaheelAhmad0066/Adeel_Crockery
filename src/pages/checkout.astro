@@ -1,0 +1,316 @@
+---
+// src/pages/checkout.astro - Modular Clean Architecture
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import CartDrawer from '../components/CartDrawer.astro';
+
+import CheckoutStepper from '../components/checkout/CheckoutStepper.astro';
+import OrderConfirmationForm from '../components/checkout/OrderConfirmationForm.astro';
+import OrderPreparation from '../components/checkout/OrderPreparation.astro';
+import LiveTrackerMap from '../components/checkout/LiveTrackerMap.astro';
+import OrderReviewModal from '../components/checkout/OrderReviewModal.astro';
+---
+
+<Layout title="Checkout & Live Order Tracking — Earthware">
+  <Navbar active="shop" showCategoryBar={false} />
+
+  <main class="bg-[#FAF8F5] min-h-screen py-10 sm:py-14 px-4 sm:px-6">
+    <div class="max-w-4xl mx-auto space-y-8">
+
+      <!-- Step 1-2-3 Navigation Bar -->
+      <CheckoutStepper />
+
+      <!-- Step 1: Form & Drag-to-confirm -->
+      <OrderConfirmationForm />
+
+      <!-- Step 2: 2-minute Preparation Timer -->
+      <OrderPreparation />
+
+      <!-- Step 3: Google Maps Real-time Polyline Tracking -->
+      <LiveTrackerMap />
+
+      <!-- Step 4: Rating & Feedback -->
+      <OrderReviewModal />
+
+    </div>
+  </main>
+
+  <Footer />
+  <CartDrawer />
+</Layout>
+
+<script>
+  import { CartViewModel } from '../viewmodels/CartViewModel.js';
+  import { GoogleMapsTrackerService } from '../services/GoogleMapsTrackerService.js';
+
+  const cartVM = new CartViewModel();
+  const mapsService = new GoogleMapsTrackerService('AIzaSyBuOyLOiDw57p8JSKHaaoLxNCqWP_NsRls');
+
+  // DOM Screen Containers
+  const screenCheckout = document.getElementById('screen-checkout');
+  const screenPreparing = document.getElementById('screen-preparing');
+  const screenTracking = document.getElementById('screen-tracking');
+  const screenReview = document.getElementById('screen-review');
+
+  // Stepper Elements
+  const stepNav1 = document.getElementById('step-nav-1');
+  const stepNav2 = document.getElementById('step-nav-2');
+  const stepNav3 = document.getElementById('step-nav-3');
+  const stepBar1 = document.getElementById('step-bar-1');
+  const stepBar2 = document.getElementById('step-bar-2');
+
+  // 1. Populate Order Summary
+  function renderOrderSummary() {
+    const list = document.getElementById('checkout-items-list');
+    const subtotalEl = document.getElementById('co-subtotal');
+    const discountEl = document.getElementById('co-discount');
+    const vatEl = document.getElementById('co-vat');
+    const totalEl = document.getElementById('co-total');
+
+    if (!list) return;
+
+    if (cartVM.items.length === 0) {
+      list.innerHTML = `
+        <div class="py-4 text-center text-xs text-neutral-400">
+          Cart is empty. Please add items from the shop.
+        </div>
+      `;
+      if (subtotalEl) subtotalEl.textContent = '$0.00 USD';
+      if (discountEl) discountEl.textContent = '-$0.00 USD';
+      if (vatEl) vatEl.textContent = '$0.00 USD';
+      if (totalEl) totalEl.textContent = '$0.00 USD';
+      return;
+    }
+
+    list.innerHTML = cartVM.items.map(item => `
+      <div class="flex items-center justify-between py-2.5">
+        <div class="flex items-center gap-3">
+          <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-contain bg-[#FAF8F5] rounded-md border p-0.5" />
+          <div>
+            <h4 class="font-bold text-xs text-[#000104]">${item.name}</h4>
+            <span class="text-[11px] text-neutral-500">Qty: ${item.qty} × $${item.price}</span>
+          </div>
+        </div>
+        <span class="font-bold text-xs text-[#000104]">$${item.total} USD</span>
+      </div>
+    `).join('');
+
+    if (subtotalEl) subtotalEl.textContent = `$${cartVM.subtotal} USD`;
+    if (discountEl) discountEl.textContent = `-$${cartVM.discount} USD`;
+    if (vatEl) vatEl.textContent = `$${cartVM.vat} USD`;
+    if (totalEl) totalEl.textContent = `$${cartVM.grandTotal} USD`;
+  }
+
+  renderOrderSummary();
+
+  // 2. Address Edit / Save Toggle
+  const editAddrBtn = document.getElementById('edit-address-btn');
+  const editBox = document.getElementById('address-edit-box');
+  const previewBox = document.getElementById('address-preview');
+  const saveAddrBtn = document.getElementById('save-addr-btn');
+  const cancelAddrBtn = document.getElementById('cancel-addr-btn');
+
+  if (editAddrBtn && editBox && previewBox) {
+    editAddrBtn.addEventListener('click', () => {
+      editBox.classList.remove('hidden');
+      previewBox.classList.add('hidden');
+    });
+  }
+
+  if (cancelAddrBtn && editBox && previewBox) {
+    cancelAddrBtn.addEventListener('click', () => {
+      editBox.classList.add('hidden');
+      previewBox.classList.remove('hidden');
+    });
+  }
+
+  if (saveAddrBtn && editBox && previewBox) {
+    saveAddrBtn.addEventListener('click', () => {
+      const name = (document.getElementById('input-name') as HTMLInputElement)?.value;
+      const street = (document.getElementById('input-street') as HTMLInputElement)?.value;
+      const city = (document.getElementById('input-city') as HTMLInputElement)?.value;
+      const phone = (document.getElementById('input-phone') as HTMLInputElement)?.value;
+
+      if (name) document.getElementById('addr-name')!.textContent = name;
+      if (street) document.getElementById('addr-line1')!.textContent = street;
+      if (city) document.getElementById('addr-city')!.textContent = city + ', Pakistan';
+      if (phone) document.getElementById('addr-phone')!.textContent = '📞 ' + phone;
+
+      editBox.classList.add('hidden');
+      previewBox.classList.remove('hidden');
+    });
+  }
+
+  // 3. Swipe / Drag Knob to Place Order
+  const track = document.getElementById('slider-track') as HTMLDivElement;
+  const knob = document.getElementById('slider-knob') as HTMLDivElement;
+  const fill = document.getElementById('slider-fill') as HTMLDivElement;
+  const text = document.getElementById('slider-text') as HTMLSpanElement;
+
+  let isDragging = false;
+  let startX = 0;
+  let maxDistance = 0;
+
+  function updateMaxDistance() {
+    if (track && knob) {
+      maxDistance = track.clientWidth - knob.clientWidth - 10;
+    }
+  }
+
+  updateMaxDistance();
+  window.addEventListener('resize', updateMaxDistance);
+
+  function onDragStart(e: MouseEvent | TouchEvent) {
+    isDragging = true;
+    startX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    document.addEventListener('mousemove', onDragMove);
+    document.addEventListener('mouseup', onDragEnd);
+    document.addEventListener('touchmove', onDragMove);
+    document.addEventListener('touchend', onDragEnd);
+  }
+
+  function onDragMove(e: MouseEvent | TouchEvent) {
+    if (!isDragging) return;
+    const currentX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    let diff = currentX - startX;
+    if (diff < 0) diff = 0;
+    if (diff > maxDistance) diff = maxDistance;
+
+    knob.style.transform = `translateX(${diff}px)`;
+    fill.style.width = `${diff + 44}px`;
+
+    const progress = diff / maxDistance;
+    text.style.opacity = `${1 - progress}`;
+
+    if (diff >= maxDistance - 2) {
+      onDragEnd();
+      confirmOrder();
+    }
+  }
+
+  function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    document.removeEventListener('mousemove', onDragMove);
+    document.removeEventListener('mouseup', onDragEnd);
+    document.removeEventListener('touchmove', onDragMove);
+    document.removeEventListener('touchend', onDragEnd);
+
+    const match = knob.style.transform.match(/translateX\(([\d.]+)px\)/);
+    const curDiff = match ? parseFloat(match[1]) : 0;
+    if (curDiff < maxDistance - 5) {
+      knob.style.transition = 'transform 0.2s ease-out';
+      fill.style.transition = 'width 0.2s ease-out';
+      knob.style.transform = 'translateX(0px)';
+      fill.style.width = '44px';
+      text.style.opacity = '1';
+      setTimeout(() => {
+        knob.style.transition = '';
+        fill.style.transition = '';
+      }, 200);
+    }
+  }
+
+  if (knob) {
+    knob.addEventListener('mousedown', onDragStart);
+    knob.addEventListener('touchstart', onDragStart, { passive: true });
+  }
+
+  // 4. Transitions & 2-Minute Preparation Countdown
+  let prepInterval: any = null;
+
+  function confirmOrder() {
+    cartVM.clear();
+
+    screenCheckout?.classList.add('hidden');
+    screenPreparing?.classList.remove('hidden');
+
+    stepNav1?.classList.replace('text-[#000104]', 'text-emerald-700');
+    stepBar1?.classList.replace('bg-neutral-200', 'bg-emerald-500');
+    stepNav2?.classList.add('text-[#000104]');
+
+    let secondsLeft = 120;
+    const timerEl = document.getElementById('prep-timer');
+
+    prepInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(prepInterval);
+        startRiderTracking();
+        return;
+      }
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      if (timerEl) {
+        timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+    }, 1000);
+  }
+
+  document.getElementById('skip-prep-btn')?.addEventListener('click', () => {
+    if (prepInterval) clearInterval(prepInterval);
+    startRiderTracking();
+  });
+
+  // 5. Start Real-time Google Maps Tracker
+  function startRiderTracking() {
+    screenPreparing?.classList.add('hidden');
+    screenTracking?.classList.remove('hidden');
+
+    stepNav2?.classList.replace('text-[#000104]', 'text-emerald-700');
+    stepBar2?.classList.replace('bg-neutral-200', 'bg-emerald-500');
+    stepNav3?.classList.add('text-[#000104]');
+
+    mapsService.init('google-map', () => {
+      showReviewScreen();
+    });
+  }
+
+  // Fast forward delivery button
+  document.getElementById('simulate-delivered-btn')?.addEventListener('click', () => {
+    mapsService.stop();
+    showReviewScreen();
+  });
+
+  // 6. Delivery Complete & Review Screen
+  function showReviewScreen() {
+    screenTracking?.classList.add('hidden');
+    screenReview?.classList.remove('hidden');
+
+    stepNav3?.classList.replace('text-[#000104]', 'text-emerald-700');
+  }
+
+  // Star Rating Interaction
+  const stars = document.querySelectorAll('#star-rating .star');
+  let selectedRating = 5;
+
+  stars.forEach((star) => {
+    star.addEventListener('click', (e) => {
+      const val = parseInt((e.target as HTMLElement).getAttribute('data-v') || '5', 10);
+      selectedRating = val;
+      stars.forEach((s) => {
+        const sv = parseInt((s as HTMLElement).getAttribute('data-v') || '0', 10);
+        if (sv <= selectedRating) {
+          s.classList.add('text-amber-400');
+          s.classList.remove('text-neutral-300');
+        } else {
+          s.classList.remove('text-amber-400');
+          s.classList.add('text-neutral-300');
+        }
+      });
+    });
+  });
+
+  // Submit Review Button
+  const submitReviewBtn = document.getElementById('submit-review-btn');
+  const reviewSuccess = document.getElementById('review-success');
+
+  if (submitReviewBtn && reviewSuccess) {
+    submitReviewBtn.addEventListener('click', () => {
+      submitReviewBtn.parentElement?.classList.add('hidden');
+      reviewSuccess.classList.remove('hidden');
+    });
+  }
+</script>
+

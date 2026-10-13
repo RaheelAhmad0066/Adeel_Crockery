@@ -135,14 +135,13 @@ class App {
   setupCheckout() {
     const checkoutBtn = document.getElementById('checkout-order-btn');
     if (checkoutBtn) {
-      checkoutBtn.onclick = () => {
+      checkoutBtn.onclick = (e) => {
         if (this.cartVM.items.length === 0) {
+          e.preventDefault();
           NotificationService.showToast('Your cart is empty! Add products to proceed.');
           return;
         }
-        alert(`Order placed successfully!\nTotal: $${this.cartVM.grandTotal} USD\nThank you for choosing Earthware Pottery.`);
-        this.cartVM.clear();
-        this.cartView.close();
+        // Let anchor href="/checkout" execute normally
       };
     }
   }

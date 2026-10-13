@@ -1,0 +1,23 @@
+---
+// src/components/checkout/CheckoutStepper.astro - Step Progress Header
+---
+
+<div class="bg-white rounded-2xl p-5 sm:p-6 border border-neutral-200/60 shadow-sm">
+  <div class="flex items-center justify-between text-xs sm:text-sm font-semibold text-neutral-400">
+    <div id="step-nav-1" class="flex items-center gap-2 text-[#000104]">
+      <span class="w-6 h-6 rounded-full bg-[#000104] text-white flex items-center justify-center text-xs">1</span>
+      <span>Delivery & Payment</span>
+    </div>
+    <div class="h-[2px] flex-1 mx-3 sm:mx-6 bg-neutral-200 transition-colors" id="step-bar-1"></div>
+    <div id="step-nav-2" class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center text-xs">2</span>
+      <span>Preparing Order</span>
+    </div>
+    <div class="h-[2px] flex-1 mx-3 sm:mx-6 bg-neutral-200 transition-colors" id="step-bar-2"></div>
+    <div id="step-nav-3" class="flex items-center gap-2">
+      <span class="w-6 h-6 rounded-full bg-neutral-200 text-neutral-600 flex items-center justify-center text-xs">3</span>
+      <span>Live Rider Tracker</span>
+    </div>
+  </div>
+</div>
+
