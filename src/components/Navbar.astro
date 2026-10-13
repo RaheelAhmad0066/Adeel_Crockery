@@ -27,10 +27,12 @@ const { active = 'home', showCategoryBar = true } = Astro.props;
 
     <!-- Right Action Items (Figma cart.svg) -->
     <div class="flex items-center gap-2.5 sm:gap-6 flex-shrink-0">
-      <button id="cart-btn" class="flex items-center gap-1.5 sm:gap-2 text-[15px] sm:text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press p-1 sm:p-0">
-        <img src="/assets/icons/cart.svg" alt="Cart" class="w-5 h-5 object-contain">
+      <button id="cart-btn" class="relative flex items-center gap-2 text-[15px] sm:text-[16px] font-medium text-[#5E666C] hover:text-[#000104] transition-colors btn-press p-1.5 sm:p-0">
+        <div class="relative flex items-center justify-center">
+          <img src="/assets/icons/cart.svg" alt="Cart" class="w-6 h-6 object-contain">
+          <span class="cart-count-badge absolute -top-2 -right-2.5 bg-[#000104] text-white text-[10px] rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center font-bold shadow-sm leading-none transition-transform duration-300">0</span>
+        </div>
         <span class="hidden sm:inline">Cart</span>
-        <span class="cart-count-badge bg-[#000104] text-white text-[11px] rounded-full w-5 h-5 flex items-center justify-center font-bold">0</span>
       </button>
 
       <span class="hidden sm:inline-block h-5 w-[1px] bg-neutral-300"></span>

@@ -44,7 +44,12 @@ export class CartDrawerView {
   }
 
   render() {
-    this.countBadges.forEach(b => b.textContent = this.vm.totalItemsCount);
+    this.countBadges.forEach(b => {
+      b.textContent = this.vm.totalItemsCount;
+      b.classList.remove('cart-bump-animate');
+      void b.offsetWidth; // Force DOM reflow to restart animation
+      b.classList.add('cart-bump-animate');
+    });
 
     if (this.subtotalEl) this.subtotalEl.textContent = `PKR ${this.vm.subtotal}`;
     if (this.discountEl) this.discountEl.textContent = this.vm.discount > 0 ? `-PKR ${this.vm.discount}` : 'PKR 0';
