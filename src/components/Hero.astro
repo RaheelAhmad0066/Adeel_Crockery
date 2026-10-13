@@ -1,37 +1,68 @@
 ---
-// Hero.astro
+// Hero.astro - Instant Zero-Latency Render with Client Hydration
+const defaultBanner = {
+  headline: "Feel it, Feel the Uniqueness.",
+  subtitle: "Is filament of the highest quality that we are proud to offer our customers.",
+  cta_text: "Buy Now",
+  cta_link: "#products",
+  image: "/assets/images/hero-pot.png"
+};
 ---
 
-<section class="relative overflow-hidden py-16 sm:py-24 border-b border-neutral-200/50 bg-[#FBF6F3]">
-  <!-- Exact Background Image: assets/images/Hero Section.svg -->
+
+<section id="hero-banner-section" class="relative overflow-hidden py-16 sm:py-24 border-b border-neutral-200/50 bg-[#FBF6F3]">
+  <!-- Exact Background Image: assets/images/Hero Section.svg (Permanent) -->
   <img 
     src="/assets/images/Hero Section.svg" 
     alt="" 
-    class="absolute inset-0 w-full h-full object-cover pointer-events-none"
+    class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-90"
   >
   
   <div class="max-w-[1440px] mx-auto px-6 lg:px-28 text-center relative z-10 space-y-7">
-    <h1 class="font-gallient text-4xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[1.08] font-normal text-[#000104] tracking-tight max-w-4xl mx-auto">
-      Feel it, Feel the Uniqueness.
+    <h1 id="hero-headline" class="font-gallient text-4xl sm:text-6xl md:text-7xl lg:text-[80px] leading-[1.08] font-normal text-[#000104] tracking-tight max-w-4xl mx-auto">
+      {defaultBanner.headline}
     </h1>
 
-    <p class="text-lg sm:text-2xl text-[#5E666C] font-normal max-w-2xl mx-auto leading-relaxed">
-      Is filament of the highest quality that we are proud to offer our customers.
+    <p id="hero-subtitle" class="text-lg sm:text-2xl text-[#5E666C] font-normal max-w-2xl mx-auto leading-relaxed">
+      {defaultBanner.subtitle}
     </p>
 
     <div class="pt-2">
-      <a href="#products" class="inline-block bg-[#000104] text-white text-[18px] font-semibold px-11 py-4 rounded-md hover:bg-neutral-800 transition-smooth shadow-md btn-press">
-        Buy Now
+      <a 
+        id="hero-cta" 
+        href={defaultBanner.cta_link} 
+        class="inline-block bg-[#000104] text-white text-[18px] font-semibold px-11 py-4 rounded-md hover:bg-neutral-800 transition-smooth shadow-md btn-press"
+      >
+        {defaultBanner.cta_text}
       </a>
     </div>
 
     <div class="pt-6 max-w-xl mx-auto flex justify-center animate-float">
       <img 
-        src="/assets/images/hero-pot.png" 
-        alt="Ceramic Jugs" 
+        id="hero-img"
+        src={defaultBanner.image} 
+        alt="Ceramic Pottery" 
         class="max-h-[340px] w-auto drop-shadow-xl object-contain"
       >
     </div>
   </div>
 </section>
+
+<script>
+  import { getActiveHeroBanners } from '../services/dbService.js';
+  getActiveHeroBanners().then((banners) => {
+    if (banners && banners.length > 0) {
+      const active = banners.find((b: any) => b.is_active) || banners[0];
+      const hEl = document.getElementById('hero-headline');
+      const sEl = document.getElementById('hero-subtitle');
+      const cEl = document.getElementById('hero-cta') as HTMLAnchorElement;
+      const iEl = document.getElementById('hero-img') as HTMLImageElement;
+      if (hEl && active.headline) hEl.textContent = active.headline;
+      if (sEl && active.subtitle) sEl.textContent = active.subtitle;
+      if (cEl && active.cta_text) cEl.textContent = active.cta_text;
+      if (cEl && active.cta_link) cEl.href = active.cta_link;
+      if (iEl && active.image) iEl.src = active.image;
+    }
+  }).catch(() => {});
+</script>
 

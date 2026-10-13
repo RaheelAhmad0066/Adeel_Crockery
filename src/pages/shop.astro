@@ -10,7 +10,9 @@ import ShopFilters from '../components/ShopFilters.astro';
 
 // Clean Data Import (Ready to be replaced with backend API fetch)
 import { ceramicPotteryProducts, categoryProducts } from '../data/shopData.js';
+const activeProducts = ceramicPotteryProducts;
 ---
+
 
 <Layout title="Shop — Earthware">
   <Navbar active="shop" />
@@ -52,7 +54,7 @@ import { ceramicPotteryProducts, categoryProducts } from '../data/shopData.js';
 
           <!-- Products Grid -->
           <div id="shop-products-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-            {ceramicPotteryProducts.map((prod) => (
+            {activeProducts.map((prod) => (
               <ProductCard 
                 id={prod.id}
                 name={prod.name}

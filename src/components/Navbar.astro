@@ -7,6 +7,7 @@ interface Props {
 const { active = 'home', showCategoryBar = true } = Astro.props;
 ---
 
+
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8E8E8]">
   <!-- Top Primary Bar -->
   <div class="max-w-[1440px] mx-auto px-6 lg:px-28 h-20 sm:h-[92px] flex items-center justify-between">
@@ -37,11 +38,17 @@ const { active = 'home', showCategoryBar = true } = Astro.props;
 
       <span class="hidden sm:inline-block h-5 w-[1px] bg-neutral-300"></span>
 
-      <a href="/login" class="hidden sm:inline-block text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
-
-      <a href="/signup" class="hidden sm:inline-block bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
-        Sign Up
-      </a>
+      <!-- Dynamic Auth User / Guest Buttons -->
+      <div id="nav-auth-container" class="hidden sm:flex items-center gap-3">
+        <a id="nav-login-btn" href="/login" class="text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
+        <a id="nav-signup-btn" href="/signup" class="bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+          Sign Up
+        </a>
+        <div id="nav-user-box" class="hidden items-center gap-3">
+          <span id="nav-user-email" class="text-xs font-semibold text-neutral-700 bg-neutral-100 px-3 py-1.5 rounded-full truncate max-w-[150px]"></span>
+          <button id="nav-logout-btn" class="text-xs font-bold text-red-600 hover:underline">Logout</button>
+        </div>
+      </div>
 
       <!-- Mobile Hamburger Button -->
       <button id="mobile-menu-btn" class="lg:hidden text-[#000104] p-2 hover:bg-neutral-100 rounded-lg transition-colors" aria-label="Toggle navigation menu">
@@ -330,4 +337,48 @@ const { active = 'home', showCategoryBar = true } = Astro.props;
     </div>
   </div>
 </aside>
+
+<script>
+  import { supabase } from '../lib/supabase.js';
+
+  const loginBtn = document.getElementById('nav-login-btn');
+  const signupBtn = document.getElementById('nav-signup-btn');
+  const userBox = document.getElementById('nav-user-box');
+  const userEmail = document.getElementById('nav-user-email');
+  const logoutBtn = document.getElementById('nav-logout-btn');
+
+  // Check initial user session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    updateAuthUI(session?.user);
+  });
+
+  // Listen to auth state changes
+  supabase.auth.onAuthStateChange((_event, session) => {
+    updateAuthUI(session?.user);
+  });
+
+  function updateAuthUI(user: any) {
+    if (user && user.email) {
+      if (loginBtn) loginBtn.classList.add('hidden');
+      if (signupBtn) signupBtn.classList.add('hidden');
+      if (userBox) {
+        userBox.classList.remove('hidden');
+        userBox.classList.add('flex');
+      }
+      if (userEmail) userEmail.textContent = user.email;
+    } else {
+      if (loginBtn) loginBtn.classList.remove('hidden');
+      if (signupBtn) signupBtn.classList.remove('hidden');
+      if (userBox) {
+        userBox.classList.add('hidden');
+        userBox.classList.remove('flex');
+      }
+    }
+  }
+
+  logoutBtn?.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.reload();
+  });
+</script>
 

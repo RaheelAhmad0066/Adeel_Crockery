@@ -1,7 +1,11 @@
 ---
-// Blog.astro
+// Blog.astro - Instant Zero-Latency Render with Client Hydration
 import { blogData } from '../data/mockData.js';
+
+let featuredArticles = blogData.featured;
+let compactArticles = blogData.compact;
 ---
+
 
 <section id="blog" class="py-16 lg:py-24 bg-white border-b border-neutral-200/60">
   <div class="max-w-[1440px] mx-auto px-6 lg:px-28 space-y-12">
@@ -11,8 +15,8 @@ import { blogData } from '../data/mockData.js';
 
     <!-- Featured Articles (2 Columns) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {blogData.featured.map((post) => (
-        <article class="space-y-3 group cursor-pointer">
+      {featuredArticles.map((post) => (
+        <article class="space-y-3 group cursor-pointer" onclick="window.location.href='/news'">
           <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
             <img 
               src={post.image.startsWith('/') ? post.image : `/${post.image}`} 
@@ -38,8 +42,8 @@ import { blogData } from '../data/mockData.js';
 
     <!-- Compact Cards (4 Columns) -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-      {blogData.compact.map((item) => (
-        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50">
+      {compactArticles.map((item) => (
+        <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50" onclick="window.location.href='/news'">
           <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
             <img 
               src={item.image.startsWith('/') ? item.image : `/${item.image}`} 
@@ -60,4 +64,3 @@ import { blogData } from '../data/mockData.js';
     </div>
   </div>
 </section>
-

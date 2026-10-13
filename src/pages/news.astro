@@ -6,9 +6,10 @@ import Newsletter from '../components/Newsletter.astro';
 import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
 import ProductCard from '../components/ProductCard.astro';
+import { getAllArticles } from '../services/dbService.js';
 
-// Recent Articles matching the screenshot sidebar
-const recentArticles = [
+// Recent Articles with graceful fallback
+let recentArticles = [
   {
     title: 'Limited-Edition Handmade Mug',
     date: 'Apr 16, 2024, 2:30 am',
@@ -31,6 +32,8 @@ const recentArticles = [
     link: '#'
   }
 ];
+
+
 
 // Popular tags matching the screenshot
 const popularTags = [

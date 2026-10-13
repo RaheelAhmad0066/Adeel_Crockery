@@ -289,7 +289,12 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 
       delSlideModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
         if (pendingSlideIdx !== -1) {
-          slides.splice(pendingSlideIdx, 1);
+          const removed = slides.splice(pendingSlideIdx, 1)[0];
+          if (removed && removed.id) {
+            import('../services/dbService.js').then(({ deleteHeroBanner }) => {
+              deleteHeroBanner(removed.id).catch(err => console.error('Error deleting banner from Supabase:', err));
+            });
+          }
           if (activeIndex >= slides.length) activeIndex = 0;
           pendingSlideIdx = -1;
           renderSlides();
@@ -331,17 +336,25 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
     modal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  fileInput?.addEventListener('change', (e) => {
-    const target = e.target as HTMLInputElement;
-    if (target.files && target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        if (evt.target?.result) {
-          modalImgPreview.src = evt.target.result as string;
-          slideImgPath.value = evt.target.result as string;
+  fileInput?.addEventListener('change', async (e: any) => {
+    const file = e.target?.files?.[0];
+    if (file) {
+      import('../services/dbService.js').then(async ({ uploadImageToStorage }) => {
+        const uploadRes = await uploadImageToStorage(file, 'banners');
+        if (uploadRes.success && uploadRes.publicUrl) {
+          modalImgPreview.src = uploadRes.publicUrl;
+          slideImgPath.value = uploadRes.publicUrl;
+        } else {
+          const reader = new FileReader();
+          reader.onload = (evt) => {
+            if (evt.target?.result) {
+              modalImgPreview.src = evt.target.result as string;
+              slideImgPath.value = evt.target.result as string;
+            }
+          };
+          reader.readAsDataURL(file);
         }
-      };
-      reader.readAsDataURL(target.files[0]);
+      });
     }
   });
 
@@ -365,8 +378,44 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
       slides[idx] = newSlide;
     }
 
+    // Persist to Supabase
+    import('../services/dbService.js').then(({ saveHeroBanner }) => {
+      saveHeroBanner({
+        id: newSlide.id,
+        headline: newSlide.headline,
+        subtitle: newSlide.subtitle,
+        cta_text: newSlide.cta,
+        cta_link: newSlide.link,
+        image: newSlide.img,
+        is_active: newSlide.active,
+        sort_order: idx === -1 ? slides.length : idx + 1
+      }).catch(err => console.error('Supabase banner save error:', err));
+    });
+
     renderSlides();
     modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  // Client-side fetch from Supabase
+  import('../services/dbService.js').then(async ({ getActiveHeroBanners }) => {
+    try {
+      const liveBanners = await getActiveHeroBanners();
+      if (liveBanners && liveBanners.length > 0) {
+        slides = liveBanners.map((b: any) => ({
+          id: b.id,
+          headline: b.headline,
+          subtitle: b.subtitle,
+          cta: b.cta_text || 'Buy Now',
+          link: b.cta_link || '#products',
+          img: b.image || '/assets/images/hero-pot.png',
+          active: b.is_active ?? true
+        }));
+        activeIndex = 0;
+        renderSlides();
+      }
+    } catch (e) {
+      console.warn('Banner live fetch warning:', e);
+    }
   });
 
   renderSlides();

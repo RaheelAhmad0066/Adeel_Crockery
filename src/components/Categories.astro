@@ -1,6 +1,7 @@
 ---
-// Categories.astro - Exact Figma layout matching Image 3
+// Categories.astro - Instant Zero-Latency Render with Client Hydration
 import { categoriesData } from '../data/mockData.js';
+const displayCategories = categoriesData;
 ---
 
 <section id="categories" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60 overflow-hidden">
@@ -17,7 +18,7 @@ import { categoriesData } from '../data/mockData.js';
     <!-- Categories Container: Grid on Mobile (2 columns), Carousel on Desktop -->
     <div class="relative">
       <div id="categories-grid-container" class="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-nowrap gap-4 sm:gap-6 lg:overflow-x-auto pb-4 lg:pb-6 hide-scrollbar scroll-smooth">
-        {categoriesData.map((cat, index) => {
+        {displayCategories.map((cat, index) => {
           const isSelected = index === 0;
           const cardBgClass = isSelected ? 'bg-[#EDEDED]' : 'bg-white border border-neutral-200/80';
           const imgSrc = cat.image.startsWith('/') ? cat.image : `/${cat.image}`;
@@ -59,10 +60,19 @@ import { categoriesData } from '../data/mockData.js';
         class="hidden lg:flex absolute right-0 top-1/2 -translate-y-8 w-12 h-12 rounded-full bg-white shadow-xl border border-neutral-200 items-center justify-center text-neutral-800 z-30 hover:scale-110 transition-smooth btn-press" 
         aria-label="Next Category"
       >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-        </svg>
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
       </button>
     </div>
   </div>
 </section>
+
+<script>
+  const container = document.getElementById('categories-grid-container');
+  const scrollRightBtn = document.getElementById('cat-scroll-right-btn');
+
+  if (scrollRightBtn && container) {
+    scrollRightBtn.addEventListener('click', () => {
+      container.scrollBy({ left: 300, behavior: 'smooth' });
+    });
+  }
+</script>

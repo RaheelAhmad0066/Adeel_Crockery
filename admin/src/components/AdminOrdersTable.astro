@@ -141,6 +141,7 @@ const displayOrders = adminOrdersList.slice(0, limit);
     sel.addEventListener('change', (e) => {
       const target = e.target as HTMLSelectElement;
       const row = target.closest('.order-row');
+      const orderId = row?.getAttribute('data-order-id');
       const badge = row?.querySelector('.order-badge');
       if (badge && row) {
         badge.textContent = target.value;
@@ -151,6 +152,98 @@ const displayOrders = adminOrdersList.slice(0, limit);
         if (target.value === 'Out for Delivery') badge.className += 'bg-purple-100 text-purple-800 border border-purple-200';
         if (target.value === 'Delivered') badge.className += 'bg-emerald-100 text-emerald-800 border border-emerald-200';
       }
+
+      if (orderId) {
+        import('../services/dbService.js').then(({ updateOrderStatus }) => {
+          updateOrderStatus(orderId, target.value).catch((err: any) => console.error('Status update error:', err));
+        });
+      }
     });
+  });
+
+  // Client-side fetch live orders from Supabase
+  import('../services/dbService.js').then(async ({ getAllOrders, updateOrderStatus }) => {
+    try {
+      const liveOrders = await getAllOrders();
+      if (liveOrders && liveOrders.length > 0) {
+        const tbody = document.querySelector('table tbody');
+        if (tbody) {
+          tbody.innerHTML = '';
+          liveOrders.forEach((order: any) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-neutral-50/70 transition-colors order-row';
+            tr.setAttribute('data-status', order.status || 'Pending');
+            tr.setAttribute('data-order-id', order.id);
+
+            let badgeClass = 'bg-amber-100 text-amber-800 border border-amber-200';
+            if (order.status === 'Preparing') badgeClass = 'bg-blue-100 text-blue-800 border border-blue-200';
+            if (order.status === 'Out for Delivery') badgeClass = 'bg-purple-100 text-purple-800 border border-purple-200';
+            if (order.status === 'Delivered') badgeClass = 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+
+            const itemsStr = Array.isArray(order.items) 
+              ? order.items.map((it: any) => `${it.name || 'Item'} (x${it.quantity || it.qty || 1})`).join(', ')
+              : 'Items';
+
+            tr.innerHTML = `
+              <td class="py-3.5 px-5 font-bold text-[#000104]">
+                #${order.id}
+                <span class="block text-[10px] text-neutral-400 font-normal">Recent</span>
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="font-bold text-neutral-900 block">${order.customer}</span>
+                <span class="text-neutral-500 text-[11px] block">${order.phone}</span>
+                <span class="text-neutral-400 text-[10px] block truncate max-w-[180px]">${order.address}</span>
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="font-semibold text-neutral-800">${order.items_count || 1} Items</span>
+                <div class="text-[11px] text-neutral-500 truncate max-w-[180px]">${itemsStr}</div>
+              </td>
+              <td class="py-3.5 px-5 font-bold text-[#000104]">
+                PKR ${Number(order.total || 0).toLocaleString()}
+                <span class="block text-[10px] text-neutral-400 font-normal">${order.payment_method || 'COD'}</span>
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="order-badge inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ${badgeClass}">
+                  ${order.status || 'Pending'}
+                </span>
+              </td>
+              <td class="py-3.5 px-5 text-right">
+                <select class="order-status-changer text-xs border border-neutral-200 rounded-lg px-2.5 py-1 bg-white font-medium text-neutral-800 focus:outline-none focus:border-black cursor-pointer">
+                  <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                  <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
+                  <option value="Out for Delivery" ${order.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+                  <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                </select>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+
+          // Re-attach status changer listeners
+          tbody.querySelectorAll('.order-status-changer').forEach(sel => {
+            sel.addEventListener('change', (e) => {
+              const target = e.target as HTMLSelectElement;
+              const row = target.closest('.order-row');
+              const orderId = row?.getAttribute('data-order-id');
+              const badge = row?.querySelector('.order-badge');
+              if (badge && row) {
+                badge.textContent = target.value;
+                row.setAttribute('data-status', target.value);
+                badge.className = 'order-badge inline-block px-2.5 py-1 rounded-full text-[11px] font-bold ';
+                if (target.value === 'Pending') badge.className += 'bg-amber-100 text-amber-800 border border-amber-200';
+                if (target.value === 'Preparing') badge.className += 'bg-blue-100 text-blue-800 border border-blue-200';
+                if (target.value === 'Out for Delivery') badge.className += 'bg-purple-100 text-purple-800 border border-purple-200';
+                if (target.value === 'Delivered') badge.className += 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+              }
+              if (orderId) {
+                updateOrderStatus(orderId, target.value).catch((err: any) => console.error('Status update error:', err));
+              }
+            });
+          });
+        }
+      }
+    } catch (e: any) {
+      console.warn('Orders fetch warning:', e);
+    }
   });
 </script>

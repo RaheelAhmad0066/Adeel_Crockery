@@ -1,6 +1,7 @@
 ---
-// Products.astro - Exact Figma layout matching Image 2
+// Products.astro - Instant Zero-Latency Render with Client Hydration
 import { productsData } from '../data/mockData.js';
+const displayProducts = productsData.slice(0, 4);
 ---
 
 <section id="products" class="bg-earth-peach py-16 lg:py-24 overflow-hidden border-b border-neutral-200/60">
@@ -18,7 +19,7 @@ import { productsData } from '../data/mockData.js';
 
     <!-- Products 4-Grid Container matching Figma layout -->
     <div id="products-grid-container" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-      {productsData.slice(0, 4).map((prod) => {
+      {displayProducts.slice(0, 4).map((prod) => {
         const imgSrc = prod.image.startsWith('/') ? prod.image : `/${prod.image}`;
         return (
           <div class="flex flex-col justify-between group bg-white/60 p-3 sm:p-4 rounded-xl border border-neutral-100 hover:bg-white hover:shadow-md transition-all">

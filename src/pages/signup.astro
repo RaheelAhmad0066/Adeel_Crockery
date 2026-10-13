@@ -185,23 +185,81 @@ import CartDrawer from '../components/CartDrawer.astro';
 </Layout>
 
 <script>
-  // Simple password toggle logic
+  import { supabase } from '../lib/supabase.js';
+
+  const form = document.getElementById('signup-form') as HTMLFormElement | null;
+  const emailInput = document.getElementById('email') as HTMLInputElement | null;
+  const passwordInput = document.getElementById('password') as HTMLInputElement | null;
+  const confirmPasswordInput = document.getElementById('confirm-password') as HTMLInputElement | null;
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+  // Password visibility toggles
   const toggleBtn1 = document.getElementById('toggle-password');
-  const passwordInput1 = document.getElementById('password') as HTMLInputElement | null;
-  if (toggleBtn1 && passwordInput1) {
+  if (toggleBtn1 && passwordInput) {
     toggleBtn1.addEventListener('click', () => {
-      const isPassword = passwordInput1.type === 'password';
-      passwordInput1.type = isPassword ? 'text' : 'password';
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
     });
   }
 
   const toggleBtn2 = document.getElementById('toggle-confirm-password');
-  const passwordInput2 = document.getElementById('confirm-password') as HTMLInputElement | null;
-  if (toggleBtn2 && passwordInput2) {
+  if (toggleBtn2 && confirmPasswordInput) {
     toggleBtn2.addEventListener('click', () => {
-      const isPassword = passwordInput2.type === 'password';
-      passwordInput2.type = isPassword ? 'text' : 'password';
+      confirmPasswordInput.type = confirmPasswordInput.type === 'password' ? 'text' : 'password';
     });
   }
+
+  // Real Supabase Auth Submission
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = emailInput?.value?.trim();
+    const password = passwordInput?.value;
+    const confirmPassword = confirmPasswordInput?.value;
+
+    if (!email || !password) {
+      alert('Please fill in both email and password.');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters long.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match. Please re-enter.');
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating account...';
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      if (error) {
+        alert('Signup Failed: ' + error.message);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Sign Up';
+        }
+        return;
+      }
+
+      alert('Account created successfully! You are now logged in.');
+      window.location.href = '/';
+    } catch (err: any) {
+      alert('An unexpected error occurred: ' + (err?.message || 'Please try again.'));
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sign Up';
+      }
+    }
+  });
 </script>
 

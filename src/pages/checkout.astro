@@ -220,7 +220,32 @@ import OrderReviewModal from '../components/checkout/OrderReviewModal.astro';
   // 4. Transitions & 2-Minute Preparation Countdown
   let prepInterval: any = null;
 
-  function confirmOrder() {
+  async function confirmOrder() {
+    const orderId = 'ORD-' + Math.floor(1000 + Math.random() * 9000);
+    const customerName = (document.getElementById('addr-name')?.textContent || 'Guest Customer').trim();
+    const customerPhone = (document.getElementById('addr-phone')?.textContent?.replace('📞', '') || '+92 300 1234567').trim();
+    const customerAddress = (document.getElementById('addr-line1')?.textContent || 'Sector F-7/2, Islamabad').trim();
+    const customerCity = (document.getElementById('addr-city')?.textContent || 'Islamabad, Pakistan').trim();
+
+    const orderPayload = {
+      id: orderId,
+      customer: customerName,
+      phone: customerPhone,
+      address: customerAddress,
+      city: customerCity,
+      items: cartVM.items,
+      items_count: cartVM.totalItemsCount,
+      total: cartVM.grandTotal,
+      status: 'Pending',
+      payment_method: 'Cash on Delivery (COD)',
+      payment_status: 'Unpaid'
+    };
+
+    // Save to Supabase Cloud Database asynchronously
+    import('../services/dbService.js').then(({ createOrder }) => {
+      createOrder(orderPayload).catch(err => console.error('Supabase order error:', err));
+    });
+
     cartVM.clear();
 
     screenCheckout?.classList.add('hidden');

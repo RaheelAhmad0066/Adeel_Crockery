@@ -179,6 +179,12 @@ import { adminArticlesList } from '../data/adminMockData.js';
 
     delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
       if (pendingArtRow) {
+        const artId = pendingArtRow.getAttribute('data-id');
+        if (artId) {
+          import('../services/dbService.js').then(({ deleteArticle }) => {
+            deleteArticle(artId).catch(err => console.error('Delete article error:', err));
+          });
+        }
         pendingArtRow.remove();
         pendingArtRow = null;
       }
@@ -191,6 +197,8 @@ import { adminArticlesList } from '../data/adminMockData.js';
     const idx = parseInt(artIdx.value);
     const title = titleInput.value;
     const author = authorInput.value;
+    const category = catInput.value || 'Ceramic Art';
+    const id = idx !== -1 ? (document.getElementById(`art-row-${idx}`)?.getAttribute('data-id') || `art-${Date.now()}`) : `art-${Date.now()}`;
 
     if (idx !== -1) {
       const row = document.getElementById(`art-row-${idx}`);
@@ -200,8 +208,88 @@ import { adminArticlesList } from '../data/adminMockData.js';
         if (t) t.textContent = title;
         if (a) a.textContent = author;
       }
+    } else {
+      const tbody = document.getElementById('articles-body');
+      const newIdx = document.querySelectorAll('#articles-body tr').length;
+      const tr = document.createElement('tr');
+      tr.id = `art-row-${newIdx}`;
+      tr.setAttribute('data-id', id);
+      tr.className = 'hover:bg-neutral-50/70 transition-colors';
+      tr.innerHTML = `
+        <td class="py-3.5 px-4 font-bold text-[#000104] max-w-xs truncate art-title">${title}</td>
+        <td class="py-3.5 px-4 font-medium art-author">${author}</td>
+        <td class="py-3.5 px-4">
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700">${category}</span>
+        </td>
+        <td class="py-3.5 px-4 text-neutral-500">Just Now</td>
+        <td class="py-3.5 px-4">
+          <span class="text-[10px] text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded">#CERAMICS</span>
+        </td>
+        <td class="py-3.5 px-4">
+          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Published</span>
+        </td>
+        <td class="py-3.5 px-4 text-right space-x-2">
+          <button class="btn-edit-art text-[#000104] font-semibold underline" data-idx="${newIdx}">Edit</button>
+          <button class="btn-del-art text-red-500 font-semibold underline" data-idx="${newIdx}">Delete</button>
+        </td>
+      `;
+      tbody?.prepend(tr);
+      attachArtListeners();
     }
+
+    import('../services/dbService.js').then(({ saveArticle }) => {
+      saveArticle({
+        id,
+        title,
+        author,
+        category,
+        date: 'Today',
+        status: 'Published'
+      }).catch(err => console.error('Save article error:', err));
+    });
+
     modal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  // Client-side fetch from Supabase
+  import('../services/dbService.js').then(async ({ getAllArticles }) => {
+    try {
+      const liveArticles = await getAllArticles();
+      if (liveArticles && liveArticles.length > 0) {
+        const tbody = document.getElementById('articles-body');
+        if (tbody) {
+          tbody.innerHTML = '';
+          liveArticles.forEach((art: any, idx: number) => {
+            const tr = document.createElement('tr');
+            tr.id = `art-row-${idx}`;
+            tr.setAttribute('data-id', art.id);
+            tr.className = 'hover:bg-neutral-50/70 transition-colors';
+            tr.innerHTML = `
+              <td class="py-3.5 px-4 font-bold text-[#000104] max-w-xs truncate art-title">${art.title}</td>
+              <td class="py-3.5 px-4 font-medium art-author">${art.author || 'American Spa Staff'}</td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700">${art.category || 'Ceramics'}</span>
+              </td>
+              <td class="py-3.5 px-4 text-neutral-500">${art.date || 'Apr 16, 2024'}</td>
+              <td class="py-3.5 px-4">
+                <span class="text-[10px] text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded">#ARTISAN</span>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${art.status || 'Published'}</span>
+              </td>
+              <td class="py-3.5 px-4 text-right space-x-2">
+                <button class="btn-edit-art text-[#000104] font-semibold underline" data-idx="${idx}">Edit</button>
+                <button class="btn-del-art text-red-500 font-semibold underline" data-idx="${idx}">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+          attachArtListeners();
+        }
+      }
+    } catch (e) {
+      console.warn('Could not load live articles:', e);
+    }
   });
 
   attachArtListeners();

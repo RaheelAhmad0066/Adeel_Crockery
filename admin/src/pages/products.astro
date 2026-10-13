@@ -466,6 +466,12 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
 
   document.getElementById('confirm-del-btn')?.addEventListener('click', () => {
     if (pendingDeleteRow) {
+      const id = pendingDeleteRow.getAttribute('data-id');
+      if (id) {
+        import('../services/dbService.js').then(({ deleteProduct }) => {
+          deleteProduct(id).catch(err => console.error('Error deleting product from Supabase:', err));
+        });
+      }
       pendingDeleteRow.remove();
       pendingDeleteRow = null;
       deleteModal?.classList.add('opacity-0', 'pointer-events-none');
@@ -573,8 +579,23 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
         </td>
       `;
 
-      tbody?.prepend(tr);
-    }
+    // Save to Supabase Cloud Database
+    import('../services/dbService.js').then(({ saveProduct }) => {
+      saveProduct({
+        id,
+        name,
+        category: cat,
+        subcategory: subcat,
+        price,
+        cost_price: cost,
+        stock,
+        sku: 'EW-' + id,
+        image,
+        show_on_home_categories: isHomeCat,
+        show_on_home_featured: isHomeFeat,
+        status: stock > 0 ? 'In Stock' : 'Out of Stock'
+      }).catch(err => console.error('Error saving product to Supabase:', err));
+    });
 
     attachEditListeners();
     attachDeleteListeners();
@@ -613,4 +634,97 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   // Initial Attach
   attachEditListeners();
   attachDeleteListeners();
+
+  // Dynamic Supabase fetch on client-side
+  import('../services/dbService.js').then(async ({ getAllProducts, uploadImageToStorage }) => {
+    try {
+      const liveProducts = await getAllProducts();
+      if (liveProducts && liveProducts.length > 0) {
+        const tbody = document.getElementById('products-table-body');
+        const countSpan = document.getElementById('total-count');
+        if (tbody) {
+          tbody.innerHTML = '';
+          liveProducts.forEach(prod => {
+            const tr = document.createElement('tr');
+            tr.id = `row-${prod.id}`;
+            tr.className = 'product-row hover:bg-neutral-50/70 transition-colors';
+            tr.setAttribute('data-id', prod.id);
+            tr.setAttribute('data-name', prod.name);
+            tr.setAttribute('data-category', prod.category || '');
+            tr.setAttribute('data-subcategory', prod.subcategory || '');
+            tr.setAttribute('data-price', (prod.price || 0).toString());
+            tr.setAttribute('data-cost', (prod.cost_price || 0).toString());
+            tr.setAttribute('data-stock', (prod.stock || 0).toString());
+            tr.setAttribute('data-image', prod.image || '/assets/images/cat-river-vase.png');
+            tr.setAttribute('data-home-cat', prod.show_on_home_categories ? 'true' : 'false');
+            tr.setAttribute('data-home-feat', prod.show_on_home_featured ? 'true' : 'false');
+
+            tr.innerHTML = `
+              <td class="py-3.5 px-5">
+                <div class="flex items-center gap-3">
+                  <div class="w-12 h-12 rounded-xl bg-[#FAF8F5] border border-neutral-200/70 p-1 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src="${prod.image}" alt="${prod.name}" class="max-h-full max-w-full object-contain row-img" />
+                  </div>
+                  <div>
+                    <span class="font-bold text-[#000104] block text-xs row-name">${prod.name}</span>
+                    <span class="text-[10px] text-neutral-400 font-mono">${prod.sku || prod.id}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="py-3.5 px-5">
+                <div class="space-y-0.5">
+                  <span class="font-semibold text-neutral-900 block row-cat">${prod.category}</span>
+                  <span class="text-[11px] text-neutral-400 row-subcat">${prod.subcategory || 'General'}</span>
+                </div>
+              </td>
+              <td class="py-3.5 px-5 font-bold text-[#000104] row-price">
+                PKR ${Number(prod.price || 0).toLocaleString()}
+              </td>
+              <td class="py-3.5 px-5 text-neutral-500 row-cost">
+                PKR ${Number(prod.cost_price || 0).toLocaleString()}
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="font-bold text-neutral-900 row-stock">${prod.stock || 0}</span>
+                <span class="text-[10px] text-neutral-400"> pcs</span>
+              </td>
+              <td class="py-3.5 px-5">
+                ${prod.show_on_home_categories ? '<span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mr-1">Home Carousel</span>' : ''}
+                ${prod.show_on_home_featured ? '<span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 mr-1">Home 4-Grid</span>' : ''}
+                ${!prod.show_on_home_categories && !prod.show_on_home_featured ? '<span class="inline-block px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-100 text-neutral-600">Shop Only</span>' : ''}
+              </td>
+              <td class="py-3.5 px-5">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold ${prod.stock > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                  ${prod.status || (prod.stock > 0 ? 'In Stock' : 'Out of Stock')}
+                </span>
+              </td>
+              <td class="py-3.5 px-5 text-right whitespace-nowrap space-x-2">
+                <button class="btn-edit-prod text-xs font-semibold text-neutral-700 hover:text-black underline" data-id="${prod.id}">Edit</button>
+                <button class="btn-delete-prod text-xs font-semibold text-red-500 hover:text-red-700 underline" data-id="${prod.id}">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+          if (countSpan) countSpan.textContent = liveProducts.length.toString();
+          attachEditListeners();
+          attachDeleteListeners();
+        }
+      }
+    } catch (e) {
+      console.warn('Could not load live products, displaying fallback data:', e);
+    }
+
+    // Handle real file upload to Supabase bucket
+    fileInput?.addEventListener('change', async (e: any) => {
+      const file = e.target?.files?.[0];
+      if (file) {
+        const uploadRes = await uploadImageToStorage(file, 'products');
+        if (uploadRes.success && uploadRes.publicUrl) {
+          if (imgPreview && imgPathHidden) {
+            imgPreview.src = uploadRes.publicUrl;
+            imgPathHidden.value = uploadRes.publicUrl;
+          }
+        }
+      }
+    });
+  });
 </script>
