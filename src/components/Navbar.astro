@@ -1,9 +1,10 @@
 ---
 // Navbar.astro
 interface Props {
-  active?: 'home' | 'about' | 'shop' | 'service' | 'news';
+  active?: 'home' | 'about' | 'shop' | 'service' | 'news' | 'login' | 'signup';
+  showCategoryBar?: boolean;
 }
-const { active = 'home' } = Astro.props;
+const { active = 'home', showCategoryBar = true } = Astro.props;
 ---
 
 <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E8E8E8]">
@@ -34,9 +35,9 @@ const { active = 'home' } = Astro.props;
 
       <span class="hidden sm:inline-block h-5 w-[1px] bg-neutral-300"></span>
 
-      <a href="#login" class="hidden sm:inline-block text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
+      <a href="/login" class="hidden sm:inline-block text-[16px] font-medium text-[#230C33] hover:opacity-80">Login</a>
 
-      <a href="#signup" class="bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
+      <a href="/signup" class="bg-[#000000] text-white text-[16px] font-semibold px-8 py-3 rounded-md hover:bg-neutral-800 transition-smooth btn-press shadow-sm">
         Sign Up
       </a>
 
@@ -47,6 +48,7 @@ const { active = 'home' } = Astro.props;
   </div>
 
   <!-- Secondary Category Bar (Exact Figma/User screenshots) -->
+  {showCategoryBar && (
   <div class="hidden lg:block bg-[#FAF8F5] border-t border-b border-[#EAE6DF] relative">
     <div class="max-w-[1440px] mx-auto px-6 lg:px-28 h-12 flex items-center justify-between text-[15px] text-[#4A4F54]">
       
@@ -159,6 +161,7 @@ const { active = 'home' } = Astro.props;
 
     </div>
   </div>
+  )}
 
   <!-- Mobile Menu -->
   <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-neutral-200 px-6 py-4 space-y-3 max-h-[80vh] overflow-y-auto">
@@ -167,6 +170,11 @@ const { active = 'home' } = Astro.props;
     <a href="/shop" class={active === 'shop' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Shop</a>
     <a href="/service" class={active === 'service' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>Service</a>
     <a href="/news" class={active === 'news' ? "block font-semibold text-[#000104]" : "block text-[#5E666C] hover:text-[#000104]"}>News</a>
+
+    <div class="flex items-center gap-3 pt-2">
+      <a href="/login" class="flex-1 text-center py-2 text-sm font-medium border border-neutral-300 rounded text-[#000104]">Login</a>
+      <a href="/signup" class="flex-1 text-center py-2 text-sm font-medium bg-[#000104] text-white rounded">Sign Up</a>
+    </div>
 
     <!-- Mobile Categories Accordion -->
     <div class="pt-3 border-t border-neutral-200">
