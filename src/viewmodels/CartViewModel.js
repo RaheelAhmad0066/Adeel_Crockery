@@ -2,11 +2,7 @@ import { CartItem } from '../models/Product.js';
 
 const STORAGE_KEY = 'earthware_cart_items_v2';
 
-const DEFAULT_PREFILLED_ITEMS = [
-  { id: 'sp-1', name: 'Ceramic Plant Pot', price: 230.80, qty: 1, image: '/assets/images/shop-1.svg' },
-  { id: 'sp-2', name: 'Terracotta Mug', price: 100.00, qty: 2, image: '/assets/images/shop-2.svg' },
-  { id: 'sp-3', name: 'Earthenware Tea Pot', price: 100.00, qty: 1, image: '/assets/images/shop-3.svg' }
-];
+const DEFAULT_PREFILLED_ITEMS = [];
 
 /**
  * CartViewModel: Manages cart state, reactive updates, localStorage persistence & calculations
@@ -22,14 +18,14 @@ export class CartViewModel {
 
   loadItems() {
     if (typeof window === 'undefined') {
-      return DEFAULT_PREFILLED_ITEMS.map(i => new CartItem(i.id, i.name, i.price, i.qty, i.image));
+      return [];
     }
 
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed.map(i => new CartItem(i.id, i.name, i.price, i.qty, i.image));
         }
       }
@@ -37,10 +33,7 @@ export class CartViewModel {
       console.warn('Failed to load cart from localStorage', e);
     }
 
-    // Default pre-populated items
-    const seeded = DEFAULT_PREFILLED_ITEMS.map(i => new CartItem(i.id, i.name, i.price, i.qty, i.image));
-    this.saveItems(seeded);
-    return seeded;
+    return [];
   }
 
   saveItems(itemsToSave = this.items) {

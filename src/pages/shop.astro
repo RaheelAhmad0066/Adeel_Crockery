@@ -1,479 +1,209 @@
 ---
+// shop.astro - Clean, Modular, Backend-Friendly Architecture
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Newsletter from '../components/Newsletter.astro';
 import Footer from '../components/Footer.astro';
 import CartDrawer from '../components/CartDrawer.astro';
+import ProductCard from '../components/ProductCard.astro';
+import ShopFilters from '../components/ShopFilters.astro';
 
-// Map category slug to display title
-const categoryTitles: Record<string, string> = {
-  'brass-serving-thaal': 'Brass Serving / Thaal',
-  'brass-ware': 'Brass Ware',
-  'brass-chafing-dish': 'Brass Chafing Dish',
-  'silver-bowl': 'Silver Bowl',
-  'silver-platters': 'Silver Platters',
-  'chafing-dish': 'Chafing Dish',
-  'copperware': 'Copperware',
-  'serveware': 'Serveware',
-  'casserole-dish': 'Casserole Dish',
-  'plate-sets': 'Plate sets',
-  'tea-cups-and-saucers': 'Tea cups and Saucers',
-  '2-tier-3-tier': '2-Tier & 3-Tier',
-  'dessert-set': 'Dessert Set',
-  'cutlery': 'Cutlery',
-  'cake-stand': 'Cake Stand',
-  'cake-lifter': 'Cake Lifter',
-  'mugs': 'Mugs',
-  'trays': 'Trays',
-  'glass-and-water-set': 'Glass and water set',
-  'jars': 'Jars',
-  'glasslock-containers': 'GlassLock Storage Containers',
-  'candle-stands': 'Candle stands',
-  'accessories': 'Accessories',
-  'planters': 'Planters',
-  'table-mats-placemats': 'Table mats/ placemats',
-  'bathroom-set': 'Bathroom Set'
-};
-
-const catParam = Astro.url.searchParams.get('cat') || 'brass-serving-thaal';
-const currentCategoryTitle = categoryTitles[catParam] || 'Brass Serving / Thaal';
-
-// Products matching Image 2 and ceramic collection
-const shopProducts = [
-  // Brass Collection (Matching Image 2)
-  { 
-    id: 'bp-1', 
-    name: 'Brass serving platter', 
-    type: 'platter', 
-    material: 'brass', 
-    finishing: 'silver-plated', 
-    color: 'silver', 
-    size: 'large', 
-    quantity: 'single', 
-    price: 23500, 
-    priceDisplay: 'Rs.23,500.00 PKR', 
-    isSoldOut: true, 
-    image: '/assets/images/about-promo-1.png', 
-    category: 'brass-serving-thaal',
-    rating: 5 
-  },
-  { 
-    id: 'bp-2', 
-    name: 'Royal Gold Hammered Brass Platter', 
-    type: 'platter', 
-    material: 'brass', 
-    finishing: 'hammered', 
-    color: 'gold', 
-    size: 'large', 
-    quantity: 'single', 
-    price: 17500, 
-    priceDisplay: 'From Rs.17,500.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/about-promo-2.png', 
-    category: 'brass-serving-thaal',
-    rating: 5 
-  },
-  { 
-    id: 'bp-3', 
-    name: 'Royal Brass Handi Dish', 
-    type: 'handi', 
-    material: 'brass', 
-    finishing: 'polished', 
-    color: 'gold', 
-    size: 'medium', 
-    quantity: 'set-of-2', 
-    price: 18500, 
-    priceDisplay: 'From Rs.18,500.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/image-removebg-preview 1.png', 
-    category: 'brass-serving-thaal',
-    rating: 5 
-  },
-  { 
-    id: 'bp-4', 
-    name: 'Brass Serving Platter', 
-    type: 'platter', 
-    material: 'brass', 
-    finishing: 'silver-plated', 
-    color: 'silver', 
-    size: 'large', 
-    quantity: 'single', 
-    price: 22000, 
-    priceDisplay: 'From Rs.22,000.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/shop-3.svg', 
-    category: 'brass-serving-thaal',
-    rating: 5 
-  },
-  { 
-    id: 'bp-5', 
-    name: 'Handcrafted Brass Thaal', 
-    type: 'thaal', 
-    material: 'brass', 
-    finishing: 'engraved', 
-    color: 'gold', 
-    size: 'large', 
-    quantity: 'single', 
-    price: 19500, 
-    priceDisplay: 'From Rs.19,500.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/shop-5.svg', 
-    category: 'brass-serving-thaal',
-    rating: 5 
-  },
-  // Additional Handcrafted Collection
-  { 
-    id: 'sp-1', 
-    name: 'Ceramic Plant Pot', 
-    type: 'plant-pot', 
-    material: 'ceramic', 
-    finishing: 'matte', 
-    color: 'green', 
-    size: 'large', 
-    quantity: 'single', 
-    price: 23500, 
-    priceDisplay: 'Rs.23,500.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/shop-1.svg', 
-    category: 'planters',
-    rating: 5 
-  },
-  { 
-    id: 'sp-2', 
-    name: 'Terracotta Mug', 
-    type: 'mug', 
-    material: 'terracotta', 
-    finishing: 'textured', 
-    color: 'brown', 
-    size: 'medium', 
-    quantity: 'single', 
-    price: 17500, 
-    priceDisplay: 'From Rs.17,500.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/shop-2.svg', 
-    category: 'mugs',
-    rating: 5 
-  },
-  { 
-    id: 'sp-4', 
-    name: 'Ceramic Glass', 
-    type: 'glass', 
-    material: 'ceramic', 
-    finishing: 'glossy', 
-    color: 'pink', 
-    size: 'small', 
-    quantity: 'set-of-2', 
-    price: 22000, 
-    priceDisplay: 'From Rs.22,000.00 PKR', 
-    isSoldOut: false, 
-    image: '/assets/images/shop-4.svg', 
-    category: 'glass-and-water-set',
-    rating: 5 
-  }
-];
+// Clean Data Import (Ready to be replaced with backend API fetch)
+import { ceramicPotteryProducts, categoryProducts } from '../data/shopData.js';
 ---
 
-<Layout title={`${currentCategoryTitle} — Earthware Ceramic Pot Website`}>
+<Layout title="Shop — Earthware">
   <Navbar active="shop" />
 
-  <main class="bg-[#FDFBF7]">
+  <main class="bg-[#FDFBF7] min-h-screen">
 
-    <!-- ================= 1. CATEGORY HEADER (Exact Image 2) ================= -->
-    <section class="pt-12 sm:pt-16 pb-8 border-b border-neutral-200/40">
-      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-8">
-        
-        <!-- Large Category Heading in Gallient Font -->
-        <h1 id="shop-category-heading" class="font-gallient text-4xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
-          {currentCategoryTitle}
-        </h1>
+    <!-- ========================================================================= -->
+    <!-- 1. GENERAL SHOP VIEW (When clicking "Shop" from top Navbar /shop)          -->
+    <!-- Matches Figma & user screenshot media_1791876894512_95b91dc3.png          -->
+    <!-- ========================================================================= -->
+    <div id="general-shop-view">
+      
+      <!-- Hero Texture Banner -->
+      <section class="relative overflow-hidden py-14 sm:py-20 bg-[#F4EBE1] border-b border-neutral-200/50">
+        <img 
+          src="/assets/images/Hero Section.svg" 
+          alt="" 
+          class="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-60 mix-blend-multiply"
+        />
 
-        <!-- Subheader Quick Filter Bar matching Image 2 -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-[#4A4F54] border-t border-neutral-200/60 pt-6">
-          <!-- Left: Filter Toggles -->
-          <div class="flex items-center gap-6">
-            <span class="font-medium text-[#000104]">Filter:</span>
-            
-            <div class="relative group">
-              <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
-                <span>Availability</span>
-                <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </div>
-
-            <div class="relative group">
-              <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
-                <span>Price</span>
-                <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </div>
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-20 text-center relative z-10 space-y-3">
+          <div class="inline-flex items-center gap-2 text-xs sm:text-sm text-[#000104] font-medium tracking-wide">
+            <span>Unique handmade</span>
+            <span class="bg-[#000104] text-white px-2.5 py-0.5 rounded text-xs font-semibold">pottery</span>
           </div>
 
-          <!-- Right: Sort by & Product count -->
-          <div class="flex items-center gap-6">
-            <div class="flex items-center gap-2">
-              <span class="font-medium text-[#000104]">Sort by:</span>
-              <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
-                <span>Best selling</span>
-                <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-            </div>
-            <span class="text-[#8E959B]" id="quick-counter">5 of 7 products</span>
-          </div>
+          <h1 class="font-gallient text-4xl sm:text-6xl md:text-[68px] font-normal text-[#000104] tracking-tight">
+            Discover Our Products
+          </h1>
         </div>
+      </section>
 
-      </div>
-    </section>
+      <!-- Products Grid Section with Centered Filter Dropdowns -->
+      <section class="py-12 sm:py-16">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-12">
 
-    <!-- ================= 2. PRODUCTS SECTION ================= -->
-    <section class="py-12 sm:py-16">
-      <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-12">
+          <!-- Centered Filter Pill Bar -->
+          <ShopFilters />
 
-        <!-- Centered Filter Bar -->
-        <div class="flex flex-col items-center justify-center w-full space-y-3">
-          <div class="bg-white border border-[#E8E8E8] p-2.5 sm:p-4 rounded-xl sm:rounded-md shadow-sm flex items-center justify-center flex-wrap gap-2 sm:gap-3 relative z-30 max-w-full">
-            
-            <!-- 1. Sort By Dropdown -->
-            <div class="relative filter-dropdown-group" data-filter-type="sort">
-              <button 
-                class="filter-trigger-btn bg-[#000104] text-white text-[11px] sm:text-sm font-semibold px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2.5 hover:bg-neutral-800 transition-smooth btn-press flex-shrink-0"
-              >
-                <span class="btn-label">Sort By</span>
-                <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <div class="dropdown-menu hidden absolute left-0 top-full mt-2 w-48 sm:w-52 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="default">Featured / Default</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="price-asc">Price: Low to High</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="price-desc">Price: High to Low</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="name-asc">Name: A to Z</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="name-desc">Name: Z to A</button>
-              </div>
-            </div>
-
-            <!-- 2. Product Type Dropdown -->
-            <div class="relative filter-dropdown-group" data-filter-type="type">
-              <button 
-                class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0"
-              >
-                <span class="btn-label">Product Type</span>
-                <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <div class="dropdown-menu hidden absolute left-0 top-full mt-2 w-48 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Types</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="platter">Brass Platter</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="handi">Royal Brass Handi</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="thaal">Handcrafted Thaal</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="plant-pot">Ceramic Plant Pot</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="mug">Terracotta Mug</button>
-              </div>
-            </div>
-
-            <!-- 3. Material Dropdown -->
-            <div class="relative filter-dropdown-group" data-filter-type="material">
-              <button 
-                class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0"
-              >
-                <span class="btn-label">Material</span>
-                <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <div class="dropdown-menu hidden absolute left-0 sm:left-auto top-full mt-2 w-44 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Materials</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="brass">Solid Brass</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="ceramic">Ceramic</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="terracotta">Terracotta</button>
-              </div>
-            </div>
-
-            <!-- 4. Price Range Dropdown -->
-            <div class="relative filter-dropdown-group" data-filter-type="priceRange">
-              <button 
-                class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0"
-              >
-                <span class="btn-label">Price Range</span>
-                <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                </svg>
-              </button>
-              <div class="dropdown-menu hidden absolute right-0 top-full mt-2 w-48 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Prices</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="under-18k">Under 18,000 PKR</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="18k-20k">18,000 - 20,000 PKR</button>
-                <button class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="above-20k">Above 20,000 PKR</button>
-              </div>
-            </div>
-
+          <!-- Products Grid -->
+          <div id="shop-products-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {ceramicPotteryProducts.map((prod) => (
+              <ProductCard 
+                id={prod.id}
+                name={prod.name}
+                price={prod.price}
+                priceDisplay={prod.priceDisplay}
+                image={prod.image}
+                rating={prod.rating}
+                type={prod.type}
+                material={prod.material}
+                category={prod.category}
+              />
+            ))}
           </div>
 
-          <!-- Active Filter Status & Reset Pill -->
-          <div id="filter-status-row" class="flex items-center gap-3 text-xs text-[#5E666C]">
-            <span id="results-count-text">Showing {shopProducts.length} products</span>
-            <button id="reset-all-filters-btn" class="hidden text-xs font-semibold text-red-600 hover:underline">
-              Reset Filters ✕
+          <!-- Empty State Container -->
+          <div id="no-products-empty" class="hidden text-center py-16 space-y-4">
+            <div class="text-5xl">🏺</div>
+            <h3 class="text-xl font-bold text-[#000104]">No products match your selected filters</h3>
+            <p class="text-sm text-[#5E666C]">Try clearing some filters to explore our collection.</p>
+            <button type="button" id="empty-clear-filters-btn" class="bg-[#000104] text-white text-xs font-semibold px-6 py-2.5 rounded hover:bg-neutral-800 transition-smooth">
+              Clear All Filters
             </button>
           </div>
+
+          <!-- Pagination Controls -->
+          <div class="pt-6 flex items-center justify-between border-t border-neutral-200/60">
+            <div class="flex items-center gap-1.5 sm:gap-2">
+              <span class="w-9 h-9 rounded bg-[#000104] text-white font-bold text-sm flex items-center justify-center shadow-sm">1</span>
+              <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">2</button>
+              <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">3</button>
+              <span class="w-9 h-9 text-[#8E959B] text-sm flex items-center justify-center">...</span>
+              <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">8</button>
+            </div>
+
+            <button class="bg-[#000104] text-white text-xs sm:text-sm font-semibold px-6 sm:px-8 py-2.5 rounded shadow-sm hover:bg-neutral-800 transition-smooth btn-press">
+              Next
+            </button>
+          </div>
+
         </div>
+      </section>
 
-        <!-- 2-Column Mobile / 4-Column Desktop Product Cards Grid -->
-        <div id="shop-products-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
-          {shopProducts.map((prod) => (
-            <div 
-              class="shop-product-card bg-transparent flex flex-col justify-between group"
-              data-id={prod.id}
-              data-name={prod.name}
-              data-price={prod.price}
-              data-type={prod.type}
-              data-material={prod.material}
-              data-finishing={prod.finishing}
-              data-color={prod.color}
-              data-size={prod.size}
-              data-quantity={prod.quantity}
-            >
-              
-              <!-- Product Image Area with Link to Product Detail Page -->
-              <a href={`/product?id=${prod.id}`} class="relative w-full aspect-square bg-[#F4F1EA]/60 rounded-lg flex items-center justify-center p-4 overflow-hidden block group-hover:shadow-md transition-shadow">
-                <img 
-                  src={prod.image} 
-                  alt={prod.name} 
-                  class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
-                />
-
-                <!-- Sold Out Badge (Matching Image 2) -->
-                {prod.isSoldOut && (
-                  <span class="absolute bottom-3 left-3 bg-[#1F2937] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow">
-                    Sold out
-                  </span>
-                )}
-              </a>
-
-              <!-- Product Details -->
-              <div class="pt-3 sm:pt-4 space-y-1 flex flex-col flex-1 justify-between">
-                <div>
-                  <!-- Product Title Link -->
-                  <a href={`/product?id=${prod.id}`} class="font-bold text-[13px] sm:text-[16px] text-[#000104] hover:text-neutral-600 transition-colors block line-clamp-1">
-                    {prod.name}
-                  </a>
-
-                  <!-- Price -->
-                  <p class="text-xs sm:text-sm font-semibold text-[#000104] mt-0.5 sm:mt-1">
-                    {prod.priceDisplay}
-                  </p>
-                </div>
-
-                <!-- Custom Outline / Fill Button Requested by User -->
-                <button 
-                  class="add-to-cart-btn mt-2.5 sm:mt-3.5 w-full border-2 border-[#000104] text-[#000104] bg-transparent hover:bg-[#000104] hover:text-white transition-all duration-200 rounded-md py-2 sm:py-3 px-2 sm:px-4 flex items-center justify-center gap-1.5 sm:gap-2.5 font-semibold text-[11px] sm:text-sm tracking-wide group/btn btn-press shadow-sm"
-                  data-id={prod.id}
-                  data-name={prod.name}
-                  data-price={prod.price}
-                  data-image={prod.image}
-                  onclick="event.preventDefault(); event.stopPropagation();"
+      <!-- Flash Sale Banner Section -->
+      <section id="flash-sale-banner-section" class="py-16 sm:py-24 bg-[#262E35] transition-all duration-300">
+        <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
+          <div class="relative rounded-2xl overflow-hidden min-h-[380px] sm:min-h-[460px] flex items-center justify-center shadow-2xl border border-neutral-700/50">
+            <img 
+              src="/assets/images/flash-sale-banner.svg" 
+              alt="Artisan Crafted Ceramic Pots" 
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+            <div class="absolute inset-0 bg-black/25"></div>
+            <div class="relative z-10 bg-white p-8 sm:p-12 md:p-14 max-w-[620px] mx-4 text-center space-y-4 shadow-2xl rounded-sm">
+              <h3 class="text-base sm:text-lg font-bold tracking-[0.25em] text-[#000104] uppercase">
+                FLASH SALE
+              </h3>
+              <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
+                For a limited time, discover artisan-crafted ceramic pots at unbeatable prices. These unique, handcrafted pieces add warmth and elegance to any space, but they won't last long—grab yours before they're gone!
+              </p>
+              <div class="pt-2">
+                <a 
+                  href="#shop-products-grid" 
+                  class="inline-block bg-[#000104] text-white text-xs font-semibold px-8 py-3.5 rounded hover:bg-neutral-800 transition-smooth btn-press shadow-sm"
                 >
-                  <!-- Cart SVG Icon (Black outline by default, turns white when filled) -->
-                  <svg class="w-3.5 sm:w-4 h-3.5 sm:h-4 fill-current transition-colors duration-200 flex-shrink-0" viewBox="0 0 24 24">
-                    <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+                  Shop Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. CATEGORY VIEW (When clicking category links under navbar ?cat=...)       -->
+    <!-- ========================================================================= -->
+    <div id="category-shop-view" class="hidden">
+      
+      <section class="pt-10 sm:pt-14 pb-6 border-b border-neutral-200/50">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-6">
+          
+          <!-- Dynamic Category Heading -->
+          <h1 id="shop-category-heading" class="font-serif text-3xl sm:text-5xl md:text-[56px] font-normal text-[#1F2937] tracking-tight">
+            Brass Serving / Thaal
+          </h1>
+
+          <!-- Subheader Quick Filter Bar -->
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-xs sm:text-sm text-[#4B5563] border-t border-neutral-200/60 pt-5">
+            <div class="flex items-center gap-6">
+              <span class="font-medium text-[#111827]">Filter:</span>
+              
+              <div class="relative group">
+                <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
+                  <span>Availability</span>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                   </svg>
-                  <span class="whitespace-nowrap">Add to Cart</span>
                 </button>
               </div>
 
+              <div class="relative group">
+                <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
+                  <span>Price</span>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
             </div>
-          ))}
-        </div>
 
-        <!-- Empty State Container when no products match filter -->
-        <div id="no-products-empty" class="hidden text-center py-16 space-y-4">
-          <div class="text-5xl">🏺</div>
-          <h3 class="text-xl font-bold text-[#000104]">No products match your selected filters</h3>
-          <p class="text-sm text-[#5E666C]">Try clearing some filters to explore our handmade collection.</p>
-          <button id="empty-clear-filters-btn" class="bg-[#000104] text-white text-xs font-semibold px-6 py-2.5 rounded hover:bg-neutral-800 transition-smooth">
-            Clear All Filters
-          </button>
-        </div>
-
-        <!-- Pagination Controls matching Figma -->
-        <div class="pt-6 flex items-center justify-between border-t border-neutral-200/60">
-          <!-- Page Numbers -->
-          <div class="flex items-center gap-1.5 sm:gap-2">
-            <span class="w-9 h-9 rounded bg-[#000104] text-white font-bold text-sm flex items-center justify-center shadow-sm">
-              1
-            </span>
-            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
-              2
-            </button>
-            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
-              3
-            </button>
-            <span class="w-9 h-9 text-[#8E959B] text-sm flex items-center justify-center">
-              ...
-            </span>
-            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
-              8
-            </button>
-            <button class="w-9 h-9 rounded text-[#5E666C] hover:text-[#000104] hover:bg-neutral-100 font-medium text-sm flex items-center justify-center transition-colors">
-              9
-            </button>
-          </div>
-
-          <!-- Next Button -->
-          <button class="bg-[#000104] text-white text-xs sm:text-sm font-semibold px-6 sm:px-8 py-2.5 rounded shadow-sm hover:bg-neutral-800 transition-smooth btn-press">
-            Next
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ================= 3. FLASH SALE SECTION ================= -->
-    <section id="flash-sale-banner-section" class="py-16 sm:py-24 bg-[#262E35] transition-all duration-300">
-      <div class="max-w-[1240px] mx-auto px-6 lg:px-12">
-        <div class="relative rounded-2xl overflow-hidden min-h-[380px] sm:min-h-[460px] flex items-center justify-center shadow-2xl border border-neutral-700/50">
-          
-          <!-- Background Ceramic Pots Graphic from Figma -->
-          <img 
-            src="/assets/images/flash-sale-banner.svg" 
-            alt="Artisan Crafted Ceramic Pots" 
-            class="absolute inset-0 w-full h-full object-cover"
-          />
-
-          <!-- Dark Overlay Tint -->
-          <div class="absolute inset-0 bg-black/25"></div>
-
-          <!-- Centered White Card (Exact Figma Layout & Typography) -->
-          <div class="relative z-10 bg-white p-8 sm:p-12 md:p-14 max-w-[620px] mx-4 text-center space-y-4 shadow-2xl rounded-sm">
-            <h3 class="text-base sm:text-lg font-bold tracking-[0.25em] text-[#000104] uppercase">
-              FLASH SALE
-            </h3>
-            
-            <p class="text-xs sm:text-[13px] text-[#5E666C] leading-relaxed">
-              For a limited time, discover artisan-crafted ceramic pots at unbeatable prices. These unique, handcrafted pieces add warmth and elegance to any space, but they won't last long—grab yours before they're gone!
-            </p>
-
-            <div class="pt-2">
-              <a 
-                href="#products" 
-                class="inline-block bg-[#000104] text-white text-xs font-semibold px-8 py-3.5 rounded hover:bg-neutral-800 transition-smooth btn-press shadow-sm"
-              >
-                Shop Now
-              </a>
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-[#111827]">Sort by:</span>
+                <button class="flex items-center gap-1.5 hover:text-black font-medium transition-colors">
+                  <span>Best selling</span>
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+              <span class="text-[#78716C]">{categoryProducts.length} of {categoryProducts.length} products</span>
             </div>
           </div>
 
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ================= 4. NEWSLETTER ================= -->
+      <!-- Category Products Grid -->
+      <section class="py-10 sm:py-14">
+        <div class="max-w-[1440px] mx-auto px-6 lg:px-20 space-y-10">
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            {categoryProducts.map((prod) => (
+              <ProductCard 
+                id={prod.id}
+                name={prod.name}
+                price={prod.price}
+                priceDisplay={prod.priceDisplay}
+                image={prod.image}
+                isSoldOut={prod.isSoldOut}
+                category={prod.category}
+                isSerif={true}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Newsletter -->
     <Newsletter />
 
   </main>
@@ -483,6 +213,50 @@ const shopProducts = [
 </Layout>
 
 <script>
+  import { categoryTitles } from '../data/shopData.js';
+
+  // 1. Navigation & View Switching Engine
+  function switchView() {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('cat');
+    const generalView = document.getElementById('general-shop-view');
+    const categoryView = document.getElementById('category-shop-view');
+    const heading = document.getElementById('shop-category-heading');
+
+    if (cat) {
+      // Show Category View
+      if (generalView) generalView.classList.add('hidden');
+      if (categoryView) categoryView.classList.remove('hidden');
+
+      const title = (categoryTitles as Record<string, string>)[cat] || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      if (heading) heading.textContent = title;
+      document.title = `${title} — Earthware`;
+    } else {
+      // Show General Shop View
+      if (categoryView) categoryView.classList.add('hidden');
+      if (generalView) generalView.classList.remove('hidden');
+      document.title = `Shop — Earthware`;
+    }
+  }
+
+  function setupNavigationInterception() {
+    document.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement)?.closest('a') as HTMLAnchorElement | null;
+      if (!target) return;
+
+      const url = new URL(target.href, window.location.origin);
+      if (url.pathname === '/shop') {
+        e.preventDefault();
+        window.history.pushState({}, '', target.href);
+        switchView();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+
+    window.addEventListener('popstate', switchView);
+  }
+
+  // 2. Dropdowns & Filtering Functionality for Shop View
   function initShopFilters() {
     const filterState = {
       sort: 'default',
@@ -492,16 +266,15 @@ const shopProducts = [
     };
 
     const dropdownGroups = document.querySelectorAll('.filter-dropdown-group');
-    const cards = Array.from(document.querySelectorAll('.shop-product-card')) as HTMLElement[];
+    const cards = Array.from(document.querySelectorAll('#shop-products-grid .shop-product-card')) as HTMLElement[];
     const grid = document.getElementById('shop-products-grid');
     const emptyState = document.getElementById('no-products-empty');
     const countText = document.getElementById('results-count-text');
-    const quickCounter = document.getElementById('quick-counter');
     const resetBtn = document.getElementById('reset-all-filters-btn');
     const emptyClearBtn = document.getElementById('empty-clear-filters-btn');
-    const flashSaleBanner = document.getElementById('flash-sale-banner-section');
 
-    // 1. Toggle dropdowns
+    if (!dropdownGroups.length) return;
+
     dropdownGroups.forEach(group => {
       const triggerBtn = group.querySelector('.filter-trigger-btn');
       const menu = group.querySelector('.dropdown-menu');
@@ -512,7 +285,6 @@ const shopProducts = [
           e.stopPropagation();
           const isClosed = menu.classList.contains('hidden');
 
-          // Close all other dropdowns
           dropdownGroups.forEach(other => {
             other.querySelector('.dropdown-menu')?.classList.add('hidden');
             other.querySelector('.chevron')?.classList.remove('rotate-180');
@@ -525,7 +297,6 @@ const shopProducts = [
         });
       }
 
-      // 2. Select option inside dropdown
       const optionButtons = group.querySelectorAll('.filter-option-btn');
       const filterType = group.getAttribute('data-filter-type') as keyof typeof filterState;
       const labelSpan = group.querySelector('.btn-label');
@@ -538,7 +309,6 @@ const shopProducts = [
 
           filterState[filterType] = val;
 
-          // Update trigger button label
           if (labelSpan) {
             if (val === 'all' || val === 'default') {
               const defaultLabels: Record<string, string> = {
@@ -553,17 +323,14 @@ const shopProducts = [
             }
           }
 
-          // Close dropdown
           menu?.classList.add('hidden');
           chevron?.classList.remove('rotate-180');
 
-          // Apply filters
-          applyFiltersAndSort();
+          applyFilters();
         });
       });
     });
 
-    // 3. Close dropdown when clicking outside
     document.addEventListener('click', () => {
       dropdownGroups.forEach(group => {
         group.querySelector('.dropdown-menu')?.classList.add('hidden');
@@ -571,61 +338,43 @@ const shopProducts = [
       });
     });
 
-    // 4. Filtering and Sorting Engine
-    function applyFiltersAndSort() {
-      let visibleCards = cards.filter(card => {
+    function applyFilters() {
+      let visible = cards.filter(card => {
         const type = card.dataset.type || '';
         const material = card.dataset.material || '';
         const price = Number(card.dataset.price) || 0;
 
         const matchType = filterState.type === 'all' || type === filterState.type;
         const matchMaterial = filterState.material === 'all' || material === filterState.material;
-        
+
         let matchPrice = true;
-        if (filterState.priceRange === 'under-18k') {
-          matchPrice = price < 18000;
-        } else if (filterState.priceRange === '18k-20k') {
-          matchPrice = price >= 18000 && price <= 20000;
-        } else if (filterState.priceRange === 'above-20k') {
-          matchPrice = price > 20000;
-        }
+        if (filterState.priceRange === 'under-100') matchPrice = price < 100;
+        else if (filterState.priceRange === '100-200') matchPrice = price >= 100 && price <= 200;
 
         return matchType && matchMaterial && matchPrice;
       });
 
-      // Apply Sorting
       if (filterState.sort === 'price-asc') {
-        visibleCards.sort((a, b) => Number(a.dataset.price) - Number(b.dataset.price));
+        visible.sort((a, b) => Number(a.dataset.price) - Number(b.dataset.price));
       } else if (filterState.sort === 'price-desc') {
-        visibleCards.sort((a, b) => Number(b.dataset.price) - Number(a.dataset.price));
+        visible.sort((a, b) => Number(b.dataset.price) - Number(a.dataset.price));
       } else if (filterState.sort === 'name-asc') {
-        visibleCards.sort((a, b) => (a.dataset.name || '').localeCompare(b.dataset.name || ''));
-      } else if (filterState.sort === 'name-desc') {
-        visibleCards.sort((a, b) => (b.dataset.name || '').localeCompare(a.dataset.name || ''));
+        visible.sort((a, b) => (a.dataset.name || '').localeCompare(b.dataset.name || ''));
       }
 
-      // Hide all cards first
-      cards.forEach(card => card.classList.add('hidden'));
+      cards.forEach(c => c.classList.add('hidden'));
 
-      // Show and reorder matching cards
       if (grid) {
-        visibleCards.forEach(card => {
-          card.classList.remove('hidden');
-          grid.appendChild(card);
+        visible.forEach(c => {
+          c.classList.remove('hidden');
+          grid.appendChild(c);
         });
       }
 
-      // Update Results Counter
-      if (countText) {
-        countText.textContent = `Showing ${visibleCards.length} products`;
-      }
-      if (quickCounter) {
-        quickCounter.textContent = `${visibleCards.length} of ${cards.length} products`;
-      }
+      if (countText) countText.textContent = `Showing ${visible.length} products`;
 
-      // Show / Hide Empty State
       if (emptyState && grid) {
-        if (visibleCards.length === 0) {
+        if (visible.length === 0) {
           emptyState.classList.remove('hidden');
           grid.classList.add('hidden');
         } else {
@@ -634,27 +383,14 @@ const shopProducts = [
         }
       }
 
-      // Show reset button & hide flash sale banner if any filter is active
       const isFiltered = Object.entries(filterState).some(([k, v]) => v !== 'all' && v !== 'default');
       if (resetBtn) {
-        if (isFiltered) {
-          resetBtn.classList.remove('hidden');
-        } else {
-          resetBtn.classList.add('hidden');
-        }
-      }
-
-      if (flashSaleBanner) {
-        if (isFiltered) {
-          flashSaleBanner.classList.add('hidden');
-        } else {
-          flashSaleBanner.classList.remove('hidden');
-        }
+        if (isFiltered) resetBtn.classList.remove('hidden');
+        else resetBtn.classList.add('hidden');
       }
     }
 
-    // 5. Reset All Filters
-    function resetAllFilters() {
+    function resetFilters() {
       filterState.sort = 'default';
       filterState.type = 'all';
       filterState.material = 'all';
@@ -674,17 +410,22 @@ const shopProducts = [
         }
       });
 
-      applyFiltersAndSort();
+      applyFilters();
     }
 
-    if (resetBtn) resetBtn.addEventListener('click', resetAllFilters);
-    if (emptyClearBtn) emptyClearBtn.addEventListener('click', resetAllFilters);
+    if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+    if (emptyClearBtn) emptyClearBtn.addEventListener('click', resetFilters);
   }
 
-  // Run on mount
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initShopFilters);
-  } else {
+  function init() {
+    switchView();
+    setupNavigationInterception();
     initShopFilters();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 </script>

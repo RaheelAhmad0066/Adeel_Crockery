@@ -35,6 +35,39 @@ class App {
 
     // 7. Bind Global Add-To-Cart actions & Custom Events
     this.bindCartActions();
+
+    // 8. Setup Smooth Scroll Animations across the website
+    this.setupScrollAnimations();
+  }
+
+  setupScrollAnimations() {
+    // Add scroll reveal observer for cards, headings, and sections
+    const animTargets = document.querySelectorAll(
+      'section > div, .shop-product-card, .category-card, #testimonials-grid-container, .brand-card, #categories-grid-container > div'
+    );
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+      );
+
+      animTargets.forEach((el, index) => {
+        el.classList.add('scroll-reveal');
+        // Add subtle stagger to consecutive grid items
+        if (index % 4 === 1) el.classList.add('delay-100');
+        if (index % 4 === 2) el.classList.add('delay-200');
+        if (index % 4 === 3) el.classList.add('delay-300');
+        observer.observe(el);
+      });
+    }
   }
 
   setupCategoriesScroll() {
@@ -120,7 +153,6 @@ class App {
       if (e.detail) {
         const { name, price, image, quantity = 1, id } = e.detail;
         this.cartVM.addItem(name, price, image, quantity, id);
-        this.cartView.open();
         NotificationService.showToast(`Added "${name}" to cart!`);
       }
     });
@@ -140,20 +172,17 @@ class App {
 
       if (name && price) {
         this.cartVM.addItem(name, price, image, 1, id);
-        this.cartView.open();
         NotificationService.showToast(`Added "${name}" to cart!`);
       } else if (id && target.hasAttribute('data-add-cat')) {
         const cat = this.homeVM.categories.find(c => c.id === Number(id));
         if (cat) {
           this.cartVM.addItem(cat.name, cat.price, cat.image, 1, `cat-${cat.id}`);
-          this.cartView.open();
           NotificationService.showToast(`Added "${cat.name}" to cart!`);
         }
       } else if (id && target.hasAttribute('data-add-prod')) {
         const prod = this.homeVM.products.find(p => p.id === Number(id));
         if (prod) {
           this.cartVM.addItem(prod.name, prod.price, prod.image, 1, `prod-${prod.id}`);
-          this.cartView.open();
           NotificationService.showToast(`Added "${prod.name}" to cart!`);
         }
       }

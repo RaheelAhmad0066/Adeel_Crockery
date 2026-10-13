@@ -1,0 +1,95 @@
+---
+// ShopFilters.astro - Centered filter dropdowns with functional sorting and filtering
+---
+
+<div class="flex flex-col items-center justify-center w-full space-y-3">
+  <div class="bg-white border border-[#E8E8E8] p-2.5 sm:p-4 rounded-xl sm:rounded-md shadow-sm flex items-center justify-center flex-wrap gap-2 sm:gap-3 relative z-30 max-w-full">
+    
+    <!-- 1. Sort By Dropdown -->
+    <div class="relative filter-dropdown-group" data-filter-type="sort">
+      <button 
+        type="button"
+        class="filter-trigger-btn bg-[#000104] text-white text-[11px] sm:text-sm font-semibold px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2.5 hover:bg-neutral-800 transition-smooth btn-press flex-shrink-0 cursor-pointer"
+      >
+        <span class="btn-label">Sort By</span>
+        <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <div class="dropdown-menu hidden absolute left-0 top-full mt-2 w-48 sm:w-52 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="default">Featured / Default</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="price-asc">Price: Low to High</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="price-desc">Price: High to Low</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="name-asc">Name: A to Z</button>
+      </div>
+    </div>
+
+    <!-- 2. Product Type Dropdown -->
+    <div class="relative filter-dropdown-group" data-filter-type="type">
+      <button 
+        type="button"
+        class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0 cursor-pointer"
+      >
+        <span class="btn-label">Product Type</span>
+        <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <div class="dropdown-menu hidden absolute left-0 top-full mt-2 w-48 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Types</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="plant-pot">Ceramic Plant Pot</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="mug">Terracotta Mug</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="tea-pot">Earthenware Tea Pot</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="glass">Ceramic Glass</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="bowl">Stoneware Bowl</button>
+      </div>
+    </div>
+
+    <!-- 3. Material Dropdown -->
+    <div class="relative filter-dropdown-group" data-filter-type="material">
+      <button 
+        type="button"
+        class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0 cursor-pointer"
+      >
+        <span class="btn-label">Material</span>
+        <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <div class="dropdown-menu hidden absolute left-0 sm:left-auto top-full mt-2 w-44 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Materials</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="ceramic">Ceramic</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="terracotta">Terracotta</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="earthenware">Earthenware</button>
+      </div>
+    </div>
+
+    <!-- 4. Price Range Dropdown -->
+    <div class="relative filter-dropdown-group" data-filter-type="priceRange">
+      <button 
+        type="button"
+        class="filter-trigger-btn bg-[#EEEEEE] hover:bg-neutral-200 text-[#5E666C] hover:text-[#000104] border border-[#E0E0E0] text-[11px] sm:text-sm font-medium px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-sm flex items-center gap-1.5 sm:gap-2 transition-smooth whitespace-nowrap flex-shrink-0 cursor-pointer"
+      >
+        <span class="btn-label">Price Range</span>
+        <svg class="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#5E666C] transition-transform duration-200 chevron" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </button>
+      <div class="dropdown-menu hidden absolute right-0 top-full mt-2 w-48 bg-white border border-[#E0E0E0] rounded-lg shadow-xl py-2 z-50 text-xs sm:text-sm">
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#000104] font-medium" data-value="all">All Prices</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="under-100">Under $100</button>
+        <button type="button" class="filter-option-btn w-full text-left px-4 py-2 hover:bg-[#FAF8F5] text-[#5E666C]" data-value="100-200">$100 - $200</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Active Filter Status & Reset Pill -->
+  <div id="filter-status-row" class="flex items-center gap-3 text-xs text-[#5E666C]">
+    <span id="results-count-text">Showing 8 products</span>
+    <button type="button" id="reset-all-filters-btn" class="hidden text-xs font-semibold text-red-600 hover:underline cursor-pointer">
+      Reset Filters ✕
+    </button>
+  </div>
+</div>
+

@@ -1,0 +1,95 @@
+---
+// ProductCard.astro - Reusable, clean component for both Shop & Categories
+interface Props {
+  id: string;
+  name: string;
+  price: number;
+  priceDisplay: string;
+  image: string;
+  isSoldOut?: boolean;
+  rating?: number;
+  type?: string;
+  material?: string;
+  category?: string;
+  isSerif?: boolean;
+}
+
+const {
+  id,
+  name,
+  price,
+  priceDisplay,
+  image,
+  isSoldOut = false,
+  rating,
+  type,
+  material,
+  category,
+  isSerif = false
+} = Astro.props;
+---
+
+<div 
+  class="shop-product-card bg-transparent flex flex-col justify-between group"
+  data-id={id}
+  data-name={name}
+  data-price={price}
+  data-type={type}
+  data-material={material}
+  data-category={category}
+>
+  <!-- Product Image Area -->
+  <a href={`/product?id=${id}`} class="relative w-full aspect-square bg-[#F4F1EA]/60 rounded-xl flex items-center justify-center p-4 overflow-hidden block group-hover:shadow-md transition-shadow">
+    <img 
+      src={image} 
+      alt={name} 
+      class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+    />
+
+    {isSoldOut && (
+      <span class="absolute bottom-3 left-3 bg-[#1F2937] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow">
+        Sold out
+      </span>
+    )}
+  </a>
+
+  <!-- Product Details -->
+  <div class="pt-3.5 space-y-1 flex flex-col flex-1 justify-between">
+    <div>
+      {rating && (
+        <div class="flex items-center text-amber-400 text-xs sm:text-sm gap-0.5 mb-1">
+          {Array.from({ length: rating }).map(() => (
+            <span>★</span>
+          ))}
+        </div>
+      )}
+
+      <a 
+        href={`/product?id=${id}`} 
+        class={`${isSerif ? 'font-serif' : 'font-bold'} text-[14px] sm:text-[16px] text-[#1F2937] hover:text-black transition-colors block line-clamp-1`}
+      >
+        {name}
+      </a>
+
+      <p class="text-xs sm:text-sm font-normal text-[#1F2937] mt-1">
+        {priceDisplay}
+      </p>
+    </div>
+
+    <!-- Requested User Button: Outline Black, Fill White, On Hover: Fill Black, Text & Icon White -->
+    <button 
+      type="button"
+      class="add-to-cart-btn mt-3.5 w-full border-2 border-[#1F2937] text-[#1F2937] bg-white hover:bg-[#1F2937] hover:text-white transition-all duration-200 rounded py-2 sm:py-2.5 px-3 flex items-center justify-center gap-2 font-medium text-xs sm:text-sm tracking-wide btn-press shadow-sm group/btn"
+      data-id={id}
+      data-name={name}
+      data-price={price}
+      data-image={image}
+    >
+      <svg class="w-3.5 h-3.5 fill-current transition-colors duration-200 flex-shrink-0" viewBox="0 0 24 24">
+        <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+      </svg>
+      <span>Add to Cart</span>
+    </button>
+  </div>
+</div>
+
