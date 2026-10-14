@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase.js';
 
 // In-Memory cache store
 const cacheStore = new Map();
-const CACHE_TTL_MS = 60 * 1000; // 1 minute cache
+const CACHE_TTL_MS = 10 * 1000; // 10 seconds cache for responsive admin edits
 
 async function withCacheAndTimeout(cacheKey, queryFn, fallbackVal) {
   // Check memory cache
@@ -16,9 +16,9 @@ async function withCacheAndTimeout(cacheKey, queryFn, fallbackVal) {
     return cached.data;
   }
 
-  // Fast timeout wrapper (1500ms max)
+  // Generous timeout wrapper (8000ms) to easily transfer rich image data
   const timeoutPromise = new Promise((_, reject) => 
-    setTimeout(() => reject(new Error('Query timeout')), 1500)
+    setTimeout(() => reject(new Error('Query timeout')), 8000)
   );
 
   try {
@@ -29,7 +29,7 @@ async function withCacheAndTimeout(cacheKey, queryFn, fallbackVal) {
     }
     return result || fallbackVal;
   } catch (err) {
-    // If cache had stale data, use it
+    console.warn(`[dbService] Cache fallback for ${cacheKey}:`, err.message);
     if (cached?.data) return cached.data;
     return fallbackVal;
   }

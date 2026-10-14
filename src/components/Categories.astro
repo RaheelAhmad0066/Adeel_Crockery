@@ -1,7 +1,5 @@
 ---
-// Categories.astro - Instant Zero-Latency Render with Client Hydration
-import { categoriesData } from '../data/mockData.js';
-const displayCategories = categoriesData;
+// Categories.astro - Fully Dynamic from Supabase Cloud
 ---
 
 <section id="categories" class="py-16 lg:py-20 bg-white border-b border-neutral-200/60 overflow-hidden">
@@ -11,47 +9,14 @@ const displayCategories = categoriesData;
         <h2 class="font-gallient text-4xl sm:text-6xl text-[#000104] font-normal">Categories</h2>
       </div>
       <p class="text-base sm:text-lg text-[#5E666C] max-w-xl">
-        3DO Filament (Made in EU) is properly one of the best filaments you will find out there, we are using the best raw materials and have a very strict quality control.
+        Explore our curated handcrafted collections made from high quality sustainable ceramic & pottery materials.
       </p>
     </div>
 
-    <!-- Categories Container: Grid on Mobile (2 columns), Carousel on Desktop -->
+    <!-- Categories Container: Dynamic Carousel from Supabase -->
     <div class="relative">
-      <div id="categories-grid-container" class="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-nowrap gap-4 sm:gap-6 lg:overflow-x-auto pb-4 lg:pb-6 hide-scrollbar scroll-smooth">
-        {displayCategories.map((cat, index) => {
-          const isSelected = index === 0;
-          const cardBgClass = isSelected ? 'bg-[#EDEDED]' : 'bg-white border border-neutral-200/80';
-          const imgSrc = cat.image.startsWith('/') ? cat.image : `/${cat.image}`;
-
-          return (
-            <div 
-              onclick={`window.location.href='/product?id=${cat.id}'`}
-              class="w-full lg:w-[230px] lg:flex-shrink-0 flex flex-col group cursor-pointer relative"
-            >
-              <!-- Card Image Container -->
-              <div class={`h-[200px] sm:h-[250px] lg:h-[290px] w-full rounded-2xl ${cardBgClass} flex items-center justify-center overflow-hidden relative card-hover transition-transform duration-300 group-hover:shadow-md p-3`}>
-                {isSelected && (
-                  <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white absolute pointer-events-none shadow-sm"></div>
-                )}
-                <img 
-                  src={imgSrc} 
-                  alt={cat.name} 
-                  class="h-28 sm:h-36 lg:h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth"
-                />
-              </div>
-
-              <!-- Title & Price (Under the Box) -->
-              <div class="pt-2 sm:pt-3 flex flex-col items-start">
-                <h4 class="font-bold text-sm sm:text-base lg:text-[18px] text-[#000104] group-hover:text-neutral-700 transition-colors">
-                  {cat.name}
-                </h4>
-                <span class="text-xs sm:text-[15px] font-medium text-[#5E666C] mt-0.5">
-                  PKR {cat.price}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+      <div id="categories-grid-container" class="grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-nowrap gap-4 sm:gap-6 lg:overflow-x-auto pb-4 lg:pb-6 hide-scrollbar scroll-smooth min-h-[300px]">
+        <!-- Dynamic cards populated via Supabase getHomeCarouselProducts -->
       </div>
 
       <!-- Carousel Right Arrow (Only on Desktop Carousel) -->
@@ -84,14 +49,17 @@ const displayCategories = categoriesData;
       liveCats.forEach((cat: any, index: number) => {
         const isSelected = index === 0;
         const cardBgClass = isSelected ? 'bg-[#EDEDED]' : 'bg-white border border-neutral-200/80';
-        const imgSrc = cat.image && cat.image.startsWith('/') ? cat.image : (cat.image ? `/${cat.image}` : '/assets/images/cat-river-vase.png');
+        let imgSrc = cat.image || '';
+        if (imgSrc && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('/')) {
+          imgSrc = `/${imgSrc}`;
+        }
         const div = document.createElement('div');
         div.className = 'w-full lg:w-[230px] lg:flex-shrink-0 flex flex-col group cursor-pointer relative';
         div.onclick = () => window.location.href = `/product?id=${cat.id}`;
         div.innerHTML = `
           <div class="h-[200px] sm:h-[250px] lg:h-[290px] w-full rounded-2xl ${cardBgClass} flex items-center justify-center overflow-hidden relative card-hover transition-transform duration-300 group-hover:shadow-md p-3">
             ${isSelected ? '<div class="w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-white absolute pointer-events-none shadow-sm"></div>' : ''}
-            <img src="${imgSrc}" alt="${cat.name}" class="h-28 sm:h-36 lg:h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth" />
+            <img src="${imgSrc}" alt="${cat.name}" onerror="this.onerror=null; this.src='/assets/images/cat-river-vase.png';" class="h-28 sm:h-36 lg:h-40 max-w-[85%] object-contain relative z-10 group-hover:scale-105 transition-smooth" />
           </div>
           <div class="pt-2 sm:pt-3 flex flex-col items-start">
             <h4 class="font-bold text-sm sm:text-base lg:text-[18px] text-[#000104] group-hover:text-neutral-700 transition-colors">

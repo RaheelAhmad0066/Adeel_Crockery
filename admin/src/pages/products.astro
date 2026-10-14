@@ -323,13 +323,27 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     </div>
   </div>
 
+  <!-- Hidden JSON data carrier for client script -->
+  <script id="categories-init-data" type="application/json" set:html={JSON.stringify(initialNavbarCategories)}></script>
+
 </AdminLayout>
 
-<script define:vars={{ initialNavbarCategories }}>
+<script>
+  import { getAllProducts, saveProduct, deleteProduct, uploadImageToStorage } from '../services/dbService.js';
+
+  // Parse initial navbar categories for instant dropdown sync
+  let categoriesData: any[] = [];
+  try {
+    const raw = document.getElementById('categories-init-data')?.textContent;
+    if (raw) categoriesData = JSON.parse(raw);
+  } catch (e) {
+    console.warn('Could not parse initial categories:', e);
+  }
+
   // Subcategories mapping dictionary
-  const subcategoryMap = {};
-  initialNavbarCategories.forEach(cat => {
-    subcategoryMap[cat.name] = cat.subcategories.map(s => s.name);
+  const subcategoryMap: Record<string, string[]> = {};
+  categoriesData.forEach(cat => {
+    subcategoryMap[cat.name] = (cat.subcategories || []).map((s: any) => s.name);
   });
 
   const modal = document.getElementById('product-modal');
@@ -338,27 +352,27 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   const closeBtn = document.getElementById('close-modal-btn');
   const cancelBtn = document.getElementById('cancel-modal-btn');
   const modalTitle = document.getElementById('modal-title');
-  const productForm = document.getElementById('product-form');
+  const productForm = document.getElementById('product-form') as HTMLFormElement | null;
 
-  const inputId = document.getElementById('form-product-id');
-  const inputName = document.getElementById('form-name');
-  const selectCat = document.getElementById('form-category');
-  const selectSubCat = document.getElementById('form-subcategory');
-  const inputPrice = document.getElementById('form-price');
-  const inputCost = document.getElementById('form-cost');
-  const inputStock = document.getElementById('form-stock');
-  const checkHomeCat = document.getElementById('form-home-cat');
-  const checkHomeFeat = document.getElementById('form-home-feat');
+  const inputId = document.getElementById('form-product-id') as HTMLInputElement;
+  const inputName = document.getElementById('form-name') as HTMLInputElement;
+  const selectCat = document.getElementById('form-category') as HTMLSelectElement;
+  const selectSubCat = document.getElementById('form-subcategory') as HTMLSelectElement;
+  const inputPrice = document.getElementById('form-price') as HTMLInputElement;
+  const inputCost = document.getElementById('form-cost') as HTMLInputElement;
+  const inputStock = document.getElementById('form-stock') as HTMLInputElement;
+  const checkHomeCat = document.getElementById('form-home-cat') as HTMLInputElement;
+  const checkHomeFeat = document.getElementById('form-home-feat') as HTMLInputElement;
 
-  const fileInput = document.getElementById('form-file-input');
-  const assetPicker = document.getElementById('form-asset-picker');
-  const imgPathHidden = document.getElementById('form-image-path');
-  const imgPreview = document.getElementById('form-img-preview');
+  const fileInput = document.getElementById('form-file-input') as HTMLInputElement;
+  const assetPicker = document.getElementById('form-asset-picker') as HTMLSelectElement;
+  const imgPathHidden = document.getElementById('form-image-path') as HTMLInputElement;
+  const imgPreview = document.getElementById('form-img-preview') as HTMLImageElement;
 
-  let pendingDeleteRow = null;
+  let pendingDeleteRow: HTMLElement | null = null;
 
   // Function to populate subcategories dropdown based on main category
-  function updateSubcategoryOptions(categoryName, selectedSub = '') {
+  function updateSubcategoryOptions(categoryName: string, selectedSub = '') {
     if (!selectSubCat) return;
     selectSubCat.innerHTML = '';
     const list = subcategoryMap[categoryName] || ['General'];
@@ -400,7 +414,6 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
 
       // Upload to Supabase bucket and store permanent public URL
       try {
-        const { uploadImageToStorage } = await import('../services/dbService.js');
         const uploadRes = await uploadImageToStorage(file, 'products');
         if (uploadRes.success && uploadRes.publicUrl) {
           if (imgPreview && imgPathHidden) {
@@ -437,6 +450,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     document.querySelectorAll<HTMLButtonElement>('.btn-edit-prod').forEach((btn) => {
       btn.onclick = (e) => {
         const id = btn.getAttribute('data-id');
+        if (!id) return;
         const row = document.getElementById(`row-${id}`);
         if (!row) return;
 
@@ -484,7 +498,6 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
       const id = pendingDeleteRow.getAttribute('data-id');
       if (id) {
         try {
-          const { deleteProduct } = await import('../services/dbService.js');
           await deleteProduct(id);
           if (typeof (window as any).refreshProducts === 'function') {
             await (window as any).refreshProducts();
@@ -500,19 +513,19 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   });
 
   // Save Form (Add or Edit)
-  productForm?.addEventListener('submit', (e) => {
+  productForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const id = inputId?.value || 'PROD-' + Math.floor(100 + Math.random() * 900);
-    const name = inputName?.value || 'New Product';
-    const cat = selectCat?.value || 'Crockery';
-    const subcat = selectSubCat?.value || 'Plate sets';
-    const price = parseInt(inputPrice?.value || '100');
-    const cost = parseInt(inputCost?.value || '60');
-    const stock = parseInt(inputStock?.value || '10');
-    const image = imgPathHidden?.value || '/assets/images/cat-river-vase.png';
-    const isHomeCat = checkHomeCat?.checked || false;
-    const isHomeFeat = checkHomeFeat?.checked || false;
+    const id = (inputId as HTMLInputElement)?.value || 'PROD-' + Math.floor(100 + Math.random() * 900);
+    const name = (inputName as HTMLInputElement)?.value || 'New Product';
+    const cat = (selectCat as HTMLSelectElement)?.value || 'Crockery';
+    const subcat = (selectSubCat as HTMLSelectElement)?.value || 'Plate sets';
+    const price = parseInt((inputPrice as HTMLInputElement)?.value || '100');
+    const cost = parseInt((inputCost as HTMLInputElement)?.value || '60');
+    const stock = parseInt((inputStock as HTMLInputElement)?.value || '10');
+    const image = (imgPathHidden as HTMLInputElement)?.value || '/assets/images/cat-river-vase.png';
+    const isHomeCat = (checkHomeCat as HTMLInputElement)?.checked || false;
+    const isHomeFeat = (checkHomeFeat as HTMLInputElement)?.checked || false;
 
     const existingRow = document.getElementById(`row-${id}`);
     if (existingRow) {
@@ -539,7 +552,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
       if (costEl) costEl.textContent = `PKR ${cost.toLocaleString()}`;
       const stockEl = existingRow.querySelector('.row-stock');
       if (stockEl) stockEl.textContent = stock.toString();
-      const imgEl = existingRow.querySelector('.row-img');
+      const imgEl = existingRow.querySelector('.row-img') as HTMLImageElement;
       if (imgEl) imgEl.src = image;
 
     } else {
@@ -602,35 +615,52 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
       tbody?.appendChild(tr);
     }
 
-    // Save to Supabase Cloud Database
-    import('../services/dbService.js').then(async ({ saveProduct }) => {
-      try {
-        await saveProduct({
-          id,
-          name,
-          category: cat,
-          subcategory: subcat,
-          price,
-          cost_price: cost,
-          stock,
-          sku: 'EW-' + id,
-          image,
-          show_on_home_categories: isHomeCat,
-          show_on_home_featured: isHomeFeat,
-          status: stock > 0 ? 'In Stock' : 'Out of Stock'
-        });
-        if (typeof (window as any).refreshProducts === 'function') {
-          await (window as any).refreshProducts();
-        }
-      } catch (err) {
-        console.error('Error saving product to Supabase:', err);
+    // Save to Supabase Cloud Database directly
+    try {
+      await saveProduct({
+        id,
+        name,
+        category: cat,
+        subcategory: subcat,
+        price,
+        cost_price: cost,
+        stock,
+        sku: 'EW-' + id,
+        image,
+        show_on_home_categories: isHomeCat,
+        show_on_home_featured: isHomeFeat,
+        status: stock > 0 ? 'In Stock' : 'Out of Stock'
+      });
+      if (typeof (window as any).refreshProducts === 'function') {
+        await (window as any).refreshProducts();
       }
-    });
+    } catch (err) {
+      console.error('Error saving product to Supabase:', err);
+    }
 
     attachEditListeners();
     attachDeleteListeners();
     closeModal();
   });
+
+  // Current active filter category
+  let currentActiveFilter = 'all';
+
+  function applyCurrentFilter() {
+    const allRows = document.querySelectorAll('.product-row');
+    allRows.forEach((row) => {
+      const rowEl = row as HTMLElement;
+      if (currentActiveFilter === 'all') {
+        rowEl.style.display = '';
+      } else if (currentActiveFilter === 'Home Categories') {
+        rowEl.style.display = rowEl.getAttribute('data-home-cat') === 'true' ? '' : 'none';
+      } else if (currentActiveFilter === 'Home Featured') {
+        rowEl.style.display = rowEl.getAttribute('data-home-feat') === 'true' ? '' : 'none';
+      } else {
+        rowEl.style.display = rowEl.getAttribute('data-category') === currentActiveFilter ? '' : 'none';
+      }
+    });
+  }
 
   // Filter Buttons
   const filterBtns = document.querySelectorAll('.filter-btn');
@@ -643,21 +673,8 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
       btn.classList.add('bg-[#000104]', 'text-white', 'active-filter');
       btn.classList.remove('bg-neutral-100', 'text-neutral-700');
 
-      const cat = btn.getAttribute('data-cat');
-      const allRows = document.querySelectorAll('.product-row');
-
-      allRows.forEach((row) => {
-        const rowEl = row;
-        if (cat === 'all') {
-          rowEl.style.display = '';
-        } else if (cat === 'Home Categories') {
-          rowEl.style.display = rowEl.getAttribute('data-home-cat') === 'true' ? '' : 'none';
-        } else if (cat === 'Home Featured') {
-          rowEl.style.display = rowEl.getAttribute('data-home-feat') === 'true' ? '' : 'none';
-        } else {
-          rowEl.style.display = rowEl.getAttribute('data-category') === cat ? '' : 'none';
-        }
-      });
+      currentActiveFilter = btn.getAttribute('data-cat') || 'all';
+      applyCurrentFilter();
     });
   });
 
@@ -668,14 +685,13 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   // Dynamic Supabase fetch on client-side
   (window as any).refreshProducts = async function() {
     try {
-      const { getAllProducts } = await import('../services/dbService.js');
       const liveProducts = await getAllProducts();
       if (liveProducts && liveProducts.length > 0) {
         const tbody = document.getElementById('products-table-body');
         const countSpan = document.getElementById('total-count');
         if (tbody) {
           tbody.innerHTML = '';
-          liveProducts.forEach(prod => {
+          liveProducts.forEach((prod: any) => {
             const tr = document.createElement('tr');
             tr.id = `row-${prod.id}`;
             tr.className = 'product-row hover:bg-neutral-50/70 transition-colors';
@@ -738,6 +754,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
           if (countSpan) countSpan.textContent = liveProducts.length.toString();
           attachEditListeners();
           attachDeleteListeners();
+          applyCurrentFilter();
         }
       }
     } catch (e) {

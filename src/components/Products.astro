@@ -1,7 +1,5 @@
 ---
-// Products.astro - Instant Zero-Latency Render with Client Hydration
-import { productsData } from '../data/mockData.js';
-const displayProducts = productsData.slice(0, 4);
+// Products.astro - Fully Dynamic from Supabase Cloud
 ---
 
 <section id="products" class="bg-earth-peach py-16 lg:py-24 overflow-hidden border-b border-neutral-200/60">
@@ -17,50 +15,9 @@ const displayProducts = productsData.slice(0, 4);
       </div>
     </div>
 
-    <!-- Products 4-Grid Container matching Figma layout -->
-    <div id="products-grid-container" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-      {displayProducts.slice(0, 4).map((prod) => {
-        const imgSrc = prod.image.startsWith('/') ? prod.image : `/${prod.image}`;
-        return (
-          <div class="flex flex-col justify-between group bg-white/60 p-3 sm:p-4 rounded-xl border border-neutral-100 hover:bg-white hover:shadow-md transition-all">
-            <!-- Aspect Square White Box -->
-            <a 
-              href={`/product?id=${prod.id}`}
-              class="w-full aspect-square bg-white rounded-lg p-3 sm:p-5 flex items-center justify-center shadow-sm card-hover border border-neutral-100 block group-hover:shadow-md transition-shadow"
-            >
-              <img 
-                src={imgSrc} 
-                alt={prod.name} 
-                class="max-h-28 sm:max-h-36 max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-              />
-            </a>
-
-            <!-- Text & Rectangular Cart Button -->
-            <div class="pt-3 sm:pt-4 space-y-1 sm:space-y-1.5 flex flex-col items-start w-full">
-              <a 
-                href={`/product?id=${prod.id}`}
-                class="text-xs sm:text-[15px] text-[#3C4245] font-normal truncate hover:text-[#000104] transition-colors block max-w-full"
-              >
-                {prod.name}
-              </a>
-              <div class="text-base sm:text-xl font-bold text-[#000104]">
-                {prod.currency || 'PKR '}{prod.price}
-              </div>
-              <button 
-                class="add-to-cart-btn mt-1.5 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 border border-neutral-400 rounded text-xs font-semibold text-[#000104] hover:bg-[#000104] hover:text-white transition-smooth btn-press w-full sm:w-auto justify-center"
-                data-id={prod.id}
-                data-name={prod.name}
-                data-price={prod.price}
-                data-image={imgSrc}
-                onclick="event.stopPropagation();"
-              >
-                <img src="/assets/icons/cart.svg" alt="" class="w-3.5 h-3.5 object-contain">
-                <span>Cart</span>
-              </button>
-            </div>
-          </div>
-        );
-      })}
+    <!-- Products 4-Grid Container: Dynamic from Supabase -->
+    <div id="products-grid-container" class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 min-h-[250px]">
+      <!-- Dynamically populated from Supabase getHomeFeaturedProducts -->
     </div>
   </div>
 </section>
@@ -73,12 +30,15 @@ const displayProducts = productsData.slice(0, 4);
       if (container) {
         container.innerHTML = '';
         liveFeat.slice(0, 4).forEach((prod: any) => {
-          const imgSrc = prod.image && prod.image.startsWith('/') ? prod.image : (prod.image ? `/${prod.image}` : '/assets/images/prod-1.png');
+          let imgSrc = prod.image || '';
+          if (imgSrc && !imgSrc.startsWith('http://') && !imgSrc.startsWith('https://') && !imgSrc.startsWith('data:') && !imgSrc.startsWith('/')) {
+            imgSrc = `/${imgSrc}`;
+          }
           const card = document.createElement('div');
           card.className = 'flex flex-col justify-between group bg-white/60 p-3 sm:p-4 rounded-xl border border-neutral-100 hover:bg-white hover:shadow-md transition-all';
           card.innerHTML = `
             <a href="/product?id=${prod.id}" class="w-full aspect-square bg-white rounded-lg p-3 sm:p-5 flex items-center justify-center shadow-sm card-hover border border-neutral-100 block group-hover:shadow-md transition-shadow">
-              <img src="${imgSrc}" alt="${prod.name}" class="max-h-28 sm:max-h-36 max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
+              <img src="${imgSrc}" alt="${prod.name}" onerror="this.onerror=null; this.src='/assets/images/prod-1.png';" class="max-h-28 sm:max-h-36 max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
             </a>
             <div class="pt-3 sm:pt-4 space-y-1 sm:space-y-1.5 flex flex-col items-start w-full">
               <a href="/product?id=${prod.id}" class="text-xs sm:text-[15px] text-[#3C4245] font-normal truncate hover:text-[#000104] transition-colors block max-w-full">

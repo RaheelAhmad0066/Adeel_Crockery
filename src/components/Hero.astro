@@ -116,10 +116,28 @@ const defaultBanner = {
     }
   }
 
-  getActiveHeroBanners().then((banners) => {
+    getActiveHeroBanners().then((banners) => {
     if (banners && banners.length > 0) {
       bannerSlides = banners.filter((b: any) => b.is_active !== false);
       if (bannerSlides.length === 0) bannerSlides = banners;
+
+      // Update hero image and content immediately without fade delay on first hydration
+      const first = bannerSlides[0];
+      const hEl = document.getElementById('hero-headline');
+      const sEl = document.getElementById('hero-subtitle');
+      const cEl = document.getElementById('hero-cta') as HTMLAnchorElement;
+      const iEl = document.getElementById('hero-img') as HTMLImageElement;
+      if (first) {
+        if (hEl && first.headline) hEl.textContent = first.headline;
+        if (sEl && first.subtitle) sEl.textContent = first.subtitle;
+        if (cEl) {
+          cEl.textContent = first.cta_text || 'Buy Now';
+          cEl.href = first.cta_link || '#products';
+        }
+        if (iEl && first.image) {
+          iEl.src = first.image;
+        }
+      }
 
       // Render dots if more than 1 banner
       const indicatorsContainer = document.getElementById('hero-indicators');
@@ -137,9 +155,10 @@ const defaultBanner = {
         });
       }
 
-      displaySlide(0);
       startAutoSlide();
     }
-  }).catch(() => {});
+  }).catch((err) => {
+    console.warn('Hero live banners warning:', err);
+  });
 </script>
 
