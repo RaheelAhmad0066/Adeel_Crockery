@@ -30,7 +30,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     </div>
 
     <!-- Category Filter Bar -->
-    <div class="bg-white p-3 rounded-xl border border-neutral-200/80 flex items-center gap-2 overflow-x-auto text-xs">
+    <div id="category-filter-bar" class="bg-white p-3 rounded-xl border border-neutral-200/80 flex items-center gap-2 overflow-x-auto text-xs">
       <span class="font-bold text-neutral-400 px-2 uppercase text-[10px] tracking-wider">Filter:</span>
       <button class="filter-btn active-filter px-3 py-1.5 rounded-lg font-bold bg-[#000104] text-white" data-cat="all">All Products (<span id="total-count">{initialProducts.length}</span>)</button>
       {initialNavbarCategories.map(cat => (
@@ -329,7 +329,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
 </AdminLayout>
 
 <script>
-  import { getAllProducts, saveProduct, deleteProduct, uploadImageToStorage } from '../services/dbService.js';
+  import { getAllProducts, saveProduct, deleteProduct, uploadImageToStorage, getNavbarCategoriesWithSubcategories } from '../services/dbService.js';
 
   // Parse initial navbar categories for instant dropdown sync
   let categoriesData: any[] = [];
@@ -662,25 +662,76 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     });
   }
 
-  // Filter Buttons
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  filterBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => {
-        b.classList.remove('bg-[#000104]', 'text-white', 'active-filter');
-        b.classList.add('bg-neutral-100', 'text-neutral-700');
-      });
-      btn.classList.add('bg-[#000104]', 'text-white', 'active-filter');
-      btn.classList.remove('bg-neutral-100', 'text-neutral-700');
+  // Attach filter buttons click listener
+  function attachFilterListeners() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => {
+          b.classList.remove('bg-[#000104]', 'text-white', 'active-filter');
+          b.classList.add('bg-neutral-100', 'text-neutral-700');
+        });
+        btn.classList.add('bg-[#000104]', 'text-white', 'active-filter');
+        btn.classList.remove('bg-neutral-100', 'text-neutral-700');
 
-      currentActiveFilter = btn.getAttribute('data-cat') || 'all';
-      applyCurrentFilter();
+        currentActiveFilter = btn.getAttribute('data-cat') || 'all';
+        applyCurrentFilter();
+      });
     });
-  });
+  }
+
+  // Refresh live navbar categories for product filter bar and modal dropdowns
+  async function refreshLiveCategoriesAndDropdowns() {
+    try {
+      const liveCats = await getNavbarCategoriesWithSubcategories();
+      if (liveCats && liveCats.length > 0) {
+        liveCats.forEach((cat: any) => {
+          subcategoryMap[cat.name] = (cat.subcategories || []).map((s: any) => s.name);
+        });
+
+        // Update modal select dropdown
+        if (selectCat) {
+          const prevVal = selectCat.value;
+          selectCat.innerHTML = '';
+          liveCats.forEach((cat: any) => {
+            const opt = document.createElement('option');
+            opt.value = cat.name;
+            opt.textContent = cat.name;
+            if (cat.name === prevVal) opt.selected = true;
+            selectCat.appendChild(opt);
+          });
+          updateSubcategoryOptions(selectCat.value);
+        }
+
+        // Update Category Filter Bar
+        const filterBar = document.getElementById('category-filter-bar');
+        if (filterBar) {
+          const totalCount = document.querySelectorAll('.product-row').length;
+          filterBar.innerHTML = `
+            <span class="font-bold text-neutral-400 px-2 uppercase text-[10px] tracking-wider">Filter:</span>
+            <button class="filter-btn ${currentActiveFilter === 'all' ? 'active-filter bg-[#000104] text-white' : 'bg-neutral-100 text-neutral-700'} px-3 py-1.5 rounded-lg font-bold" data-cat="all">
+              All Products (<span id="total-count">${totalCount}</span>)
+            </button>
+            ${liveCats.map((cat: any) => `
+              <button class="filter-btn ${currentActiveFilter === cat.name ? 'active-filter bg-[#000104] text-white' : 'bg-neutral-100 text-neutral-700'} px-3 py-1.5 rounded-lg font-semibold hover:bg-neutral-200 whitespace-nowrap" data-cat="${cat.name}">
+                ${cat.name}
+              </button>
+            `).join('')}
+            <button class="filter-btn ${currentActiveFilter === 'Home Categories' ? 'active-filter bg-[#000104] text-white' : 'bg-neutral-100 text-neutral-700'} px-3 py-1.5 rounded-lg font-semibold hover:bg-neutral-200 whitespace-nowrap" data-cat="Home Categories">Home Carousel</button>
+            <button class="filter-btn ${currentActiveFilter === 'Home Featured' ? 'active-filter bg-[#000104] text-white' : 'bg-neutral-100 text-neutral-700'} px-3 py-1.5 rounded-lg font-semibold hover:bg-neutral-200 whitespace-nowrap" data-cat="Home Featured">Home 4-Grid Deals</button>
+          `;
+          attachFilterListeners();
+        }
+      }
+    } catch (e) {
+      console.warn('Could not load live categories for product filters:', e);
+    }
+  }
 
   // Initial Attach
   attachEditListeners();
   attachDeleteListeners();
+  attachFilterListeners();
 
   // Dynamic Supabase fetch on client-side
   (window as any).refreshProducts = async function() {
@@ -763,4 +814,5 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   };
 
   (window as any).refreshProducts();
+  refreshLiveCategoriesAndDropdowns();
 </script>

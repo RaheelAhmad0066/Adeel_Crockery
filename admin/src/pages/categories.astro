@@ -34,7 +34,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
         const mappedProductsCount = initialProducts.filter(p => p.category === cat.name).length;
 
         return (
-          <div id={`cat-card-${catIdx}`} class="cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors" data-cat-name={cat.name} data-cat-idx={catIdx}>
+          <div id={`cat-card-${catIdx}`} class="cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors" data-cat-name={cat.name} data-cat-id={cat.id} data-cat-idx={catIdx}>
             
             <div class="flex items-start justify-between border-b pb-3">
               <div>
@@ -75,7 +75,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 
               <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx={catIdx}>
                 {cat.subcategories.map((sub, subIdx) => (
-                  <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors" data-sub-idx={subIdx}>
+                  <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors" data-sub-idx={subIdx} data-sub-name={sub.name} data-cat-id={cat.id}>
                     <span class="sub-name">{sub.name}</span>
                     <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
                   </span>
@@ -106,6 +106,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       </div>
 
       <form id="cat-form" class="space-y-4 text-xs">
+        <input type="hidden" id="edit-cat-id" value="" />
         <input type="hidden" id="edit-cat-index" value="-1" />
 
         <div>
@@ -135,6 +136,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       </div>
 
       <form id="subcat-form" class="space-y-3 text-xs">
+        <input type="hidden" id="target-cat-id" value="" />
         <input type="hidden" id="target-cat-idx" value="0" />
         <div>
           <label class="block font-semibold mb-1 text-neutral-700">Subcategory Name</label>
@@ -151,27 +153,45 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 </AdminLayout>
 
 <script>
+  import { 
+    getNavbarCategoriesWithSubcategories, 
+    saveCategory, 
+    deleteCategory, 
+    saveSubcategory, 
+    deleteSubcategory 
+  } from '../services/dbService.js';
+
   const catModal = document.getElementById('category-modal');
   const catModalTitle = document.getElementById('cat-modal-title');
-  const catForm = document.getElementById('cat-form');
-  const catIndexInput = document.getElementById('edit-cat-index') as HTMLInputElement;
+  const catForm = document.getElementById('cat-form') as HTMLFormElement | null;
+  const editCatIdInput = document.getElementById('edit-cat-id') as HTMLInputElement;
+  const editCatIndexInput = document.getElementById('edit-cat-index') as HTMLInputElement;
   const catNameInput = document.getElementById('cat-name-input') as HTMLInputElement;
   const catSlugInput = document.getElementById('cat-slug-input') as HTMLInputElement;
 
   const subModal = document.getElementById('subcat-modal');
   const subModalTitle = document.getElementById('subcat-modal-title');
-  const subForm = document.getElementById('subcat-form');
+  const subForm = document.getElementById('subcat-form') as HTMLFormElement | null;
+  const targetCatIdInput = document.getElementById('target-cat-id') as HTMLInputElement;
+  const targetCatIdxInput = document.getElementById('target-cat-idx') as HTMLInputElement;
   const subNameInput = document.getElementById('subcat-name-input') as HTMLInputElement;
-  const targetCatIdx = document.getElementById('target-cat-idx') as HTMLInputElement;
 
-  // Delete modal elements
+  // Reusable delete modal
   const delModal = document.getElementById('delete-category-modal');
-  let pendingDeleteTarget: HTMLElement | null = null;
+  let pendingDeleteAction: {
+    type: 'category' | 'subcategory';
+    catId: string;
+    subId?: string;
+    subName?: string;
+    domTarget?: HTMLElement | null;
+  } | null = null;
 
+  // Add Category Button
   document.getElementById('btn-add-main-cat')?.addEventListener('click', () => {
-    catIndexInput.value = '-1';
-    catNameInput.value = '';
-    catSlugInput.value = '';
+    if (editCatIdInput) editCatIdInput.value = '';
+    if (editCatIndexInput) editCatIndexInput.value = '-1';
+    if (catNameInput) catNameInput.value = '';
+    if (catSlugInput) catSlugInput.value = '';
     if (catModalTitle) catModalTitle.textContent = 'Add Navbar Category';
     catModal?.classList.remove('opacity-0', 'pointer-events-none');
   });
@@ -183,209 +203,192 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     catModal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
+  // Auto-generate slug when adding a new category
   catNameInput?.addEventListener('input', () => {
-    if (catIndexInput.value === '-1') {
+    if (!editCatIdInput?.value) {
       catSlugInput.value = catNameInput.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
   });
 
+  // Attach all action listeners to categories and subcategories
   function attachCategoryListeners() {
     // Edit Main Category
     document.querySelectorAll<HTMLButtonElement>('.btn-edit-main-cat').forEach(b => {
       b.onclick = (e) => {
-        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
-        const card = document.getElementById(`cat-card-${idx}`);
+        const btn = e.currentTarget as HTMLElement;
+        const card = btn.closest('.cat-card') as HTMLElement;
         if (!card) return;
 
-        catIndexInput.value = idx;
-        const title = card.querySelector('.cat-title')?.textContent || '';
-        const slug = card.querySelector('.cat-slug')?.textContent?.replace('/', '') || '';
+        const catId = card.getAttribute('data-cat-id') || '';
+        const catName = card.getAttribute('data-cat-name') || card.querySelector('.cat-title')?.textContent?.trim() || '';
+        const catSlug = card.querySelector('.cat-slug')?.textContent?.replace('/', '').trim() || '';
 
-        catNameInput.value = title;
-        catSlugInput.value = slug;
-        if (catModalTitle) catModalTitle.textContent = `Edit Category: ${title}`;
+        if (editCatIdInput) editCatIdInput.value = catId;
+        if (editCatIndexInput) editCatIndexInput.value = card.getAttribute('data-cat-idx') || '0';
+        if (catNameInput) catNameInput.value = catName;
+        if (catSlugInput) catSlugInput.value = catSlug;
+        if (catModalTitle) catModalTitle.textContent = `Edit Category: ${catName}`;
         catModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
-    // Delete Main Category (Pop-up Modal)
+    // Delete Main Category (Opens Confirmation Modal)
     document.querySelectorAll<HTMLButtonElement>('.btn-delete-main-cat').forEach(b => {
       b.onclick = (e) => {
-        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
-        pendingDeleteTarget = document.getElementById(`cat-card-${idx}`);
+        const btn = e.currentTarget as HTMLElement;
+        const card = btn.closest('.cat-card') as HTMLElement;
+        if (!card) return;
+
+        const catId = card.getAttribute('data-cat-id') || '';
+        const catName = card.getAttribute('data-cat-name') || card.querySelector('.cat-title')?.textContent?.trim() || 'this category';
+
+        pendingDeleteAction = {
+          type: 'category',
+          catId,
+          domTarget: card
+        };
+
         const modalDesc = delModal?.querySelector('.modal-delete-desc');
-        const catName = pendingDeleteTarget?.getAttribute('data-cat-name') || 'this category';
-        if (modalDesc) modalDesc.textContent = `Are you sure you want to delete "${catName}" and all its subcategories?`;
+        if (modalDesc) modalDesc.textContent = `Are you sure you want to delete category "${catName}" and all its subcategories?`;
         delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
-    // Add Subcategory Button
+    // Add Subcategory Button (Opens Subcategory Modal)
     document.querySelectorAll<HTMLButtonElement>('.btn-add-subcat').forEach(b => {
       b.onclick = (e) => {
-        const target = e.currentTarget as HTMLElement;
-        const idx = target.dataset.idx || '0';
-        const catName = target.dataset.cat || '';
-        targetCatIdx.value = idx;
-        subNameInput.value = '';
+        const btn = e.currentTarget as HTMLElement;
+        const card = btn.closest('.cat-card') as HTMLElement;
+        if (!card) return;
+
+        const catId = card.getAttribute('data-cat-id') || '';
+        const catName = card.getAttribute('data-cat-name') || card.querySelector('.cat-title')?.textContent?.trim() || '';
+
+        if (targetCatIdInput) targetCatIdInput.value = catId;
+        if (targetCatIdxInput) targetCatIdxInput.value = card.getAttribute('data-cat-idx') || '0';
+        if (subNameInput) subNameInput.value = '';
         if (subModalTitle) subModalTitle.textContent = `Add Subcategory under ${catName}`;
         subModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
-    // Remove Subcategory (Pop-up Modal)
+    // Delete Subcategory (Opens Confirmation Modal)
     document.querySelectorAll<HTMLButtonElement>('.btn-del-sub').forEach(b => {
       b.onclick = (e) => {
-        const pill = (e.currentTarget as HTMLElement).closest('.subcat-pill') as HTMLElement;
-        pendingDeleteTarget = pill;
-        const subName = pill.querySelector('.sub-name')?.textContent || 'this subcategory';
+        e.stopPropagation();
+        const btn = e.currentTarget as HTMLElement;
+        const pill = btn.closest('.subcat-pill') as HTMLElement;
+        const card = btn.closest('.cat-card') as HTMLElement;
+        if (!pill) return;
+
+        const catId = pill.getAttribute('data-cat-id') || card?.getAttribute('data-cat-id') || '';
+        const subId = pill.getAttribute('data-sub-id') || '';
+        const subName = pill.getAttribute('data-sub-name') || pill.querySelector('.sub-name')?.textContent?.trim() || 'this subcategory';
+
+        pendingDeleteAction = {
+          type: 'subcategory',
+          catId,
+          subId,
+          subName,
+          domTarget: pill
+        };
+
         const modalDesc = delModal?.querySelector('.modal-delete-desc');
-        if (modalDesc) modalDesc.textContent = `Remove subcategory "${subName}" from the navigation dropdown?`;
+        if (modalDesc) modalDesc.textContent = `Remove subcategory "${subName}" from navigation dropdown?`;
         delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
   }
 
-  // Delete Modal actions
+  // Delete Modal: Cancel
   delModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
     delModal.classList.add('opacity-0', 'pointer-events-none');
-    pendingDeleteTarget = null;
+    pendingDeleteAction = null;
   });
 
+  // Delete Modal: Confirm Action
   delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', async () => {
-    if (pendingDeleteTarget) {
-      const catId = pendingDeleteTarget.getAttribute('data-cat-id');
-      if (catId) {
-        try {
-          const { deleteCategory } = await import('../services/dbService.js');
-          await deleteCategory(catId);
-          if (typeof (window as any).refreshCategories === 'function') {
-            await (window as any).refreshCategories();
-          }
-        } catch (err: any) {
-          console.error('Delete category error:', err);
-        }
-      }
-      pendingDeleteTarget.remove();
-      pendingDeleteTarget = null;
+    if (!pendingDeleteAction) {
+      delModal.classList.add('opacity-0', 'pointer-events-none');
+      return;
     }
-    delModal.classList.add('opacity-0', 'pointer-events-none');
+
+    try {
+      if (pendingDeleteAction.type === 'category' && pendingDeleteAction.catId) {
+        await deleteCategory(pendingDeleteAction.catId);
+      } else if (pendingDeleteAction.type === 'subcategory') {
+        await (deleteSubcategory as any)(
+          pendingDeleteAction.subId || null, 
+          pendingDeleteAction.catId, 
+          pendingDeleteAction.subName || null
+        );
+      }
+
+      if (pendingDeleteAction.domTarget) {
+        pendingDeleteAction.domTarget.remove();
+      }
+
+      if (typeof (window as any).refreshCategories === 'function') {
+        await (window as any).refreshCategories();
+      }
+    } catch (err: any) {
+      console.error('Error executing delete action:', err);
+    } finally {
+      pendingDeleteAction = null;
+      delModal.classList.add('opacity-0', 'pointer-events-none');
+    }
   });
 
-  // Handle Category Form Submit
-  catForm?.addEventListener('submit', (e) => {
+  // Handle Category Form Submit (Add or Edit)
+  catForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const idx = parseInt(catIndexInput.value);
-    const name = catNameInput.value;
-    const slug = catSlugInput.value;
-    const catId = idx === -1 ? `cat-${slug.toLowerCase()}` : (document.getElementById(`cat-card-${idx}`)?.getAttribute('data-cat-id') || `cat-${slug}`);
+    const existingId = editCatIdInput?.value?.trim();
+    const name = catNameInput.value.trim();
+    const slug = catSlugInput.value.trim();
+    const catId = existingId ? existingId : `cat-${slug.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
-    if (idx === -1) {
-      const grid = document.getElementById('cat-cards-grid');
-      const newIdx = document.querySelectorAll('.cat-card').length;
-      const newCard = document.createElement('div');
-      newCard.id = `cat-card-${newIdx}`;
-      newCard.className = 'cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors';
-      newCard.setAttribute('data-cat-name', name);
-      newCard.setAttribute('data-cat-id', catId);
-      newCard.setAttribute('data-cat-idx', newIdx.toString());
+    catModal?.classList.add('opacity-0', 'pointer-events-none');
 
-      newCard.innerHTML = `
-        <div class="flex items-start justify-between border-b pb-3">
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="cat-title text-base font-bold text-[#000104]">${name}</h3>
-              <span class="cat-slug text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
-                /${slug}
-              </span>
-            </div>
-            <p class="cat-count text-xs text-[#5E666C] mt-0.5">0 active items mapped in inventory</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span>
-            <button class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx="${newIdx}">Edit</button>
-            <button class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx="${newIdx}">Delete</button>
-          </div>
-        </div>
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <span class="subcat-header text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Dropdown Subcategories (0)</span>
-            <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx="${newIdx}" data-cat="${name}">+ Add Subcategory</button>
-          </div>
-          <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx="${newIdx}"></div>
-        </div>
-      `;
-      grid?.prepend(newCard);
-    } else {
-      const card = document.getElementById(`cat-card-${idx}`);
-      if (card) {
-        const titleEl = card.querySelector('.cat-title');
-        const slugEl = card.querySelector('.cat-slug');
-        if (titleEl) titleEl.textContent = name;
-        if (slugEl) slugEl.textContent = `/${slug}`;
-        card.setAttribute('data-cat-name', name);
+    try {
+      await saveCategory({
+        id: catId,
+        name,
+        slug,
+        status: 'Active',
+        sort_order: 1
+      });
+
+      if (typeof (window as any).refreshCategories === 'function') {
+        await (window as any).refreshCategories();
       }
+    } catch (err: any) {
+      console.error('Save category error:', err);
     }
+  });
 
-    import('../services/dbService.js').then(async ({ saveCategory }) => {
+  // Handle Subcategory Form Submit
+  subForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const catId = targetCatIdInput?.value?.trim();
+    const subName = subNameInput.value.trim();
+
+    subModal?.classList.add('opacity-0', 'pointer-events-none');
+
+    if (catId && subName) {
       try {
-        await saveCategory({
-          id: catId,
-          name,
-          slug,
-          status: 'Active',
-          sort_order: idx === -1 ? 99 : idx + 1
+        await saveSubcategory({
+          category_id: catId,
+          name: subName,
+          slug: subName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
         });
+
         if (typeof (window as any).refreshCategories === 'function') {
           await (window as any).refreshCategories();
         }
       } catch (err: any) {
-        console.error('Save category error:', err);
+        console.error('Save subcategory error:', err);
       }
-    });
-
-    catModal?.classList.add('opacity-0', 'pointer-events-none');
-    attachCategoryListeners();
-  });
-
-  // Handle Subcategory Form Submit
-  subForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const idx = targetCatIdx.value;
-    const subName = subNameInput.value;
-    const card = document.getElementById(`cat-card-${idx}`);
-    const list = card?.querySelector('.subcat-list');
-    const catId = card?.getAttribute('data-cat-id');
-
-    if (list) {
-      const pill = document.createElement('span');
-      pill.className = 'subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors';
-      pill.innerHTML = `
-        <span class="sub-name">${subName}</span>
-        <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
-      `;
-      list.appendChild(pill);
     }
-
-    if (catId) {
-      import('../services/dbService.js').then(async ({ saveSubcategory }) => {
-        try {
-          await saveSubcategory({
-            category_id: catId,
-            name: subName,
-            slug: subName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-          });
-          if (typeof (window as any).refreshCategories === 'function') {
-            await (window as any).refreshCategories();
-          }
-        } catch (err: any) {
-          console.error('Save subcategory error:', err);
-        }
-      });
-    }
-
-    subModal?.classList.add('opacity-0', 'pointer-events-none');
-    attachCategoryListeners();
   });
 
   document.getElementById('close-subcat-modal')?.addEventListener('click', () => {
@@ -395,10 +398,9 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     subModal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  // Client-side fetch live categories
+  // Client-side fetch & render live categories from Supabase
   (window as any).refreshCategories = async function() {
     try {
-      const { getNavbarCategoriesWithSubcategories } = await import('../services/dbService.js');
       const liveCats = await getNavbarCategoriesWithSubcategories();
       if (liveCats && liveCats.length > 0) {
         const grid = document.getElementById('cat-cards-grid');
@@ -414,9 +416,9 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 
             const subs = cat.subcategories || [];
             const subPills = subs.map((sub: any) => `
-              <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors">
+              <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors" data-cat-id="${cat.id}" data-sub-id="${sub.id || ''}" data-sub-name="${sub.name}">
                 <span class="sub-name">${sub.name}</span>
-                <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
+                <button type="button" class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
               </span>
             `).join('');
 
@@ -433,14 +435,14 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${cat.status || 'Active'}</span>
-                  <button class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx="${catIdx}">Edit</button>
-                  <button class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx="${catIdx}">Delete</button>
+                  <button type="button" class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx="${catIdx}">Edit</button>
+                  <button type="button" class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx="${catIdx}">Delete</button>
                 </div>
               </div>
               <div>
                 <div class="flex items-center justify-between mb-2">
                   <span class="subcat-header text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Dropdown Subcategories (${subs.length})</span>
-                  <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx="${catIdx}" data-cat="${cat.name}">+ Add Subcategory</button>
+                  <button type="button" class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx="${catIdx}" data-cat="${cat.name}">+ Add Subcategory</button>
                 </div>
                 <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx="${catIdx}">
                   ${subPills}
@@ -457,8 +459,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     }
   };
 
+  // Initial load
   (window as any).refreshCategories();
-
   attachCategoryListeners();
 </script>
-//@mberRose91234&

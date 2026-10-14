@@ -129,6 +129,12 @@ export async function saveCategory(category) {
 export async function deleteCategory(id) {
   invalidateCache('navbar_categories');
   try {
+    // Delete child subcategories first to prevent foreign key errors
+    await supabase
+      .from('subcategories')
+      .delete()
+      .eq('category_id', id);
+
     const { error } = await supabase
       .from('categories')
       .delete()
@@ -156,13 +162,25 @@ export async function saveSubcategory(subcat) {
   }
 }
 
-export async function deleteSubcategory(id) {
+/**
+ * @param {string|null} [id]
+ * @param {string|null} [categoryId]
+ * @param {string|null} [name]
+ */
+export async function deleteSubcategory(id = null, categoryId = null, name = null) {
   invalidateCache('navbar_categories');
   try {
-    const { error } = await supabase
-      .from('subcategories')
-      .delete()
-      .eq('id', id);
+    let query = supabase.from('subcategories').delete();
+    if (id) {
+      query = query.eq('id', id);
+    } else if (categoryId && name) {
+      query = query.eq('category_id', categoryId).eq('name', name);
+    } else if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    } else {
+      throw new Error('Must provide id, or categoryId and name');
+    }
+    const { error } = await query;
 
     if (error) throw error;
     return { success: true };
