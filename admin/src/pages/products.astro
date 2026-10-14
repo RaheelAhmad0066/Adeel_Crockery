@@ -479,13 +479,19 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     pendingDeleteRow = null;
   });
 
-  document.getElementById('confirm-del-btn')?.addEventListener('click', () => {
+  document.getElementById('confirm-del-btn')?.addEventListener('click', async () => {
     if (pendingDeleteRow) {
       const id = pendingDeleteRow.getAttribute('data-id');
       if (id) {
-        import('../services/dbService.js').then(({ deleteProduct }) => {
-          deleteProduct(id).catch(err => console.error('Error deleting product from Supabase:', err));
-        });
+        try {
+          const { deleteProduct } = await import('../services/dbService.js');
+          await deleteProduct(id);
+          if (typeof (window as any).refreshProducts === 'function') {
+            await (window as any).refreshProducts();
+          }
+        } catch (err) {
+          console.error('Error deleting product from Supabase:', err);
+        }
       }
       pendingDeleteRow.remove();
       pendingDeleteRow = null;
@@ -597,21 +603,28 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     }
 
     // Save to Supabase Cloud Database
-    import('../services/dbService.js').then(({ saveProduct }) => {
-      saveProduct({
-        id,
-        name,
-        category: cat,
-        subcategory: subcat,
-        price,
-        cost_price: cost,
-        stock,
-        sku: 'EW-' + id,
-        image,
-        show_on_home_categories: isHomeCat,
-        show_on_home_featured: isHomeFeat,
-        status: stock > 0 ? 'In Stock' : 'Out of Stock'
-      }).catch(err => console.error('Error saving product to Supabase:', err));
+    import('../services/dbService.js').then(async ({ saveProduct }) => {
+      try {
+        await saveProduct({
+          id,
+          name,
+          category: cat,
+          subcategory: subcat,
+          price,
+          cost_price: cost,
+          stock,
+          sku: 'EW-' + id,
+          image,
+          show_on_home_categories: isHomeCat,
+          show_on_home_featured: isHomeFeat,
+          status: stock > 0 ? 'In Stock' : 'Out of Stock'
+        });
+        if (typeof (window as any).refreshProducts === 'function') {
+          await (window as any).refreshProducts();
+        }
+      } catch (err) {
+        console.error('Error saving product to Supabase:', err);
+      }
     });
 
     attachEditListeners();
@@ -653,8 +666,9 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   attachDeleteListeners();
 
   // Dynamic Supabase fetch on client-side
-  import('../services/dbService.js').then(async ({ getAllProducts, uploadImageToStorage }) => {
+  (window as any).refreshProducts = async function() {
     try {
+      const { getAllProducts } = await import('../services/dbService.js');
       const liveProducts = await getAllProducts();
       if (liveProducts && liveProducts.length > 0) {
         const tbody = document.getElementById('products-table-body');
@@ -729,5 +743,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     } catch (e) {
       console.warn('Could not load live products, displaying fallback data:', e);
     }
-  });
+  };
+
+  (window as any).refreshProducts();
 </script>

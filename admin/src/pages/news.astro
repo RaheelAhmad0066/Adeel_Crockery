@@ -177,13 +177,19 @@ import { adminArticlesList } from '../data/adminMockData.js';
       pendingArtRow = null;
     });
 
-    delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+    delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', async () => {
       if (pendingArtRow) {
         const artId = pendingArtRow.getAttribute('data-id');
         if (artId) {
-          import('../services/dbService.js').then(({ deleteArticle }) => {
-            deleteArticle(artId).catch(err => console.error('Delete article error:', err));
-          });
+          try {
+            const { deleteArticle } = await import('../services/dbService.js');
+            await deleteArticle(artId);
+            if (typeof (window as any).refreshArticles === 'function') {
+              await (window as any).refreshArticles();
+            }
+          } catch (err) {
+            console.error('Delete article error:', err);
+          }
         }
         pendingArtRow.remove();
         pendingArtRow = null;
@@ -192,7 +198,7 @@ import { adminArticlesList } from '../data/adminMockData.js';
     });
   }
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const idx = parseInt(artIdx.value);
     const title = titleInput.value;
@@ -200,60 +206,30 @@ import { adminArticlesList } from '../data/adminMockData.js';
     const category = catInput.value || 'Ceramic Art';
     const id = idx !== -1 ? (document.getElementById(`art-row-${idx}`)?.getAttribute('data-id') || `art-${Date.now()}`) : `art-${Date.now()}`;
 
-    if (idx !== -1) {
-      const row = document.getElementById(`art-row-${idx}`);
-      if (row) {
-        const t = row.querySelector('.art-title');
-        const a = row.querySelector('.art-author');
-        if (t) t.textContent = title;
-        if (a) a.textContent = author;
-      }
-    } else {
-      const tbody = document.getElementById('articles-body');
-      const newIdx = document.querySelectorAll('#articles-body tr').length;
-      const tr = document.createElement('tr');
-      tr.id = `art-row-${newIdx}`;
-      tr.setAttribute('data-id', id);
-      tr.className = 'hover:bg-neutral-50/70 transition-colors';
-      tr.innerHTML = `
-        <td class="py-3.5 px-4 font-bold text-[#000104] max-w-xs truncate art-title">${title}</td>
-        <td class="py-3.5 px-4 font-medium art-author">${author}</td>
-        <td class="py-3.5 px-4">
-          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-neutral-100 text-neutral-700">${category}</span>
-        </td>
-        <td class="py-3.5 px-4 text-neutral-500">Just Now</td>
-        <td class="py-3.5 px-4">
-          <span class="text-[10px] text-neutral-500 bg-neutral-50 border border-neutral-200 px-1.5 py-0.5 rounded">#CERAMICS</span>
-        </td>
-        <td class="py-3.5 px-4">
-          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Published</span>
-        </td>
-        <td class="py-3.5 px-4 text-right space-x-2">
-          <button class="btn-edit-art text-[#000104] font-semibold underline" data-idx="${newIdx}">Edit</button>
-          <button class="btn-del-art text-red-500 font-semibold underline" data-idx="${newIdx}">Delete</button>
-        </td>
-      `;
-      tbody?.prepend(tr);
-      attachArtListeners();
-    }
-
-    import('../services/dbService.js').then(({ saveArticle }) => {
-      saveArticle({
+    try {
+      const { saveArticle } = await import('../services/dbService.js');
+      await saveArticle({
         id,
         title,
         author,
         category,
         date: 'Today',
         status: 'Published'
-      }).catch(err => console.error('Save article error:', err));
-    });
+      });
+      if (typeof (window as any).refreshArticles === 'function') {
+        await (window as any).refreshArticles();
+      }
+    } catch (err) {
+      console.error('Save article error:', err);
+    }
 
     modal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
   // Client-side fetch from Supabase
-  import('../services/dbService.js').then(async ({ getAllArticles }) => {
+  (window as any).refreshArticles = async function() {
     try {
+      const { getAllArticles } = await import('../services/dbService.js');
       const liveArticles = await getAllArticles();
       if (liveArticles && liveArticles.length > 0) {
         const tbody = document.getElementById('articles-body');
@@ -290,8 +266,9 @@ import { adminArticlesList } from '../data/adminMockData.js';
     } catch (e) {
       console.warn('Could not load live articles:', e);
     }
-  });
+  };
 
+  (window as any).refreshArticles();
   attachArtListeners();
 </script>
 

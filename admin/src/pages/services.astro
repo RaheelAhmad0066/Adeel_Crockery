@@ -159,6 +159,8 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
 </AdminLayout>
 
 <script>
+  import { getAllServices, saveService, deleteService } from '../services/dbService.js';
+
   const modal = document.getElementById('service-modal');
   const modalTitle = document.getElementById('srv-modal-title');
   const form = document.getElementById('srv-form');
@@ -168,7 +170,7 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
   const descInput = document.getElementById('srv-desc-input') as HTMLTextAreaElement;
 
   document.getElementById('btn-add-service')?.addEventListener('click', () => {
-    srvIdx.value = '-1';
+    srvIdx.value = '';
     titleInput.value = '';
     catInput.value = '';
     descInput.value = '';
@@ -186,60 +188,109 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
   function attachSrvListeners() {
     document.querySelectorAll<HTMLButtonElement>('.btn-edit-srv').forEach(b => {
       b.onclick = (e) => {
-        const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
-        const card = document.getElementById(`srv-card-${idx}`);
+        const id = (e.currentTarget as HTMLElement).dataset.id || '';
+        const card = document.getElementById(`srv-card-${id}`);
         if (!card) return;
-        srvIdx.value = idx;
-        titleInput.value = card.querySelector('.srv-title')?.textContent || '';
-        descInput.value = card.querySelector('.srv-desc')?.textContent || '';
-        catInput.value = 'Custom';
+        srvIdx.value = id;
+        titleInput.value = card.querySelector('.srv-title')?.textContent?.trim() || '';
+        descInput.value = card.querySelector('.srv-desc')?.textContent?.trim() || '';
+        catInput.value = card.querySelector('.srv-cat-badge')?.textContent?.trim() || 'Custom';
         if (modalTitle) modalTitle.textContent = 'Edit Service';
         modal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
     const delModal = document.getElementById('delete-service-modal');
-    let pendingSrvIdx: string | null = null;
+    let pendingSrvId: string | null = null;
 
     document.querySelectorAll<HTMLButtonElement>('.btn-del-srv').forEach(b => {
       b.onclick = (e) => {
-        pendingSrvIdx = (e.currentTarget as HTMLElement).dataset.idx || '0';
+        pendingSrvId = (e.currentTarget as HTMLElement).dataset.id || null;
         delModal?.classList.remove('opacity-0', 'pointer-events-none');
       };
     });
 
     delModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
       delModal.classList.add('opacity-0', 'pointer-events-none');
-      pendingSrvIdx = null;
+      pendingSrvId = null;
     });
 
-    delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
-      if (pendingSrvIdx !== null) {
-        document.getElementById(`srv-card-${pendingSrvIdx}`)?.remove();
-        pendingSrvIdx = null;
+    delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', async () => {
+      if (pendingSrvId) {
+        await deleteService(pendingSrvId);
+        document.getElementById(`srv-card-${pendingSrvId}`)?.remove();
+        pendingSrvId = null;
       }
       delModal.classList.add('opacity-0', 'pointer-events-none');
     });
   }
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const idx = parseInt(srvIdx.value);
+    const existingId = srvIdx.value;
+    const targetId = existingId || ('srv-' + Date.now());
     const title = titleInput.value;
+    const cat = catInput.value || 'Custom';
     const desc = descInput.value;
 
-    if (idx !== -1) {
-      const card = document.getElementById(`srv-card-${idx}`);
-      if (card) {
-        const t = card.querySelector('.srv-title');
-        const d = card.querySelector('.srv-desc');
-        if (t) t.textContent = title;
-        if (d) d.textContent = desc;
-      }
-    }
+    await saveService({
+      id: targetId,
+      title,
+      category: cat,
+      description: desc,
+      status: 'Active',
+      image: '/assets/images/shop-2.svg'
+    });
+
+    await loadLiveServices();
     modal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  attachSrvListeners();
+  async function loadLiveServices() {
+    try {
+      const liveServices = await getAllServices();
+      const grid = document.getElementById('services-grid');
+      if (grid && liveServices && liveServices.length > 0) {
+        grid.innerHTML = '';
+        liveServices.forEach((srv: any) => {
+          const card = document.createElement('div');
+          card.id = `srv-card-${srv.id}`;
+          card.className = 'bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs flex flex-col justify-between space-y-4 hover:border-black transition-colors';
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="srv-cat-badge text-[10px] font-bold uppercase tracking-wider bg-neutral-100 text-neutral-700 px-2 py-0.5 rounded">
+                  ${srv.category || 'General'}
+                </span>
+                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
+                  ${srv.status || 'Active'}
+                </span>
+              </div>
+              <h3 class="srv-title text-sm font-bold text-[#000104]">${srv.title}</h3>
+              <p class="srv-desc text-xs text-[#5E666C] mt-2 leading-relaxed">
+                ${srv.description || ''}
+              </p>
+            </div>
+            
+            <div class="pt-3 border-t border-neutral-100 flex items-center justify-between">
+              <span class="text-xs font-medium text-neutral-500">
+                <strong class="text-[#000104]">Active</strong> offering
+              </span>
+              <div class="space-x-2">
+                <button class="btn-edit-srv text-xs font-semibold text-neutral-800 underline" data-id="${srv.id}">Edit</button>
+                <button class="btn-del-srv text-xs font-semibold text-red-500 underline" data-id="${srv.id}">Delete</button>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+        attachSrvListeners();
+      }
+    } catch (e) {
+      console.warn('Services fetch error:', e);
+    }
+  }
+
+  loadLiveServices();
 </script>
 

@@ -252,13 +252,19 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     pendingDeleteTarget = null;
   });
 
-  delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+  delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', async () => {
     if (pendingDeleteTarget) {
       const catId = pendingDeleteTarget.getAttribute('data-cat-id');
       if (catId) {
-        import('../services/dbService.js').then(({ deleteCategory }) => {
-          deleteCategory(catId).catch((err: any) => console.error('Delete category error:', err));
-        });
+        try {
+          const { deleteCategory } = await import('../services/dbService.js');
+          await deleteCategory(catId);
+          if (typeof (window as any).refreshCategories === 'function') {
+            await (window as any).refreshCategories();
+          }
+        } catch (err: any) {
+          console.error('Delete category error:', err);
+        }
       }
       pendingDeleteTarget.remove();
       pendingDeleteTarget = null;
@@ -321,14 +327,21 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       }
     }
 
-    import('../services/dbService.js').then(({ saveCategory }) => {
-      saveCategory({
-        id: catId,
-        name,
-        slug,
-        status: 'Active',
-        sort_order: idx === -1 ? 99 : idx + 1
-      }).catch((err: any) => console.error('Save category error:', err));
+    import('../services/dbService.js').then(async ({ saveCategory }) => {
+      try {
+        await saveCategory({
+          id: catId,
+          name,
+          slug,
+          status: 'Active',
+          sort_order: idx === -1 ? 99 : idx + 1
+        });
+        if (typeof (window as any).refreshCategories === 'function') {
+          await (window as any).refreshCategories();
+        }
+      } catch (err: any) {
+        console.error('Save category error:', err);
+      }
     });
 
     catModal?.classList.add('opacity-0', 'pointer-events-none');
@@ -355,12 +368,19 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     }
 
     if (catId) {
-      import('../services/dbService.js').then(({ saveSubcategory }) => {
-        saveSubcategory({
-          category_id: catId,
-          name: subName,
-          slug: subName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-        }).catch((err: any) => console.error('Save subcategory error:', err));
+      import('../services/dbService.js').then(async ({ saveSubcategory }) => {
+        try {
+          await saveSubcategory({
+            category_id: catId,
+            name: subName,
+            slug: subName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+          });
+          if (typeof (window as any).refreshCategories === 'function') {
+            await (window as any).refreshCategories();
+          }
+        } catch (err: any) {
+          console.error('Save subcategory error:', err);
+        }
       });
     }
 
@@ -376,8 +396,9 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
   });
 
   // Client-side fetch live categories
-  import('../services/dbService.js').then(async ({ getNavbarCategoriesWithSubcategories }) => {
+  (window as any).refreshCategories = async function() {
     try {
+      const { getNavbarCategoriesWithSubcategories } = await import('../services/dbService.js');
       const liveCats = await getNavbarCategoriesWithSubcategories();
       if (liveCats && liveCats.length > 0) {
         const grid = document.getElementById('cat-cards-grid');
@@ -434,7 +455,9 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     } catch (e) {
       console.warn('Live categories warning:', e);
     }
-  });
+  };
+
+  (window as any).refreshCategories();
 
   attachCategoryListeners();
 </script>

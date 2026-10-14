@@ -55,6 +55,7 @@ export async function getActiveHeroBanners() {
 
 
 export async function saveHeroBanner(banner) {
+  invalidateCache('hero_banners');
   try {
     const { data, error } = await supabase
       .from('hero_banners')
@@ -70,6 +71,7 @@ export async function saveHeroBanner(banner) {
 }
 
 export async function deleteHeroBanner(id) {
+  invalidateCache('hero_banners');
   try {
     const { error } = await supabase
       .from('hero_banners')
@@ -303,6 +305,38 @@ export async function getAllServices() {
     return data || [];
   } catch (err) {
     return [];
+  }
+}
+
+export async function saveService(service) {
+  invalidateCache('services');
+  try {
+    const { data, error } = await supabase
+      .from('services')
+      .upsert(service)
+      .select();
+
+    if (error) throw error;
+    return { success: true, data };
+  } catch (err) {
+    console.error('Error saving service:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteService(id) {
+  invalidateCache('services');
+  try {
+    const { error } = await supabase
+      .from('services')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return { success: true };
+  } catch (err) {
+    console.error('Error deleting service:', err);
+    return { success: false, error: err.message };
   }
 }
 

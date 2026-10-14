@@ -37,12 +37,15 @@ const defaultBanner = {
       </a>
     </div>
 
+    <!-- Carousel Indicators for Multiple Slides -->
+    <div id="hero-indicators" class="pt-4 flex items-center justify-center gap-2"></div>
+
     <div class="pt-6 max-w-xl mx-auto flex justify-center animate-float">
       <img 
         id="hero-img"
         src={defaultBanner.image} 
         alt="Ceramic Pottery" 
-        class="max-h-[340px] w-auto drop-shadow-xl object-contain"
+        class="max-h-[340px] w-auto drop-shadow-xl object-contain transition-opacity duration-700"
       >
     </div>
   </div>
@@ -50,18 +53,92 @@ const defaultBanner = {
 
 <script>
   import { getActiveHeroBanners } from '../services/dbService.js';
+  
+  let currentSlideIndex = 0;
+  let slideTimer: any = null;
+  let bannerSlides: any[] = [];
+
+  function displaySlide(index: number) {
+    if (!bannerSlides || bannerSlides.length === 0) return;
+    const slide = bannerSlides[index];
+    if (!slide) return;
+
+    const hEl = document.getElementById('hero-headline');
+    const sEl = document.getElementById('hero-subtitle');
+    const cEl = document.getElementById('hero-cta') as HTMLAnchorElement;
+    const iEl = document.getElementById('hero-img') as HTMLImageElement;
+
+    // Smooth subtle transition
+    if (hEl) {
+      hEl.style.opacity = '0';
+      setTimeout(() => {
+        hEl.textContent = slide.headline || '';
+        hEl.style.opacity = '1';
+      }, 200);
+    }
+    if (sEl) {
+      sEl.style.opacity = '0';
+      setTimeout(() => {
+        sEl.textContent = slide.subtitle || '';
+        sEl.style.opacity = '1';
+      }, 200);
+    }
+    if (cEl) {
+      cEl.textContent = slide.cta_text || 'Buy Now';
+      cEl.href = slide.cta_link || '#products';
+    }
+    if (iEl) {
+      iEl.style.opacity = '0';
+      setTimeout(() => {
+        iEl.src = slide.image || '/assets/images/hero-pot.png';
+        iEl.style.opacity = '1';
+      }, 200);
+    }
+
+    // Update dots
+    const dots = document.querySelectorAll('.hero-dot');
+    dots.forEach((dot, dIdx) => {
+      if (dIdx === index) {
+        dot.className = 'hero-dot w-6 h-2 rounded-full bg-[#000104] transition-all duration-300';
+      } else {
+        dot.className = 'hero-dot w-2 h-2 rounded-full bg-neutral-300 hover:bg-neutral-500 transition-all duration-300';
+      }
+    });
+  }
+
+  function startAutoSlide() {
+    if (slideTimer) clearInterval(slideTimer);
+    if (bannerSlides.length > 1) {
+      slideTimer = setInterval(() => {
+        currentSlideIndex = (currentSlideIndex + 1) % bannerSlides.length;
+        displaySlide(currentSlideIndex);
+      }, 4500); // Auto slide every 4.5 seconds
+    }
+  }
+
   getActiveHeroBanners().then((banners) => {
     if (banners && banners.length > 0) {
-      const active = banners.find((b: any) => b.is_active) || banners[0];
-      const hEl = document.getElementById('hero-headline');
-      const sEl = document.getElementById('hero-subtitle');
-      const cEl = document.getElementById('hero-cta') as HTMLAnchorElement;
-      const iEl = document.getElementById('hero-img') as HTMLImageElement;
-      if (hEl && active.headline) hEl.textContent = active.headline;
-      if (sEl && active.subtitle) sEl.textContent = active.subtitle;
-      if (cEl && active.cta_text) cEl.textContent = active.cta_text;
-      if (cEl && active.cta_link) cEl.href = active.cta_link;
-      if (iEl && active.image) iEl.src = active.image;
+      bannerSlides = banners.filter((b: any) => b.is_active !== false);
+      if (bannerSlides.length === 0) bannerSlides = banners;
+
+      // Render dots if more than 1 banner
+      const indicatorsContainer = document.getElementById('hero-indicators');
+      if (indicatorsContainer && bannerSlides.length > 1) {
+        indicatorsContainer.innerHTML = '';
+        bannerSlides.forEach((_, idx) => {
+          const dot = document.createElement('button');
+          dot.className = `hero-dot ${idx === 0 ? 'w-6 bg-[#000104]' : 'w-2 bg-neutral-300'} h-2 rounded-full transition-all duration-300`;
+          dot.onclick = () => {
+            currentSlideIndex = idx;
+            displaySlide(currentSlideIndex);
+            startAutoSlide(); // reset timer on manual click
+          };
+          indicatorsContainer.appendChild(dot);
+        });
+      }
+
+      displaySlide(0);
+      startAutoSlide();
     }
   }).catch(() => {});
 </script>

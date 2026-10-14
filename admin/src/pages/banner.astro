@@ -156,27 +156,9 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 </AdminLayout>
 
 <script>
-  let slides = [
-    {
-      id: 'slide-1',
-      headline: 'Feel it, Feel the Uniqueness.',
-      subtitle: 'Is filament of the highest quality that we are proud to offer our customers.',
-      cta: 'Buy Now',
-      link: '#products',
-      img: '/assets/images/hero-pot.png',
-      active: true
-    },
-    {
-      id: 'slide-2',
-      headline: 'Artisan Terracotta Craftsmanship',
-      subtitle: 'Hand-thrown earthen clay dining sets crafted by master pottery artisans.',
-      cta: 'Explore Shop',
-      link: '/shop',
-      img: '/assets/images/prod-1.png',
-      active: false
-    }
-  ];
+  import { getActiveHeroBanners, saveHeroBanner, deleteHeroBanner, uploadImageToStorage } from '../services/dbService.js';
 
+  let slides: any[] = [];
   let activeIndex = 0;
 
   const previewHeadline = document.getElementById('preview-headline');
@@ -200,12 +182,15 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
   const fileInput = document.getElementById('slide-file-input') as HTMLInputElement;
 
   function renderSlides() {
-    // Update live banner
+    if (!slides || slides.length === 0) return;
+    if (activeIndex >= slides.length) activeIndex = 0;
+
+    // Update live banner preview box
     const current = slides[activeIndex];
-    if (previewHeadline) previewHeadline.textContent = current.headline;
-    if (previewSubtitle) previewSubtitle.textContent = current.subtitle;
-    if (previewCta) previewCta.textContent = current.cta;
-    if (previewImg) previewImg.src = current.img;
+    if (previewHeadline && current) previewHeadline.textContent = current.headline;
+    if (previewSubtitle && current) previewSubtitle.textContent = current.subtitle;
+    if (previewCta && current) previewCta.textContent = current.cta;
+    if (previewImg && current) previewImg.src = current.img || '/assets/images/hero-pot.png';
     if (previewBadge) previewBadge.textContent = `Slide ${activeIndex + 1} of ${slides.length} (Active)`;
 
     // Indicators
@@ -258,28 +243,28 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
       });
 
       // Events
-      document.querySelectorAll('.btn-make-active').forEach(b => {
-        b.addEventListener('click', (e) => {
+      document.querySelectorAll<HTMLButtonElement>('.btn-make-active').forEach(b => {
+        b.onclick = (e) => {
           activeIndex = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
           renderSlides();
-        });
+        };
       });
 
-      document.querySelectorAll('.btn-edit-slide').forEach(b => {
-        b.addEventListener('click', (e) => {
+      document.querySelectorAll<HTMLButtonElement>('.btn-edit-slide').forEach(b => {
+        b.onclick = (e) => {
           const idx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
           openEditModal(idx);
-        });
+        };
       });
 
       const delSlideModal = document.getElementById('delete-slide-modal');
       let pendingSlideIdx = -1;
 
-      document.querySelectorAll('.btn-del-slide').forEach(b => {
-        b.addEventListener('click', (e) => {
+      document.querySelectorAll<HTMLButtonElement>('.btn-del-slide').forEach(b => {
+        b.onclick = (e) => {
           pendingSlideIdx = parseInt((e.currentTarget as HTMLElement).dataset.index || '0');
           delSlideModal?.classList.remove('opacity-0', 'pointer-events-none');
-        });
+        };
       });
 
       delSlideModal?.querySelector('.modal-delete-cancel')?.addEventListener('click', () => {
@@ -287,17 +272,15 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
         pendingSlideIdx = -1;
       });
 
-      delSlideModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
+      delSlideModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', async () => {
         if (pendingSlideIdx !== -1) {
-          const removed = slides.splice(pendingSlideIdx, 1)[0];
+          const removed = slides[pendingSlideIdx];
           if (removed && removed.id) {
-            import('../services/dbService.js').then(({ deleteHeroBanner }) => {
-              deleteHeroBanner(removed.id).catch(err => console.error('Error deleting banner from Supabase:', err));
-            });
+            await deleteHeroBanner(removed.id);
+            // Re-fetch live data to ensure 100% database alignment
+            await loadBannersFromDb();
           }
-          if (activeIndex >= slides.length) activeIndex = 0;
           pendingSlideIdx = -1;
-          renderSlides();
         }
         delSlideModal.classList.add('opacity-0', 'pointer-events-none');
       });
@@ -306,19 +289,20 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
 
   function openEditModal(idx: number) {
     const s = slides[idx];
-    slideId.value = idx.toString();
+    if (!s) return;
+    slideId.value = s.id; // Store real DB ID
     slideHeadline.value = s.headline;
     slideSubtitle.value = s.subtitle;
     slideCta.value = s.cta;
     slideLink.value = s.link;
     slideImgPath.value = s.img;
     modalImgPreview.src = s.img;
-    if (modalTitle) modalTitle.textContent = `Edit Slide #${idx + 1}`;
+    if (modalTitle) modalTitle.textContent = `Edit Slide: ${s.headline}`;
     modal?.classList.remove('opacity-0', 'pointer-events-none');
   }
 
   document.getElementById('btn-add-slide')?.addEventListener('click', () => {
-    slideId.value = '-1';
+    slideId.value = '';
     slideHeadline.value = '';
     slideSubtitle.value = '';
     slideCta.value = 'Shop Now';
@@ -339,65 +323,46 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
   fileInput?.addEventListener('change', async (e: any) => {
     const file = e.target?.files?.[0];
     if (file) {
-      import('../services/dbService.js').then(async ({ uploadImageToStorage }) => {
-        const uploadRes = await uploadImageToStorage(file, 'banners');
-        if (uploadRes.success && uploadRes.publicUrl) {
-          modalImgPreview.src = uploadRes.publicUrl;
-          slideImgPath.value = uploadRes.publicUrl;
-        } else {
-          const reader = new FileReader();
-          reader.onload = (evt) => {
-            if (evt.target?.result) {
-              modalImgPreview.src = evt.target.result as string;
-              slideImgPath.value = evt.target.result as string;
-            }
-          };
-          reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        if (evt.target?.result) {
+          modalImgPreview.src = evt.target.result as string;
+          slideImgPath.value = evt.target.result as string;
         }
-      });
+      };
+      reader.readAsDataURL(file);
+
+      const uploadRes = await uploadImageToStorage(file, 'banners');
+      if (uploadRes.success && uploadRes.publicUrl) {
+        modalImgPreview.src = uploadRes.publicUrl;
+        slideImgPath.value = uploadRes.publicUrl;
+      }
     }
   });
 
-  slideForm?.addEventListener('submit', (e) => {
+  slideForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const idx = parseInt(slideId.value);
-    const newSlide = {
-      id: 'slide-' + Date.now(),
+    const existingId = slideId.value;
+    const targetId = existingId || ('slide-' + Date.now());
+
+    const bannerPayload = {
+      id: targetId,
       headline: slideHeadline.value,
       subtitle: slideSubtitle.value,
-      cta: slideCta.value,
-      link: slideLink.value,
-      img: slideImgPath.value,
-      active: true
+      cta_text: slideCta.value,
+      cta_link: slideLink.value,
+      image: slideImgPath.value,
+      is_active: true,
+      sort_order: existingId ? 1 : (slides.length + 1)
     };
 
-    if (idx === -1) {
-      slides.push(newSlide);
-      activeIndex = slides.length - 1;
-    } else {
-      slides[idx] = newSlide;
-    }
-
-    // Persist to Supabase
-    import('../services/dbService.js').then(({ saveHeroBanner }) => {
-      saveHeroBanner({
-        id: newSlide.id,
-        headline: newSlide.headline,
-        subtitle: newSlide.subtitle,
-        cta_text: newSlide.cta,
-        cta_link: newSlide.link,
-        image: newSlide.img,
-        is_active: newSlide.active,
-        sort_order: idx === -1 ? slides.length : idx + 1
-      }).catch(err => console.error('Supabase banner save error:', err));
-    });
-
-    renderSlides();
+    // Await database write to guarantee data persistence
+    await saveHeroBanner(bannerPayload);
+    await loadBannersFromDb();
     modal?.classList.add('opacity-0', 'pointer-events-none');
   });
 
-  // Client-side fetch from Supabase
-  import('../services/dbService.js').then(async ({ getActiveHeroBanners }) => {
+  async function loadBannersFromDb() {
     try {
       const liveBanners = await getActiveHeroBanners();
       if (liveBanners && liveBanners.length > 0) {
@@ -410,13 +375,25 @@ import ConfirmDeleteModal from '../components/ConfirmDeleteModal.astro';
           img: b.image || '/assets/images/hero-pot.png',
           active: b.is_active ?? true
         }));
-        activeIndex = 0;
-        renderSlides();
+      } else {
+        slides = [
+          {
+            id: 'slide-1',
+            headline: 'Feel it, Feel the Uniqueness.',
+            subtitle: 'Is filament of the highest quality that we are proud to offer our customers.',
+            cta: 'Buy Now',
+            link: '#products',
+            img: '/assets/images/hero-pot.png',
+            active: true
+          }
+        ];
       }
+      renderSlides();
     } catch (e) {
-      console.warn('Banner live fetch warning:', e);
+      console.warn('Banner fetch error:', e);
     }
-  });
+  }
 
-  renderSlides();
+  // Load from Supabase on page load
+  loadBannersFromDb();
 </script>
