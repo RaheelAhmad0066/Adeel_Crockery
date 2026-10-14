@@ -385,17 +385,32 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
   });
 
   // Handle Real Image File Upload
-  fileInput?.addEventListener('change', (e) => {
-    const target = e.target;
-    if (target.files && target.files[0]) {
+  fileInput?.addEventListener('change', async (e: any) => {
+    const file = e.target?.files?.[0];
+    if (file) {
+      // Immediate local preview so UI never lags
       const reader = new FileReader();
       reader.onload = function(evt) {
         if (imgPreview && imgPathHidden && evt.target?.result) {
-          imgPreview.src = evt.target.result;
-          imgPathHidden.value = evt.target.result;
+          imgPreview.src = evt.target.result as string;
+          imgPathHidden.value = evt.target.result as string;
         }
       };
-      reader.readAsDataURL(target.files[0]);
+      reader.readAsDataURL(file);
+
+      // Upload to Supabase bucket and store permanent public URL
+      try {
+        const { uploadImageToStorage } = await import('../services/dbService.js');
+        const uploadRes = await uploadImageToStorage(file, 'products');
+        if (uploadRes.success && uploadRes.publicUrl) {
+          if (imgPreview && imgPathHidden) {
+            imgPreview.src = uploadRes.publicUrl;
+            imgPathHidden.value = uploadRes.publicUrl;
+          }
+        }
+      } catch (err) {
+        console.warn('Storage upload error, using local data URL:', err);
+      }
     }
   });
 
@@ -419,7 +434,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
 
   // Edit Product Handler
   function attachEditListeners() {
-    document.querySelectorAll('.btn-edit-prod').forEach((btn) => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-edit-prod').forEach((btn) => {
       btn.onclick = (e) => {
         const id = btn.getAttribute('data-id');
         const row = document.getElementById(`row-${id}`);
@@ -450,7 +465,7 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
 
   // Delete Product Handler
   function attachDeleteListeners() {
-    document.querySelectorAll('.btn-delete-prod').forEach((btn) => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-delete-prod').forEach((btn) => {
       btn.onclick = () => {
         const id = btn.getAttribute('data-id');
         pendingDeleteRow = document.getElementById(`row-${id}`);
@@ -578,6 +593,8 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
           <button class="btn-delete-prod text-xs font-semibold text-red-500 hover:text-red-700 underline" data-id="${id}">Delete</button>
         </td>
       `;
+      tbody?.appendChild(tr);
+    }
 
     // Save to Supabase Cloud Database
     import('../services/dbService.js').then(({ saveProduct }) => {
@@ -712,19 +729,5 @@ import { initialProducts, initialNavbarCategories } from '../data/storeDataModel
     } catch (e) {
       console.warn('Could not load live products, displaying fallback data:', e);
     }
-
-    // Handle real file upload to Supabase bucket
-    fileInput?.addEventListener('change', async (e: any) => {
-      const file = e.target?.files?.[0];
-      if (file) {
-        const uploadRes = await uploadImageToStorage(file, 'products');
-        if (uploadRes.success && uploadRes.publicUrl) {
-          if (imgPreview && imgPathHidden) {
-            imgPreview.src = uploadRes.publicUrl;
-            imgPathHidden.value = uploadRes.publicUrl;
-          }
-        }
-      }
-    });
   });
 </script>

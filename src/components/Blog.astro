@@ -14,7 +14,7 @@ let compactArticles = blogData.compact;
     </div>
 
     <!-- Featured Articles (2 Columns) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div id="blog-featured-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
       {featuredArticles.map((post) => (
         <article class="space-y-3 group cursor-pointer" onclick="window.location.href='/news'">
           <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
@@ -41,7 +41,7 @@ let compactArticles = blogData.compact;
     </div>
 
     <!-- Compact Cards (4 Columns) -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+    <div id="blog-compact-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
       {compactArticles.map((item) => (
         <div class="bg-[#FAF8F5] rounded-xl p-3.5 space-y-2.5 card-hover cursor-pointer border border-neutral-200/50" onclick="window.location.href='/news'">
           <div class="h-28 sm:h-32 w-full flex items-center justify-center overflow-hidden rounded-lg bg-white">
@@ -64,3 +64,44 @@ let compactArticles = blogData.compact;
     </div>
   </div>
 </section>
+
+<script>
+  import { getAllArticles } from '../services/dbService.js';
+  getAllArticles().then((liveArticles: any[]) => {
+    if (liveArticles && liveArticles.length > 0) {
+      const featGrid = document.getElementById('blog-featured-grid');
+      if (featGrid && liveArticles.length >= 2) {
+        const top2 = liveArticles.slice(0, 2);
+        const images = ['/assets/images/blog-1.png', '/assets/images/blog-2.png'];
+        featGrid.innerHTML = '';
+        top2.forEach((art, idx) => {
+          const articleEl = document.createElement('article');
+          articleEl.className = 'space-y-3 group cursor-pointer';
+          articleEl.onclick = () => window.location.href = '/news';
+          articleEl.innerHTML = `
+            <div class="w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-neutral-100 shadow-sm">
+              <img 
+                src="${images[idx % images.length]}" 
+                alt="${art.title}" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-smooth duration-500"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between text-xs text-[#5E666C] font-medium">
+                <span>${art.author || 'American Spa Staff'}</span>
+                <span>${art.date || 'Apr 16, 2024'}</span>
+              </div>
+              <h3 class="font-gallient text-2xl sm:text-3xl font-normal text-[#000104] group-hover:text-neutral-600 transition-colors">
+                ${art.title}
+              </h3>
+              <p class="text-sm text-[#5E666C] leading-relaxed line-clamp-2">
+                ${art.category || 'Pottery craftsmanship spotlight and artisan creation.'}
+              </p>
+            </div>
+          `;
+          featGrid.appendChild(articleEl);
+        });
+      }
+    }
+  }).catch(() => {});
+</script>

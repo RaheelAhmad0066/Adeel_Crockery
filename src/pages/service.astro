@@ -113,7 +113,7 @@ const serviceItems = [
         </div>
 
         <!-- 8-Card Services Grid (4 Columns Desktop / 2 Columns Mobile) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+        <div id="services-cards-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
           {serviceItems.map((item) => (
             <div class="flex flex-col justify-between group">
               
@@ -161,4 +161,46 @@ const serviceItems = [
   <Footer />
   <CartDrawer />
 </Layout>
+
+<script>
+  import { getAllServices } from '../services/dbService.js';
+  getAllServices().then((liveServices: any[]) => {
+    if (liveServices && liveServices.length > 0) {
+      const grid = document.getElementById('services-cards-grid');
+      if (grid) {
+        grid.innerHTML = '';
+        liveServices.forEach((srv: any) => {
+          const card = document.createElement('div');
+          card.className = 'flex flex-col justify-between group';
+          card.innerHTML = `
+            <div class="relative w-full aspect-square bg-transparent flex items-center justify-center p-2 overflow-hidden block">
+              <img 
+                src="${srv.image || '/assets/images/shop-2.svg'}" 
+                alt="${srv.title}" 
+                class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+            <div class="pt-4 space-y-1.5 flex flex-col flex-1 justify-between">
+              <div>
+                <h3 class="font-bold text-[15px] sm:text-[17px] text-[#000104]">
+                  ${srv.title}
+                </h3>
+                <p class="text-[11px] sm:text-xs text-[#5E666C] leading-relaxed line-clamp-2 mt-1">
+                  ${srv.description || 'Artisan handcrafted ceramic service tailored to your lifestyle.'}
+                </p>
+              </div>
+              <a 
+                href="/shop" 
+                class="inline-block text-[11px] sm:text-xs font-bold text-[#000104] hover:underline pt-2 tracking-wide uppercase"
+              >
+                Read more
+              </a>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+    }
+  }).catch(() => {});
+</script>
 

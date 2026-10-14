@@ -423,6 +423,62 @@ const activeProducts = ceramicPotteryProducts;
     switchView();
     setupNavigationInterception();
     initShopFilters();
+
+    // Dynamic fetch from Supabase
+    import('../services/dbService.js').then(async ({ getAllProducts }) => {
+      try {
+        const liveProducts = await getAllProducts();
+        if (liveProducts && liveProducts.length > 0) {
+          const grid = document.getElementById('shop-products-grid');
+          if (grid) {
+            grid.innerHTML = '';
+            liveProducts.forEach((p: any) => {
+              const imgSrc = p.image && p.image.startsWith('/') ? p.image : (p.image ? `/${p.image}` : '/assets/images/prod-1.png');
+              const card = document.createElement('div');
+              card.className = 'shop-product-card group flex flex-col justify-between';
+              card.setAttribute('data-category', (p.category || 'crockery').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+              card.setAttribute('data-type', (p.subcategory || 'pottery').toLowerCase());
+              card.setAttribute('data-price', (p.price || 0).toString());
+
+              card.innerHTML = `
+                <a href="/product?id=${p.id}" class="w-full aspect-square bg-[#FBF6F3] rounded-2xl p-4 sm:p-6 flex items-center justify-center border border-neutral-200/60 group-hover:border-neutral-900 group-hover:shadow-md transition-all duration-300 block">
+                  <img src="${imgSrc}" alt="${p.name}" class="max-h-28 sm:max-h-40 max-w-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                </a>
+                <div class="pt-3 sm:pt-4 space-y-1 sm:space-y-1.5 flex flex-col items-start w-full">
+                  <a href="/product?id=${p.id}" class="text-xs sm:text-[15px] text-[#3C4245] font-normal truncate hover:text-[#000104] transition-colors block max-w-full">
+                    ${p.name}
+                  </a>
+                  <div class="text-base sm:text-xl font-bold text-[#000104]">
+                    PKR ${Number(p.price || 0).toLocaleString()}
+                  </div>
+                  <button class="add-to-cart-btn mt-1.5 inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 border border-neutral-400 rounded text-xs font-semibold text-[#000104] hover:bg-[#000104] hover:text-white transition-smooth btn-press w-full sm:w-auto justify-center" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}" data-image="${imgSrc}">
+                    <img src="/assets/icons/cart.svg" alt="" class="w-3.5 h-3.5 object-contain" />
+                    <span>Cart</span>
+                  </button>
+                </div>
+              `;
+              grid.appendChild(card);
+            });
+
+            // Re-attach cart listeners
+            grid.querySelectorAll('.add-to-cart-btn').forEach((btn: any) => {
+              btn.addEventListener('click', (e: any) => {
+                e.stopPropagation();
+                const id = btn.getAttribute('data-id');
+                const name = btn.getAttribute('data-name');
+                const price = parseFloat(btn.getAttribute('data-price') || '0');
+                const image = btn.getAttribute('data-image');
+                if ((window as any).addToCart) {
+                  (window as any).addToCart({ id, name, price, image, quantity: 1 });
+                }
+              });
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('Shop live products fetch warning:', e);
+      }
+    });
   }
 
   if (document.readyState === 'loading') {

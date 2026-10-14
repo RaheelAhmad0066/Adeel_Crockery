@@ -147,7 +147,7 @@ import { adminArticlesList } from '../data/adminMockData.js';
   });
 
   function attachArtListeners() {
-    document.querySelectorAll('.btn-edit-art').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-edit-art').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         const row = document.getElementById(`art-row-${idx}`);
@@ -164,7 +164,7 @@ import { adminArticlesList } from '../data/adminMockData.js';
     const delModal = document.getElementById('delete-article-modal');
     let pendingArtRow: HTMLElement | null = null;
 
-    document.querySelectorAll('.btn-del-art').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-del-art').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         pendingArtRow = document.getElementById(`art-row-${idx}`);

@@ -191,7 +191,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 
   function attachCategoryListeners() {
     // Edit Main Category
-    document.querySelectorAll('.btn-edit-main-cat').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-edit-main-cat').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         const card = document.getElementById(`cat-card-${idx}`);
@@ -209,7 +209,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     });
 
     // Delete Main Category (Pop-up Modal)
-    document.querySelectorAll('.btn-delete-main-cat').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-delete-main-cat').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         pendingDeleteTarget = document.getElementById(`cat-card-${idx}`);
@@ -221,7 +221,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     });
 
     // Add Subcategory Button
-    document.querySelectorAll('.btn-add-subcat').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-add-subcat').forEach(b => {
       b.onclick = (e) => {
         const target = e.currentTarget as HTMLElement;
         const idx = target.dataset.idx || '0';
@@ -234,7 +234,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     });
 
     // Remove Subcategory (Pop-up Modal)
-    document.querySelectorAll('.btn-del-sub').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-del-sub').forEach(b => {
       b.onclick = (e) => {
         const pill = (e.currentTarget as HTMLElement).closest('.subcat-pill') as HTMLElement;
         pendingDeleteTarget = pill;
@@ -254,6 +254,12 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
 
   delModal?.querySelector('.modal-delete-confirm')?.addEventListener('click', () => {
     if (pendingDeleteTarget) {
+      const catId = pendingDeleteTarget.getAttribute('data-cat-id');
+      if (catId) {
+        import('../services/dbService.js').then(({ deleteCategory }) => {
+          deleteCategory(catId).catch((err: any) => console.error('Delete category error:', err));
+        });
+      }
       pendingDeleteTarget.remove();
       pendingDeleteTarget = null;
     }
@@ -266,6 +272,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     const idx = parseInt(catIndexInput.value);
     const name = catNameInput.value;
     const slug = catSlugInput.value;
+    const catId = idx === -1 ? `cat-${slug.toLowerCase()}` : (document.getElementById(`cat-card-${idx}`)?.getAttribute('data-cat-id') || `cat-${slug}`);
 
     if (idx === -1) {
       const grid = document.getElementById('cat-cards-grid');
@@ -274,6 +281,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       newCard.id = `cat-card-${newIdx}`;
       newCard.className = 'cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors';
       newCard.setAttribute('data-cat-name', name);
+      newCard.setAttribute('data-cat-id', catId);
       newCard.setAttribute('data-cat-idx', newIdx.toString());
 
       newCard.innerHTML = `
@@ -313,6 +321,16 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       }
     }
 
+    import('../services/dbService.js').then(({ saveCategory }) => {
+      saveCategory({
+        id: catId,
+        name,
+        slug,
+        status: 'Active',
+        sort_order: idx === -1 ? 99 : idx + 1
+      }).catch((err: any) => console.error('Save category error:', err));
+    });
+
     catModal?.classList.add('opacity-0', 'pointer-events-none');
     attachCategoryListeners();
   });
@@ -324,6 +342,7 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
     const subName = subNameInput.value;
     const card = document.getElementById(`cat-card-${idx}`);
     const list = card?.querySelector('.subcat-list');
+    const catId = card?.getAttribute('data-cat-id');
 
     if (list) {
       const pill = document.createElement('span');
@@ -335,6 +354,16 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
       list.appendChild(pill);
     }
 
+    if (catId) {
+      import('../services/dbService.js').then(({ saveSubcategory }) => {
+        saveSubcategory({
+          category_id: catId,
+          name: subName,
+          slug: subName.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        }).catch((err: any) => console.error('Save subcategory error:', err));
+      });
+    }
+
     subModal?.classList.add('opacity-0', 'pointer-events-none');
     attachCategoryListeners();
   });
@@ -344,6 +373,67 @@ import { initialNavbarCategories, initialProducts } from '../data/storeDataModel
   });
   document.getElementById('cancel-subcat-btn')?.addEventListener('click', () => {
     subModal?.classList.add('opacity-0', 'pointer-events-none');
+  });
+
+  // Client-side fetch live categories
+  import('../services/dbService.js').then(async ({ getNavbarCategoriesWithSubcategories }) => {
+    try {
+      const liveCats = await getNavbarCategoriesWithSubcategories();
+      if (liveCats && liveCats.length > 0) {
+        const grid = document.getElementById('cat-cards-grid');
+        if (grid) {
+          grid.innerHTML = '';
+          liveCats.forEach((cat: any, catIdx: number) => {
+            const card = document.createElement('div');
+            card.id = `cat-card-${catIdx}`;
+            card.className = 'cat-card bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs space-y-4 hover:border-black transition-colors';
+            card.setAttribute('data-cat-name', cat.name);
+            card.setAttribute('data-cat-id', cat.id);
+            card.setAttribute('data-cat-idx', catIdx.toString());
+
+            const subs = cat.subcategories || [];
+            const subPills = subs.map((sub: any) => `
+              <span class="subcat-pill inline-flex items-center gap-1.5 text-xs bg-neutral-50 text-neutral-800 border border-neutral-200 px-2.5 py-1 rounded-lg font-medium hover:bg-neutral-100 transition-colors">
+                <span class="sub-name">${sub.name}</span>
+                <button class="btn-del-sub text-neutral-400 hover:text-red-500 text-xs ml-0.5" title="Remove subcategory">×</button>
+              </span>
+            `).join('');
+
+            card.innerHTML = `
+              <div class="flex items-start justify-between border-b pb-3">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h3 class="cat-title text-base font-bold text-[#000104]">${cat.name}</h3>
+                    <span class="cat-slug text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100 text-neutral-700 font-mono">
+                      /${cat.slug}
+                    </span>
+                  </div>
+                  <p class="cat-count text-xs text-[#5E666C] mt-0.5">Active category in navigation</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${cat.status || 'Active'}</span>
+                  <button class="btn-edit-main-cat text-xs font-semibold text-neutral-500 hover:text-black underline" data-idx="${catIdx}">Edit</button>
+                  <button class="btn-delete-main-cat text-xs font-semibold text-red-500 hover:text-red-700 underline" data-idx="${catIdx}">Delete</button>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="subcat-header text-[11px] font-bold text-neutral-400 uppercase tracking-wider">Dropdown Subcategories (${subs.length})</span>
+                  <button class="btn-add-subcat text-[11px] font-semibold text-black hover:underline" data-idx="${catIdx}" data-cat="${cat.name}">+ Add Subcategory</button>
+                </div>
+                <div class="subcat-list flex flex-wrap gap-1.5" data-cat-idx="${catIdx}">
+                  ${subPills}
+                </div>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+          attachCategoryListeners();
+        }
+      }
+    } catch (e) {
+      console.warn('Live categories warning:', e);
+    }
   });
 
   attachCategoryListeners();

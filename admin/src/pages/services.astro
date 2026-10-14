@@ -184,7 +184,7 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
   });
 
   function attachSrvListeners() {
-    document.querySelectorAll('.btn-edit-srv').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-edit-srv').forEach(b => {
       b.onclick = (e) => {
         const idx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         const card = document.getElementById(`srv-card-${idx}`);
@@ -201,7 +201,7 @@ import { adminServicesList, adminServiceInquiries } from '../data/adminMockData.
     const delModal = document.getElementById('delete-service-modal');
     let pendingSrvIdx: string | null = null;
 
-    document.querySelectorAll('.btn-del-srv').forEach(b => {
+    document.querySelectorAll<HTMLButtonElement>('.btn-del-srv').forEach(b => {
       b.onclick = (e) => {
         pendingSrvIdx = (e.currentTarget as HTMLElement).dataset.idx || '0';
         delModal?.classList.remove('opacity-0', 'pointer-events-none');
